@@ -1,6430 +1,6497 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <base href="/admint-cs/">
-    <meta content="fastn" name="generator">
-    
-    
-    <script>
-        let __fastn_package_name__ = "fifthtry.github.io/admint-cs";
+/**
+ * marked v9.1.4 - a markdown parser
+ * Copyright (c) 2011-2023, Christopher Jeffrey. (MIT Licensed)
+ * https://github.com/markedjs/marked
+ */
+// Content taken from https://cdn.jsdelivr.net/npm/marked/marked.min.js
+!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports):"function"==typeof define&&define.amd?define(["exports"],t):t((e="undefined"!=typeof globalThis?globalThis:e||self).marked={})}(this,(function(e){"use strict";function t(){return{async:!1,breaks:!1,extensions:null,gfm:!0,hooks:null,pedantic:!1,renderer:null,silent:!1,tokenizer:null,walkTokens:null}}function n(t){e.defaults=t}e.defaults={async:!1,breaks:!1,extensions:null,gfm:!0,hooks:null,pedantic:!1,renderer:null,silent:!1,tokenizer:null,walkTokens:null};const s=/[&<>"']/,r=new RegExp(s.source,"g"),i=/[<>"']|&(?!(#\d{1,7}|#[Xx][a-fA-F0-9]{1,6}|\w+);)/,l=new RegExp(i.source,"g"),o={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"},a=e=>o[e];function c(e,t){if(t){if(s.test(e))return e.replace(r,a)}else if(i.test(e))return e.replace(l,a);return e}const h=/&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/gi;const p=/(^|[^\[])\^/g;function u(e,t){e="string"==typeof e?e:e.source,t=t||"";const n={replace:(t,s)=>(s=(s="object"==typeof s&&"source"in s?s.source:s).replace(p,"$1"),e=e.replace(t,s),n),getRegex:()=>new RegExp(e,t)};return n}function g(e){try{e=encodeURI(e).replace(/%25/g,"%")}catch(e){return null}return e}const k={exec:()=>null};function f(e,t){const n=e.replace(/\|/g,((e,t,n)=>{let s=!1,r=t;for(;--r>=0&&"\\"===n[r];)s=!s;return s?"|":" |"})).split(/ \|/);let s=0;if(n[0].trim()||n.shift(),n.length>0&&!n[n.length-1].trim()&&n.pop(),t)if(n.length>t)n.splice(t);else for(;n.length<t;)n.push("");for(;s<n.length;s++)n[s]=n[s].trim().replace(/\\\|/g,"|");return n}function d(e,t,n){const s=e.length;if(0===s)return"";let r=0;for(;r<s;){const i=e.charAt(s-r-1);if(i!==t||n){if(i===t||!n)break;r++}else r++}return e.slice(0,s-r)}function x(e,t,n,s){const r=t.href,i=t.title?c(t.title):null,l=e[1].replace(/\\([\[\]])/g,"$1");if("!"!==e[0].charAt(0)){s.state.inLink=!0;const e={type:"link",raw:n,href:r,title:i,text:l,tokens:s.inlineTokens(l)};return s.state.inLink=!1,e}return{type:"image",raw:n,href:r,title:i,text:c(l)}}class b{options;rules;lexer;constructor(t){this.options=t||e.defaults}space(e){const t=this.rules.block.newline.exec(e);if(t&&t[0].length>0)return{type:"space",raw:t[0]}}code(e){const t=this.rules.block.code.exec(e);if(t){const e=t[0].replace(/^ {1,4}/gm,"");return{type:"code",raw:t[0],codeBlockStyle:"indented",text:this.options.pedantic?e:d(e,"\n")}}}fences(e){const t=this.rules.block.fences.exec(e);if(t){const e=t[0],n=function(e,t){const n=e.match(/^(\s+)(?:```)/);if(null===n)return t;const s=n[1];return t.split("\n").map((e=>{const t=e.match(/^\s+/);if(null===t)return e;const[n]=t;return n.length>=s.length?e.slice(s.length):e})).join("\n")}(e,t[3]||"");return{type:"code",raw:e,lang:t[2]?t[2].trim().replace(this.rules.inline._escapes,"$1"):t[2],text:n}}}heading(e){const t=this.rules.block.heading.exec(e);if(t){let e=t[2].trim();if(/#$/.test(e)){const t=d(e,"#");this.options.pedantic?e=t.trim():t&&!/ $/.test(t)||(e=t.trim())}return{type:"heading",raw:t[0],depth:t[1].length,text:e,tokens:this.lexer.inline(e)}}}hr(e){const t=this.rules.block.hr.exec(e);if(t)return{type:"hr",raw:t[0]}}blockquote(e){const t=this.rules.block.blockquote.exec(e);if(t){const e=d(t[0].replace(/^ *>[ \t]?/gm,""),"\n"),n=this.lexer.state.top;this.lexer.state.top=!0;const s=this.lexer.blockTokens(e);return this.lexer.state.top=n,{type:"blockquote",raw:t[0],tokens:s,text:e}}}list(e){let t=this.rules.block.list.exec(e);if(t){let n=t[1].trim();const s=n.length>1,r={type:"list",raw:"",ordered:s,start:s?+n.slice(0,-1):"",loose:!1,items:[]};n=s?`\\d{1,9}\\${n.slice(-1)}`:`\\${n}`,this.options.pedantic&&(n=s?n:"[*+-]");const i=new RegExp(`^( {0,3}${n})((?:[\t ][^\\n]*)?(?:\\n|$))`);let l="",o="",a=!1;for(;e;){let n=!1;if(!(t=i.exec(e)))break;if(this.rules.block.hr.test(e))break;l=t[0],e=e.substring(l.length);let s=t[2].split("\n",1)[0].replace(/^\t+/,(e=>" ".repeat(3*e.length))),c=e.split("\n",1)[0],h=0;this.options.pedantic?(h=2,o=s.trimStart()):(h=t[2].search(/[^ ]/),h=h>4?1:h,o=s.slice(h),h+=t[1].length);let p=!1;if(!s&&/^ *$/.test(c)&&(l+=c+"\n",e=e.substring(c.length+1),n=!0),!n){const t=new RegExp(`^ {0,${Math.min(3,h-1)}}(?:[*+-]|\\d{1,9}[.)])((?:[ \t][^\\n]*)?(?:\\n|$))`),n=new RegExp(`^ {0,${Math.min(3,h-1)}}((?:- *){3,}|(?:_ *){3,}|(?:\\* *){3,})(?:\\n+|$)`),r=new RegExp(`^ {0,${Math.min(3,h-1)}}(?:\`\`\`|~~~)`),i=new RegExp(`^ {0,${Math.min(3,h-1)}}#`);for(;e;){const a=e.split("\n",1)[0];if(c=a,this.options.pedantic&&(c=c.replace(/^ {1,4}(?=( {4})*[^ ])/g,"  ")),r.test(c))break;if(i.test(c))break;if(t.test(c))break;if(n.test(e))break;if(c.search(/[^ ]/)>=h||!c.trim())o+="\n"+c.slice(h);else{if(p)break;if(s.search(/[^ ]/)>=4)break;if(r.test(s))break;if(i.test(s))break;if(n.test(s))break;o+="\n"+c}p||c.trim()||(p=!0),l+=a+"\n",e=e.substring(a.length+1),s=c.slice(h)}}r.loose||(a?r.loose=!0:/\n *\n *$/.test(l)&&(a=!0));let u,g=null;this.options.gfm&&(g=/^\[[ xX]\] /.exec(o),g&&(u="[ ] "!==g[0],o=o.replace(/^\[[ xX]\] +/,""))),r.items.push({type:"list_item",raw:l,task:!!g,checked:u,loose:!1,text:o,tokens:[]}),r.raw+=l}r.items[r.items.length-1].raw=l.trimEnd(),r.items[r.items.length-1].text=o.trimEnd(),r.raw=r.raw.trimEnd();for(let e=0;e<r.items.length;e++)if(this.lexer.state.top=!1,r.items[e].tokens=this.lexer.blockTokens(r.items[e].text,[]),!r.loose){const t=r.items[e].tokens.filter((e=>"space"===e.type)),n=t.length>0&&t.some((e=>/\n.*\n/.test(e.raw)));r.loose=n}if(r.loose)for(let e=0;e<r.items.length;e++)r.items[e].loose=!0;return r}}html(e){const t=this.rules.block.html.exec(e);if(t){return{type:"html",block:!0,raw:t[0],pre:"pre"===t[1]||"script"===t[1]||"style"===t[1],text:t[0]}}}def(e){const t=this.rules.block.def.exec(e);if(t){const e=t[1].toLowerCase().replace(/\s+/g," "),n=t[2]?t[2].replace(/^<(.*)>$/,"$1").replace(this.rules.inline._escapes,"$1"):"",s=t[3]?t[3].substring(1,t[3].length-1).replace(this.rules.inline._escapes,"$1"):t[3];return{type:"def",tag:e,raw:t[0],href:n,title:s}}}table(e){const t=this.rules.block.table.exec(e);if(t){if(!/[:|]/.test(t[2]))return;const e={type:"table",raw:t[0],header:f(t[1]).map((e=>({text:e,tokens:[]}))),align:t[2].replace(/^\||\| *$/g,"").split("|"),rows:t[3]&&t[3].trim()?t[3].replace(/\n[ \t]*$/,"").split("\n"):[]};if(e.header.length===e.align.length){let t,n,s,r,i=e.align.length;for(t=0;t<i;t++){const n=e.align[t];n&&(/^ *-+: *$/.test(n)?e.align[t]="right":/^ *:-+: *$/.test(n)?e.align[t]="center":/^ *:-+ *$/.test(n)?e.align[t]="left":e.align[t]=null)}for(i=e.rows.length,t=0;t<i;t++)e.rows[t]=f(e.rows[t],e.header.length).map((e=>({text:e,tokens:[]})));for(i=e.header.length,n=0;n<i;n++)e.header[n].tokens=this.lexer.inline(e.header[n].text);for(i=e.rows.length,n=0;n<i;n++)for(r=e.rows[n],s=0;s<r.length;s++)r[s].tokens=this.lexer.inline(r[s].text);return e}}}lheading(e){const t=this.rules.block.lheading.exec(e);if(t)return{type:"heading",raw:t[0],depth:"="===t[2].charAt(0)?1:2,text:t[1],tokens:this.lexer.inline(t[1])}}paragraph(e){const t=this.rules.block.paragraph.exec(e);if(t){const e="\n"===t[1].charAt(t[1].length-1)?t[1].slice(0,-1):t[1];return{type:"paragraph",raw:t[0],text:e,tokens:this.lexer.inline(e)}}}text(e){const t=this.rules.block.text.exec(e);if(t)return{type:"text",raw:t[0],text:t[0],tokens:this.lexer.inline(t[0])}}escape(e){const t=this.rules.inline.escape.exec(e);if(t)return{type:"escape",raw:t[0],text:c(t[1])}}tag(e){const t=this.rules.inline.tag.exec(e);if(t)return!this.lexer.state.inLink&&/^<a /i.test(t[0])?this.lexer.state.inLink=!0:this.lexer.state.inLink&&/^<\/a>/i.test(t[0])&&(this.lexer.state.inLink=!1),!this.lexer.state.inRawBlock&&/^<(pre|code|kbd|script)(\s|>)/i.test(t[0])?this.lexer.state.inRawBlock=!0:this.lexer.state.inRawBlock&&/^<\/(pre|code|kbd|script)(\s|>)/i.test(t[0])&&(this.lexer.state.inRawBlock=!1),{type:"html",raw:t[0],inLink:this.lexer.state.inLink,inRawBlock:this.lexer.state.inRawBlock,block:!1,text:t[0]}}link(e){const t=this.rules.inline.link.exec(e);if(t){const e=t[2].trim();if(!this.options.pedantic&&/^</.test(e)){if(!/>$/.test(e))return;const t=d(e.slice(0,-1),"\\");if((e.length-t.length)%2==0)return}else{const e=function(e,t){if(-1===e.indexOf(t[1]))return-1;let n=0;for(let s=0;s<e.length;s++)if("\\"===e[s])s++;else if(e[s]===t[0])n++;else if(e[s]===t[1]&&(n--,n<0))return s;return-1}(t[2],"()");if(e>-1){const n=(0===t[0].indexOf("!")?5:4)+t[1].length+e;t[2]=t[2].substring(0,e),t[0]=t[0].substring(0,n).trim(),t[3]=""}}let n=t[2],s="";if(this.options.pedantic){const e=/^([^'"]*[^\s])\s+(['"])(.*)\2/.exec(n);e&&(n=e[1],s=e[3])}else s=t[3]?t[3].slice(1,-1):"";return n=n.trim(),/^</.test(n)&&(n=this.options.pedantic&&!/>$/.test(e)?n.slice(1):n.slice(1,-1)),x(t,{href:n?n.replace(this.rules.inline._escapes,"$1"):n,title:s?s.replace(this.rules.inline._escapes,"$1"):s},t[0],this.lexer)}}reflink(e,t){let n;if((n=this.rules.inline.reflink.exec(e))||(n=this.rules.inline.nolink.exec(e))){let e=(n[2]||n[1]).replace(/\s+/g," ");if(e=t[e.toLowerCase()],!e){const e=n[0].charAt(0);return{type:"text",raw:e,text:e}}return x(n,e,n[0],this.lexer)}}emStrong(e,t,n=""){let s=this.rules.inline.emStrong.lDelim.exec(e);if(!s)return;if(s[3]&&n.match(/[\p{L}\p{N}]/u))return;if(!(s[1]||s[2]||"")||!n||this.rules.inline.punctuation.exec(n)){const n=[...s[0]].length-1;let r,i,l=n,o=0;const a="*"===s[0][0]?this.rules.inline.emStrong.rDelimAst:this.rules.inline.emStrong.rDelimUnd;for(a.lastIndex=0,t=t.slice(-1*e.length+s[0].length-1);null!=(s=a.exec(t));){if(r=s[1]||s[2]||s[3]||s[4]||s[5]||s[6],!r)continue;if(i=[...r].length,s[3]||s[4]){l+=i;continue}if((s[5]||s[6])&&n%3&&!((n+i)%3)){o+=i;continue}if(l-=i,l>0)continue;i=Math.min(i,i+l+o);const t=[...e].slice(0,n+s.index+i+1).join("");if(Math.min(n,i)%2){const e=t.slice(1,-1);return{type:"em",raw:t,text:e,tokens:this.lexer.inlineTokens(e)}}const a=t.slice(2,-2);return{type:"strong",raw:t,text:a,tokens:this.lexer.inlineTokens(a)}}}}codespan(e){const t=this.rules.inline.code.exec(e);if(t){let e=t[2].replace(/\n/g," ");const n=/[^ ]/.test(e),s=/^ /.test(e)&&/ $/.test(e);return n&&s&&(e=e.substring(1,e.length-1)),e=c(e,!0),{type:"codespan",raw:t[0],text:e}}}br(e){const t=this.rules.inline.br.exec(e);if(t)return{type:"br",raw:t[0]}}del(e){const t=this.rules.inline.del.exec(e);if(t)return{type:"del",raw:t[0],text:t[2],tokens:this.lexer.inlineTokens(t[2])}}autolink(e){const t=this.rules.inline.autolink.exec(e);if(t){let e,n;return"@"===t[2]?(e=c(t[1]),n="mailto:"+e):(e=c(t[1]),n=e),{type:"link",raw:t[0],text:e,href:n,tokens:[{type:"text",raw:e,text:e}]}}}url(e){let t;if(t=this.rules.inline.url.exec(e)){let e,n;if("@"===t[2])e=c(t[0]),n="mailto:"+e;else{let s;do{s=t[0],t[0]=this.rules.inline._backpedal.exec(t[0])[0]}while(s!==t[0]);e=c(t[0]),n="www."===t[1]?"http://"+t[0]:t[0]}return{type:"link",raw:t[0],text:e,href:n,tokens:[{type:"text",raw:e,text:e}]}}}inlineText(e){const t=this.rules.inline.text.exec(e);if(t){let e;return e=this.lexer.state.inRawBlock?t[0]:c(t[0]),{type:"text",raw:t[0],text:e}}}}const m={newline:/^(?: *(?:\n|$))+/,code:/^( {4}[^\n]+(?:\n(?: *(?:\n|$))*)?)+/,fences:/^ {0,3}(`{3,}(?=[^`\n]*(?:\n|$))|~{3,})([^\n]*)(?:\n|$)(?:|([\s\S]*?)(?:\n|$))(?: {0,3}\1[~`]* *(?=\n|$)|$)/,hr:/^ {0,3}((?:-[\t ]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})(?:\n+|$)/,heading:/^ {0,3}(#{1,6})(?=\s|$)(.*)(?:\n+|$)/,blockquote:/^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/,list:/^( {0,3}bull)([ \t][^\n]+?)?(?:\n|$)/,html:"^ {0,3}(?:<(script|pre|style|textarea)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n+|$)|comment[^\\n]*(\\n+|$)|<\\?[\\s\\S]*?(?:\\?>\\n*|$)|<![A-Z][\\s\\S]*?(?:>\\n*|$)|<!\\[CDATA\\[[\\s\\S]*?(?:\\]\\]>\\n*|$)|</?(tag)(?: +|\\n|/?>)[\\s\\S]*?(?:(?:\\n *)+\\n|$)|<(?!script|pre|style|textarea)([a-z][\\w-]*)(?:attribute)*? */?>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n *)+\\n|$)|</(?!script|pre|style|textarea)[a-z][\\w-]*\\s*>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n *)+\\n|$))",def:/^ {0,3}\[(label)\]: *(?:\n *)?([^<\s][^\s]*|<.*?>)(?:(?: +(?:\n *)?| *\n *)(title))? *(?:\n+|$)/,table:k,lheading:/^(?!bull )((?:.|\n(?!\s*?\n|bull ))+?)\n {0,3}(=+|-+) *(?:\n+|$)/,_paragraph:/^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html|table| +\n)[^\n]+)*)/,text:/^[^\n]+/,_label:/(?!\s*\])(?:\\.|[^\[\]\\])+/,_title:/(?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))/};m.def=u(m.def).replace("label",m._label).replace("title",m._title).getRegex(),m.bullet=/(?:[*+-]|\d{1,9}[.)])/,m.listItemStart=u(/^( *)(bull) */).replace("bull",m.bullet).getRegex(),m.list=u(m.list).replace(/bull/g,m.bullet).replace("hr","\\n+(?=\\1?(?:(?:- *){3,}|(?:_ *){3,}|(?:\\* *){3,})(?:\\n+|$))").replace("def","\\n+(?="+m.def.source+")").getRegex(),m._tag="address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|option|p|param|section|source|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul",m._comment=/<!--(?!-?>)[\s\S]*?(?:-->|$)/,m.html=u(m.html,"i").replace("comment",m._comment).replace("tag",m._tag).replace("attribute",/ +[a-zA-Z:_][\w.:-]*(?: *= *"[^"\n]*"| *= *'[^'\n]*'| *= *[^\s"'=<>`]+)?/).getRegex(),m.lheading=u(m.lheading).replace(/bull/g,m.bullet).getRegex(),m.paragraph=u(m._paragraph).replace("hr",m.hr).replace("heading"," {0,3}#{1,6}(?:\\s|$)").replace("|lheading","").replace("|table","").replace("blockquote"," {0,3}>").replace("fences"," {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list"," {0,3}(?:[*+-]|1[.)]) ").replace("html","</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag",m._tag).getRegex(),m.blockquote=u(m.blockquote).replace("paragraph",m.paragraph).getRegex(),m.normal={...m},m.gfm={...m.normal,table:"^ *([^\\n ].*)\\n {0,3}((?:\\| *)?:?-+:? *(?:\\| *:?-+:? *)*(?:\\| *)?)(?:\\n((?:(?! *\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)"},m.gfm.table=u(m.gfm.table).replace("hr",m.hr).replace("heading"," {0,3}#{1,6}(?:\\s|$)").replace("blockquote"," {0,3}>").replace("code"," {4}[^\\n]").replace("fences"," {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list"," {0,3}(?:[*+-]|1[.)]) ").replace("html","</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag",m._tag).getRegex(),m.gfm.paragraph=u(m._paragraph).replace("hr",m.hr).replace("heading"," {0,3}#{1,6}(?:\\s|$)").replace("|lheading","").replace("table",m.gfm.table).replace("blockquote"," {0,3}>").replace("fences"," {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list"," {0,3}(?:[*+-]|1[.)]) ").replace("html","</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag",m._tag).getRegex(),m.pedantic={...m.normal,html:u("^ *(?:comment *(?:\\n|\\s*$)|<(tag)[\\s\\S]+?</\\1> *(?:\\n{2,}|\\s*$)|<tag(?:\"[^\"]*\"|'[^']*'|\\s[^'\"/>\\s]*)*?/?> *(?:\\n{2,}|\\s*$))").replace("comment",m._comment).replace(/tag/g,"(?!(?:a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo|span|br|wbr|ins|del|img)\\b)\\w+(?!:|[^\\w\\s@]*@)\\b").getRegex(),def:/^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +(["(][^\n]+[")]))? *(?:\n+|$)/,heading:/^(#{1,6})(.*)(?:\n+|$)/,fences:k,lheading:/^(.+?)\n {0,3}(=+|-+) *(?:\n+|$)/,paragraph:u(m.normal._paragraph).replace("hr",m.hr).replace("heading"," *#{1,6} *[^\n]").replace("lheading",m.lheading).replace("blockquote"," {0,3}>").replace("|fences","").replace("|list","").replace("|html","").getRegex()};const w={escape:/^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/,autolink:/^<(scheme:[^\s\x00-\x1f<>]*|email)>/,url:k,tag:"^comment|^</[a-zA-Z][\\w:-]*\\s*>|^<[a-zA-Z][\\w-]*(?:attribute)*?\\s*/?>|^<\\?[\\s\\S]*?\\?>|^<![a-zA-Z]+\\s[\\s\\S]*?>|^<!\\[CDATA\\[[\\s\\S]*?\\]\\]>",link:/^!?\[(label)\]\(\s*(href)(?:\s+(title))?\s*\)/,reflink:/^!?\[(label)\]\[(ref)\]/,nolink:/^!?\[(ref)\](?:\[\])?/,reflinkSearch:"reflink|nolink(?!\\()",emStrong:{lDelim:/^(?:\*+(?:((?!\*)[punct])|[^\s*]))|^_+(?:((?!_)[punct])|([^\s_]))/,rDelimAst:/^[^_*]*?__[^_*]*?\*[^_*]*?(?=__)|[^*]+(?=[^*])|(?!\*)[punct](\*+)(?=[\s]|$)|[^punct\s](\*+)(?!\*)(?=[punct\s]|$)|(?!\*)[punct\s](\*+)(?=[^punct\s])|[\s](\*+)(?!\*)(?=[punct])|(?!\*)[punct](\*+)(?!\*)(?=[punct])|[^punct\s](\*+)(?=[^punct\s])/,rDelimUnd:/^[^_*]*?\*\*[^_*]*?_[^_*]*?(?=\*\*)|[^_]+(?=[^_])|(?!_)[punct](_+)(?=[\s]|$)|[^punct\s](_+)(?!_)(?=[punct\s]|$)|(?!_)[punct\s](_+)(?=[^punct\s])|[\s](_+)(?!_)(?=[punct])|(?!_)[punct](_+)(?!_)(?=[punct])/},code:/^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,br:/^( {2,}|\\)\n(?!\s*$)/,del:k,text:/^(`+|[^`])(?:(?= {2,}\n)|[\s\S]*?(?:(?=[\\<!\[`*_]|\b_|$)|[^ ](?= {2,}\n)))/,punctuation:/^((?![*_])[\spunctuation])/,_punctuation:"\\p{P}$+<=>`^|~"};w.punctuation=u(w.punctuation,"u").replace(/punctuation/g,w._punctuation).getRegex(),w.blockSkip=/\[[^[\]]*?\]\([^\(\)]*?\)|`[^`]*?`|<[^<>]*?>/g,w.anyPunctuation=/\\[punct]/g,w._escapes=/\\([punct])/g,w._comment=u(m._comment).replace("(?:--\x3e|$)","--\x3e").getRegex(),w.emStrong.lDelim=u(w.emStrong.lDelim,"u").replace(/punct/g,w._punctuation).getRegex(),w.emStrong.rDelimAst=u(w.emStrong.rDelimAst,"gu").replace(/punct/g,w._punctuation).getRegex(),w.emStrong.rDelimUnd=u(w.emStrong.rDelimUnd,"gu").replace(/punct/g,w._punctuation).getRegex(),w.anyPunctuation=u(w.anyPunctuation,"gu").replace(/punct/g,w._punctuation).getRegex(),w._escapes=u(w._escapes,"gu").replace(/punct/g,w._punctuation).getRegex(),w._scheme=/[a-zA-Z][a-zA-Z0-9+.-]{1,31}/,w._email=/[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/,w.autolink=u(w.autolink).replace("scheme",w._scheme).replace("email",w._email).getRegex(),w._attribute=/\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/,w.tag=u(w.tag).replace("comment",w._comment).replace("attribute",w._attribute).getRegex(),w._label=/(?:\[(?:\\.|[^\[\]\\])*\]|\\.|`[^`]*`|[^\[\]\\`])*?/,w._href=/<(?:\\.|[^\n<>\\])+>|[^\s\x00-\x1f]*/,w._title=/"(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)/,w.link=u(w.link).replace("label",w._label).replace("href",w._href).replace("title",w._title).getRegex(),w.reflink=u(w.reflink).replace("label",w._label).replace("ref",m._label).getRegex(),w.nolink=u(w.nolink).replace("ref",m._label).getRegex(),w.reflinkSearch=u(w.reflinkSearch,"g").replace("reflink",w.reflink).replace("nolink",w.nolink).getRegex(),w.normal={...w},w.pedantic={...w.normal,strong:{start:/^__|\*\*/,middle:/^__(?=\S)([\s\S]*?\S)__(?!_)|^\*\*(?=\S)([\s\S]*?\S)\*\*(?!\*)/,endAst:/\*\*(?!\*)/g,endUnd:/__(?!_)/g},em:{start:/^_|\*/,middle:/^()\*(?=\S)([\s\S]*?\S)\*(?!\*)|^_(?=\S)([\s\S]*?\S)_(?!_)/,endAst:/\*(?!\*)/g,endUnd:/_(?!_)/g},link:u(/^!?\[(label)\]\((.*?)\)/).replace("label",w._label).getRegex(),reflink:u(/^!?\[(label)\]\s*\[([^\]]*)\]/).replace("label",w._label).getRegex()},w.gfm={...w.normal,escape:u(w.escape).replace("])","~|])").getRegex(),_extended_email:/[A-Za-z0-9._+-]+(@)[a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]*[a-zA-Z0-9])+(?![-_])/,url:/^((?:ftp|https?):\/\/|www\.)(?:[a-zA-Z0-9\-]+\.?)+[^\s<]*|^email/,_backpedal:/(?:[^?!.,:;*_'"~()&]+|\([^)]*\)|&(?![a-zA-Z0-9]+;$)|[?!.,:;*_'"~)]+(?!$))+/,del:/^(~~?)(?=[^\s~])([\s\S]*?[^\s~])\1(?=[^~]|$)/,text:/^([`~]+|[^`~])(?:(?= {2,}\n)|(?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)|[\s\S]*?(?:(?=[\\<!\[`*~_]|\b_|https?:\/\/|ftp:\/\/|www\.|$)|[^ ](?= {2,}\n)|[^a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-](?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)))/},w.gfm.url=u(w.gfm.url,"i").replace("email",w.gfm._extended_email).getRegex(),w.breaks={...w.gfm,br:u(w.br).replace("{2,}","*").getRegex(),text:u(w.gfm.text).replace("\\b_","\\b_| {2,}\\n").replace(/\{2,\}/g,"*").getRegex()};class _{tokens;options;state;tokenizer;inlineQueue;constructor(t){this.tokens=[],this.tokens.links=Object.create(null),this.options=t||e.defaults,this.options.tokenizer=this.options.tokenizer||new b,this.tokenizer=this.options.tokenizer,this.tokenizer.options=this.options,this.tokenizer.lexer=this,this.inlineQueue=[],this.state={inLink:!1,inRawBlock:!1,top:!0};const n={block:m.normal,inline:w.normal};this.options.pedantic?(n.block=m.pedantic,n.inline=w.pedantic):this.options.gfm&&(n.block=m.gfm,this.options.breaks?n.inline=w.breaks:n.inline=w.gfm),this.tokenizer.rules=n}static get rules(){return{block:m,inline:w}}static lex(e,t){return new _(t).lex(e)}static lexInline(e,t){return new _(t).inlineTokens(e)}lex(e){let t;for(e=e.replace(/\r\n|\r/g,"\n"),this.blockTokens(e,this.tokens);t=this.inlineQueue.shift();)this.inlineTokens(t.src,t.tokens);return this.tokens}blockTokens(e,t=[]){let n,s,r,i;for(e=this.options.pedantic?e.replace(/\t/g,"    ").replace(/^ +$/gm,""):e.replace(/^( *)(\t+)/gm,((e,t,n)=>t+"    ".repeat(n.length)));e;)if(!(this.options.extensions&&this.options.extensions.block&&this.options.extensions.block.some((s=>!!(n=s.call({lexer:this},e,t))&&(e=e.substring(n.raw.length),t.push(n),!0)))))if(n=this.tokenizer.space(e))e=e.substring(n.raw.length),1===n.raw.length&&t.length>0?t[t.length-1].raw+="\n":t.push(n);else if(n=this.tokenizer.code(e))e=e.substring(n.raw.length),s=t[t.length-1],!s||"paragraph"!==s.type&&"text"!==s.type?t.push(n):(s.raw+="\n"+n.raw,s.text+="\n"+n.text,this.inlineQueue[this.inlineQueue.length-1].src=s.text);else if(n=this.tokenizer.fences(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.heading(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.hr(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.blockquote(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.list(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.html(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.def(e))e=e.substring(n.raw.length),s=t[t.length-1],!s||"paragraph"!==s.type&&"text"!==s.type?this.tokens.links[n.tag]||(this.tokens.links[n.tag]={href:n.href,title:n.title}):(s.raw+="\n"+n.raw,s.text+="\n"+n.raw,this.inlineQueue[this.inlineQueue.length-1].src=s.text);else if(n=this.tokenizer.table(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.lheading(e))e=e.substring(n.raw.length),t.push(n);else{if(r=e,this.options.extensions&&this.options.extensions.startBlock){let t=1/0;const n=e.slice(1);let s;this.options.extensions.startBlock.forEach((e=>{s=e.call({lexer:this},n),"number"==typeof s&&s>=0&&(t=Math.min(t,s))})),t<1/0&&t>=0&&(r=e.substring(0,t+1))}if(this.state.top&&(n=this.tokenizer.paragraph(r)))s=t[t.length-1],i&&"paragraph"===s.type?(s.raw+="\n"+n.raw,s.text+="\n"+n.text,this.inlineQueue.pop(),this.inlineQueue[this.inlineQueue.length-1].src=s.text):t.push(n),i=r.length!==e.length,e=e.substring(n.raw.length);else if(n=this.tokenizer.text(e))e=e.substring(n.raw.length),s=t[t.length-1],s&&"text"===s.type?(s.raw+="\n"+n.raw,s.text+="\n"+n.text,this.inlineQueue.pop(),this.inlineQueue[this.inlineQueue.length-1].src=s.text):t.push(n);else if(e){const t="Infinite loop on byte: "+e.charCodeAt(0);if(this.options.silent){console.error(t);break}throw new Error(t)}}return this.state.top=!0,t}inline(e,t=[]){return this.inlineQueue.push({src:e,tokens:t}),t}inlineTokens(e,t=[]){let n,s,r,i,l,o,a=e;if(this.tokens.links){const e=Object.keys(this.tokens.links);if(e.length>0)for(;null!=(i=this.tokenizer.rules.inline.reflinkSearch.exec(a));)e.includes(i[0].slice(i[0].lastIndexOf("[")+1,-1))&&(a=a.slice(0,i.index)+"["+"a".repeat(i[0].length-2)+"]"+a.slice(this.tokenizer.rules.inline.reflinkSearch.lastIndex))}for(;null!=(i=this.tokenizer.rules.inline.blockSkip.exec(a));)a=a.slice(0,i.index)+"["+"a".repeat(i[0].length-2)+"]"+a.slice(this.tokenizer.rules.inline.blockSkip.lastIndex);for(;null!=(i=this.tokenizer.rules.inline.anyPunctuation.exec(a));)a=a.slice(0,i.index)+"++"+a.slice(this.tokenizer.rules.inline.anyPunctuation.lastIndex);for(;e;)if(l||(o=""),l=!1,!(this.options.extensions&&this.options.extensions.inline&&this.options.extensions.inline.some((s=>!!(n=s.call({lexer:this},e,t))&&(e=e.substring(n.raw.length),t.push(n),!0)))))if(n=this.tokenizer.escape(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.tag(e))e=e.substring(n.raw.length),s=t[t.length-1],s&&"text"===n.type&&"text"===s.type?(s.raw+=n.raw,s.text+=n.text):t.push(n);else if(n=this.tokenizer.link(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.reflink(e,this.tokens.links))e=e.substring(n.raw.length),s=t[t.length-1],s&&"text"===n.type&&"text"===s.type?(s.raw+=n.raw,s.text+=n.text):t.push(n);else if(n=this.tokenizer.emStrong(e,a,o))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.codespan(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.br(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.del(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.autolink(e))e=e.substring(n.raw.length),t.push(n);else if(this.state.inLink||!(n=this.tokenizer.url(e))){if(r=e,this.options.extensions&&this.options.extensions.startInline){let t=1/0;const n=e.slice(1);let s;this.options.extensions.startInline.forEach((e=>{s=e.call({lexer:this},n),"number"==typeof s&&s>=0&&(t=Math.min(t,s))})),t<1/0&&t>=0&&(r=e.substring(0,t+1))}if(n=this.tokenizer.inlineText(r))e=e.substring(n.raw.length),"_"!==n.raw.slice(-1)&&(o=n.raw.slice(-1)),l=!0,s=t[t.length-1],s&&"text"===s.type?(s.raw+=n.raw,s.text+=n.text):t.push(n);else if(e){const t="Infinite loop on byte: "+e.charCodeAt(0);if(this.options.silent){console.error(t);break}throw new Error(t)}}else e=e.substring(n.raw.length),t.push(n);return t}}class y{options;constructor(t){this.options=t||e.defaults}code(e,t,n){const s=(t||"").match(/^\S*/)?.[0];return e=e.replace(/\n$/,"")+"\n",s?'<pre><code class="language-'+c(s)+'">'+(n?e:c(e,!0))+"</code></pre>\n":"<pre><code>"+(n?e:c(e,!0))+"</code></pre>\n"}blockquote(e){return`<blockquote>\n${e}</blockquote>\n`}html(e,t){return e}heading(e,t,n){return`<h${t}>${e}</h${t}>\n`}hr(){return"<hr>\n"}list(e,t,n){const s=t?"ol":"ul";return"<"+s+(t&&1!==n?' start="'+n+'"':"")+">\n"+e+"</"+s+">\n"}listitem(e,t,n){return`<li>${e}</li>\n`}checkbox(e){return"<input "+(e?'checked="" ':"")+'disabled="" type="checkbox">'}paragraph(e){return`<p>${e}</p>\n`}table(e,t){return t&&(t=`<tbody>${t}</tbody>`),"<table>\n<thead>\n"+e+"</thead>\n"+t+"</table>\n"}tablerow(e){return`<tr>\n${e}</tr>\n`}tablecell(e,t){const n=t.header?"th":"td";return(t.align?`<${n} align="${t.align}">`:`<${n}>`)+e+`</${n}>\n`}strong(e){return`<strong>${e}</strong>`}em(e){return`<em>${e}</em>`}codespan(e){return`<code>${e}</code>`}br(){return"<br>"}del(e){return`<del>${e}</del>`}link(e,t,n){const s=g(e);if(null===s)return n;let r='<a href="'+(e=s)+'"';return t&&(r+=' title="'+t+'"'),r+=">"+n+"</a>",r}image(e,t,n){const s=g(e);if(null===s)return n;let r=`<img src="${e=s}" alt="${n}"`;return t&&(r+=` title="${t}"`),r+=">",r}text(e){return e}}class ${strong(e){return e}em(e){return e}codespan(e){return e}del(e){return e}html(e){return e}text(e){return e}link(e,t,n){return""+n}image(e,t,n){return""+n}br(){return""}}class z{options;renderer;textRenderer;constructor(t){this.options=t||e.defaults,this.options.renderer=this.options.renderer||new y,this.renderer=this.options.renderer,this.renderer.options=this.options,this.textRenderer=new $}static parse(e,t){return new z(t).parse(e)}static parseInline(e,t){return new z(t).parseInline(e)}parse(e,t=!0){let n="";for(let s=0;s<e.length;s++){const r=e[s];if(this.options.extensions&&this.options.extensions.renderers&&this.options.extensions.renderers[r.type]){const e=r,t=this.options.extensions.renderers[e.type].call({parser:this},e);if(!1!==t||!["space","hr","heading","code","table","blockquote","list","html","paragraph","text"].includes(e.type)){n+=t||"";continue}}switch(r.type){case"space":continue;case"hr":n+=this.renderer.hr();continue;case"heading":{const e=r;n+=this.renderer.heading(this.parseInline(e.tokens),e.depth,this.parseInline(e.tokens,this.textRenderer).replace(h,((e,t)=>"colon"===(t=t.toLowerCase())?":":"#"===t.charAt(0)?"x"===t.charAt(1)?String.fromCharCode(parseInt(t.substring(2),16)):String.fromCharCode(+t.substring(1)):"")));continue}case"code":{const e=r;n+=this.renderer.code(e.text,e.lang,!!e.escaped);continue}case"table":{const e=r;let t="",s="";for(let t=0;t<e.header.length;t++)s+=this.renderer.tablecell(this.parseInline(e.header[t].tokens),{header:!0,align:e.align[t]});t+=this.renderer.tablerow(s);let i="";for(let t=0;t<e.rows.length;t++){const n=e.rows[t];s="";for(let t=0;t<n.length;t++)s+=this.renderer.tablecell(this.parseInline(n[t].tokens),{header:!1,align:e.align[t]});i+=this.renderer.tablerow(s)}n+=this.renderer.table(t,i);continue}case"blockquote":{const e=r,t=this.parse(e.tokens);n+=this.renderer.blockquote(t);continue}case"list":{const e=r,t=e.ordered,s=e.start,i=e.loose;let l="";for(let t=0;t<e.items.length;t++){const n=e.items[t],s=n.checked,r=n.task;let o="";if(n.task){const e=this.renderer.checkbox(!!s);i?n.tokens.length>0&&"paragraph"===n.tokens[0].type?(n.tokens[0].text=e+" "+n.tokens[0].text,n.tokens[0].tokens&&n.tokens[0].tokens.length>0&&"text"===n.tokens[0].tokens[0].type&&(n.tokens[0].tokens[0].text=e+" "+n.tokens[0].tokens[0].text)):n.tokens.unshift({type:"text",text:e+" "}):o+=e+" "}o+=this.parse(n.tokens,i),l+=this.renderer.listitem(o,r,!!s)}n+=this.renderer.list(l,t,s);continue}case"html":{const e=r;n+=this.renderer.html(e.text,e.block);continue}case"paragraph":{const e=r;n+=this.renderer.paragraph(this.parseInline(e.tokens));continue}case"text":{let i=r,l=i.tokens?this.parseInline(i.tokens):i.text;for(;s+1<e.length&&"text"===e[s+1].type;)i=e[++s],l+="\n"+(i.tokens?this.parseInline(i.tokens):i.text);n+=t?this.renderer.paragraph(l):l;continue}default:{const e='Token with "'+r.type+'" type was not found.';if(this.options.silent)return console.error(e),"";throw new Error(e)}}}return n}parseInline(e,t){t=t||this.renderer;let n="";for(let s=0;s<e.length;s++){const r=e[s];if(this.options.extensions&&this.options.extensions.renderers&&this.options.extensions.renderers[r.type]){const e=this.options.extensions.renderers[r.type].call({parser:this},r);if(!1!==e||!["escape","html","link","image","strong","em","codespan","br","del","text"].includes(r.type)){n+=e||"";continue}}switch(r.type){case"escape":{const e=r;n+=t.text(e.text);break}case"html":{const e=r;n+=t.html(e.text);break}case"link":{const e=r;n+=t.link(e.href,e.title,this.parseInline(e.tokens,t));break}case"image":{const e=r;n+=t.image(e.href,e.title,e.text);break}case"strong":{const e=r;n+=t.strong(this.parseInline(e.tokens,t));break}case"em":{const e=r;n+=t.em(this.parseInline(e.tokens,t));break}case"codespan":{const e=r;n+=t.codespan(e.text);break}case"br":n+=t.br();break;case"del":{const e=r;n+=t.del(this.parseInline(e.tokens,t));break}case"text":{const e=r;n+=t.text(e.text);break}default:{const e='Token with "'+r.type+'" type was not found.';if(this.options.silent)return console.error(e),"";throw new Error(e)}}}return n}}class T{options;constructor(t){this.options=t||e.defaults}static passThroughHooks=new Set(["preprocess","postprocess"]);preprocess(e){return e}postprocess(e){return e}}class R{defaults={async:!1,breaks:!1,extensions:null,gfm:!0,hooks:null,pedantic:!1,renderer:null,silent:!1,tokenizer:null,walkTokens:null};options=this.setOptions;parse=this.#e(_.lex,z.parse);parseInline=this.#e(_.lexInline,z.parseInline);Parser=z;parser=z.parse;Renderer=y;TextRenderer=$;Lexer=_;lexer=_.lex;Tokenizer=b;Hooks=T;constructor(...e){this.use(...e)}walkTokens(e,t){let n=[];for(const s of e)switch(n=n.concat(t.call(this,s)),s.type){case"table":{const e=s;for(const s of e.header)n=n.concat(this.walkTokens(s.tokens,t));for(const s of e.rows)for(const e of s)n=n.concat(this.walkTokens(e.tokens,t));break}case"list":{const e=s;n=n.concat(this.walkTokens(e.items,t));break}default:{const e=s;this.defaults.extensions?.childTokens?.[e.type]?this.defaults.extensions.childTokens[e.type].forEach((s=>{n=n.concat(this.walkTokens(e[s],t))})):e.tokens&&(n=n.concat(this.walkTokens(e.tokens,t)))}}return n}use(...e){const t=this.defaults.extensions||{renderers:{},childTokens:{}};return e.forEach((e=>{const n={...e};if(n.async=this.defaults.async||n.async||!1,e.extensions&&(e.extensions.forEach((e=>{if(!e.name)throw new Error("extension name required");if("renderer"in e){const n=t.renderers[e.name];t.renderers[e.name]=n?function(...t){let s=e.renderer.apply(this,t);return!1===s&&(s=n.apply(this,t)),s}:e.renderer}if("tokenizer"in e){if(!e.level||"block"!==e.level&&"inline"!==e.level)throw new Error("extension level must be 'block' or 'inline'");const n=t[e.level];n?n.unshift(e.tokenizer):t[e.level]=[e.tokenizer],e.start&&("block"===e.level?t.startBlock?t.startBlock.push(e.start):t.startBlock=[e.start]:"inline"===e.level&&(t.startInline?t.startInline.push(e.start):t.startInline=[e.start]))}"childTokens"in e&&e.childTokens&&(t.childTokens[e.name]=e.childTokens)})),n.extensions=t),e.renderer){const t=this.defaults.renderer||new y(this.defaults);for(const n in e.renderer){const s=e.renderer[n],r=n,i=t[r];t[r]=(...e)=>{let n=s.apply(t,e);return!1===n&&(n=i.apply(t,e)),n||""}}n.renderer=t}if(e.tokenizer){const t=this.defaults.tokenizer||new b(this.defaults);for(const n in e.tokenizer){const s=e.tokenizer[n],r=n,i=t[r];t[r]=(...e)=>{let n=s.apply(t,e);return!1===n&&(n=i.apply(t,e)),n}}n.tokenizer=t}if(e.hooks){const t=this.defaults.hooks||new T;for(const n in e.hooks){const s=e.hooks[n],r=n,i=t[r];T.passThroughHooks.has(n)?t[r]=e=>{if(this.defaults.async)return Promise.resolve(s.call(t,e)).then((e=>i.call(t,e)));const n=s.call(t,e);return i.call(t,n)}:t[r]=(...e)=>{let n=s.apply(t,e);return!1===n&&(n=i.apply(t,e)),n}}n.hooks=t}if(e.walkTokens){const t=this.defaults.walkTokens,s=e.walkTokens;n.walkTokens=function(e){let n=[];return n.push(s.call(this,e)),t&&(n=n.concat(t.call(this,e))),n}}this.defaults={...this.defaults,...n}})),this}setOptions(e){return this.defaults={...this.defaults,...e},this}#e(e,t){return(n,s)=>{const r={...s},i={...this.defaults,...r};!0===this.defaults.async&&!1===r.async&&(i.silent||console.warn("marked(): The async option was set to true by an extension. The async: false option sent to parse will be ignored."),i.async=!0);const l=this.#t(!!i.silent,!!i.async);if(null==n)return l(new Error("marked(): input parameter is undefined or null"));if("string"!=typeof n)return l(new Error("marked(): input parameter is of type "+Object.prototype.toString.call(n)+", string expected"));if(i.hooks&&(i.hooks.options=i),i.async)return Promise.resolve(i.hooks?i.hooks.preprocess(n):n).then((t=>e(t,i))).then((e=>i.walkTokens?Promise.all(this.walkTokens(e,i.walkTokens)).then((()=>e)):e)).then((e=>t(e,i))).then((e=>i.hooks?i.hooks.postprocess(e):e)).catch(l);try{i.hooks&&(n=i.hooks.preprocess(n));const s=e(n,i);i.walkTokens&&this.walkTokens(s,i.walkTokens);let r=t(s,i);return i.hooks&&(r=i.hooks.postprocess(r)),r}catch(e){return l(e)}}}#t(e,t){return n=>{if(n.message+="\nPlease report this to https://github.com/markedjs/marked.",e){const e="<p>An error occurred:</p><pre>"+c(n.message+"",!0)+"</pre>";return t?Promise.resolve(e):e}if(t)return Promise.reject(n);throw n}}}const S=new R;function A(e,t){return S.parse(e,t)}A.options=A.setOptions=function(e){return S.setOptions(e),A.defaults=S.defaults,n(A.defaults),A},A.getDefaults=t,A.defaults=e.defaults,A.use=function(...e){return S.use(...e),A.defaults=S.defaults,n(A.defaults),A},A.walkTokens=function(e,t){return S.walkTokens(e,t)},A.parseInline=S.parseInline,A.Parser=z,A.parser=z.parse,A.Renderer=y,A.TextRenderer=$,A.Lexer=_,A.lexer=_.lex,A.Tokenizer=b,A.Hooks=T,A.parse=A;const I=A.options,E=A.setOptions,Z=A.use,q=A.walkTokens,L=A.parseInline,D=A,P=z.parse,v=_.lex;e.Hooks=T,e.Lexer=_,e.Marked=R,e.Parser=z,e.Renderer=y,e.TextRenderer=$,e.Tokenizer=b,e.getDefaults=t,e.lexer=v,e.marked=A,e.options=I,e.parse=D,e.parseInline=L,e.parser=P,e.setOptions=E,e.use=Z,e.walkTokens=q}));
+const fastn = (function (fastn) {
+    class Closure {
+        #cached_value;
+        #node;
+        #property;
+        #formula;
+        #inherited;
+        constructor(func, execute = true) {
+            if (execute) {
+                this.#cached_value = func();
+            }
+            this.#formula = func;
+        }
 
-    </script>
+        get() {
+            return this.#cached_value;
+        }
+        getFormula() {
+            return this.#formula;
+        }
+        addNodeProperty(node, property, inherited) {
+            this.#node = node;
+            this.#property = property;
+            this.#inherited = inherited;
+            this.updateUi();
 
-    
-                <script src="markdown-24E09EFC0C2B9A11DEA9AC71888EB3A1E85864FA7D9C95A3EB5075A0E0F49A5F.js"></script>
-                <script src="prism-8FE3A42AD547E2DBBC9FE16BA059F8F1870D613AD0C5B0B013D6205B72A62BAF.js"></script>
-                <script src="default-67B19AC9B4DEBF568010458013D260532F553C103BF105B16FF61E9934DF8A26.js"></script>
-                <link rel="stylesheet" href="prism-73F718B9234C00C5C14AB6A11BF239A103F0B0F93B69CD55CB5C6530501182EB.css">
-                
-            
-    
+            return this;
+        }
+        update() {
+            this.#cached_value = this.#formula();
+            this.updateUi();
+        }
+        getNode() {
+            return this.#node;
+        }
+        updateUi() {
+            if (
+                !this.#node ||
+                this.#property === null ||
+                this.#property === undefined ||
+                !this.#node.getNode()
+            ) {
+                return;
+            }
 
-    <style>
-       /* http://meyerweb.com/eric/tools/css/reset/
-          v2.0 | 20110126
-          License: none (public domain)
-       */
+            this.#node.setStaticProperty(
+                this.#property,
+                this.#cached_value,
+                this.#inherited,
+            );
+        }
+    }
 
-/*html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-size: 100%;
-    font: inherit;
-    vertical-align: baseline;
+    class Mutable {
+        #value;
+        #old_closure;
+        #closures;
+        #closureInstance;
+        constructor(val) {
+            this.#value = null;
+            this.#old_closure = null;
+            this.#closures = [];
+            this.#closureInstance = fastn.closure(() =>
+                this.#closures.forEach((closure) => closure.update()),
+            );
+            this.set(val);
+        }
+        get(key) {
+            if (
+                !fastn_utils.isNull(key) &&
+                (this.#value instanceof RecordInstance ||
+                    this.#value instanceof MutableList ||
+                    this.#value instanceof Mutable)
+            ) {
+                return this.#value.get(key);
+            }
+            return this.#value;
+        }
+        setWithoutUpdate(value) {
+            if (this.#old_closure) {
+                this.#value.removeClosure(this.#old_closure);
+            }
+
+            if (this.#value instanceof RecordInstance) {
+                // this.#value.replace(value); will replace the record type
+                // variable instance created which we don't want.
+                // color: red
+                // color if { something }: $orange-green
+                // The `this.#value.replace(value);` will replace the value of
+                // `orange-green` with `{light: red, dark: red}`
+                this.#value = value;
+            } else {
+                this.#value = value;
+            }
+
+            if (this.#value instanceof Mutable) {
+                this.#old_closure = fastn.closureWithoutExecute(() =>
+                    this.#closureInstance.update(),
+                );
+                this.#value.addClosure(this.#old_closure);
+            } else {
+                this.#old_closure = null;
+            }
+        }
+        set(value) {
+            this.setWithoutUpdate(value);
+
+            this.#closureInstance.update();
+        }
+        // we have to unlink all nodes, else they will be kept in memory after the node is removed from DOM
+        unlinkNode(node) {
+            this.#closures = this.#closures.filter(
+                (closure) => closure.getNode() !== node,
+            );
+        }
+        addClosure(closure) {
+            this.#closures.push(closure);
+        }
+        removeClosure(closure) {
+            this.#closures = this.#closures.filter((c) => c !== closure);
+        }
+        equalMutable(other) {
+            if (!fastn_utils.deepEqual(this.get(), other.get())) {
+                return false;
+            }
+            const thisClosures = this.#closures;
+            const otherClosures = other.#closures;
+
+            return thisClosures === otherClosures;
+        }
+        getClone() {
+            return new Mutable(fastn_utils.clone(this.#value));
+        }
+    }
+
+    class Proxy {
+        #differentiator;
+        #cached_value;
+        #closures;
+        #closureInstance;
+        constructor(targets, differentiator) {
+            this.#differentiator = differentiator;
+            this.#cached_value = this.#differentiator().get();
+            this.#closures = [];
+
+            let proxy = this;
+            for (let idx in targets) {
+                targets[idx].addClosure(
+                    new Closure(function () {
+                        proxy.update();
+                        proxy.#closures.forEach((closure) => closure.update());
+                    }),
+                );
+                targets[idx].addClosure(this);
+            }
+        }
+        addClosure(closure) {
+            this.#closures.push(closure);
+        }
+        removeClosure(closure) {
+            this.#closures = this.#closures.filter((c) => c !== closure);
+        }
+        update() {
+            this.#cached_value = this.#differentiator().get();
+        }
+        get(key) {
+            if (
+                !!key &&
+                (this.#cached_value instanceof RecordInstance ||
+                    this.#cached_value instanceof MutableList ||
+                    this.#cached_value instanceof Mutable)
+            ) {
+                return this.#cached_value.get(key);
+            }
+            return this.#cached_value;
+        }
+        set(value) {
+            // Todo: Optimization removed. Reuse optimization later again
+            /*if (fastn_utils.deepEqual(this.#cached_value, value)) {
+                return;
+            }*/
+            this.#differentiator().set(value);
+        }
+    }
+
+    class MutableList {
+        #list;
+        #watchers;
+        #closures;
+        constructor(list) {
+            this.#list = [];
+            for (let idx in list) {
+                this.#list.push({
+                    item: fastn.wrapMutable(list[idx]),
+                    index: new Mutable(parseInt(idx)),
+                });
+            }
+            this.#watchers = [];
+            this.#closures = [];
+        }
+        addClosure(closure) {
+            this.#closures.push(closure);
+        }
+        unlinkNode(node) {
+            this.#closures = this.#closures.filter(
+                (closure) => closure.getNode() !== node,
+            );
+        }
+        forLoop(root, dom_constructor) {
+            let l = fastn_dom.forLoop(root, dom_constructor, this);
+            this.#watchers.push(l);
+            return l;
+        }
+        getList() {
+            return this.#list;
+        }
+        getLength() {
+            return this.#list.length;
+        }
+        get(idx) {
+            if (fastn_utils.isNull(idx)) {
+                return this.getList();
+            }
+            return this.#list[idx];
+        }
+        set(index, value) {
+            if (value === undefined) {
+                value = index;
+                if (!(value instanceof MutableList)) {
+                    if (!Array.isArray(value)) {
+                        value = [value];
+                    }
+                    value = new MutableList(value);
+                }
+
+                let list = value.#list;
+                this.#list = [];
+                for (let i in list) {
+                    this.#list.push(list[i]);
+                }
+
+                for (let i in this.#watchers) {
+                    this.#watchers[i].createAllNode();
+                }
+            } else {
+                index = fastn_utils.getFlattenStaticValue(index);
+                this.#list[index].item.set(value);
+            }
+
+            this.#closures.forEach((closure) => closure.update());
+        }
+        insertAt(index, value) {
+            index = fastn_utils.getFlattenStaticValue(index);
+            let mutable = fastn.wrapMutable(value);
+            this.#list.splice(index, 0, {
+                item: mutable,
+                index: new Mutable(index),
+            });
+            // for every item after the inserted item, update the index
+            for (let i = index + 1; i < this.#list.length; i++) {
+                this.#list[i].index.set(i);
+            }
+
+            for (let i in this.#watchers) {
+                this.#watchers[i].createNode(index);
+            }
+            this.#closures.forEach((closure) => closure.update());
+        }
+        push(value) {
+            this.insertAt(this.#list.length, value);
+        }
+        deleteAt(index) {
+            index = fastn_utils.getFlattenStaticValue(index);
+            this.#list.splice(index, 1);
+            // for every item after the deleted item, update the index
+            for (let i = index; i < this.#list.length; i++) {
+                this.#list[i].index.set(i);
+            }
+
+            for (let i in this.#watchers) {
+                let forLoop = this.#watchers[i];
+                forLoop.deleteNode(index);
+            }
+            this.#closures.forEach((closure) => closure.update());
+        }
+        clearAll() {
+            this.#list = [];
+            for (let i in this.#watchers) {
+                this.#watchers[i].deleteAllNode();
+            }
+            this.#closures.forEach((closure) => closure.update());
+        }
+        pop() {
+            this.deleteAt(this.#list.length - 1);
+        }
+        getClone() {
+            let current_list = this.#list;
+            let new_list = [];
+            for (let idx in current_list) {
+                new_list.push(fastn_utils.clone(current_list[idx].item));
+            }
+            return new MutableList(new_list);
+        }
+    }
+
+    fastn.mutable = function (val) {
+        return new Mutable(val);
+    };
+
+    fastn.closure = function (func) {
+        return new Closure(func);
+    };
+
+    fastn.closureWithoutExecute = function (func) {
+        return new Closure(func, false);
+    };
+
+    fastn.formula = function (deps, func) {
+        let closure = fastn.closure(func);
+        let mutable = new Mutable(closure.get());
+        for (let idx in deps) {
+            if (fastn_utils.isNull(deps[idx]) || !deps[idx].addClosure) {
+                continue;
+            }
+            deps[idx].addClosure(
+                new Closure(function () {
+                    closure.update();
+                    mutable.set(closure.get());
+                }),
+            );
+        }
+
+        return mutable;
+    };
+
+    fastn.proxy = function (targets, differentiator) {
+        return new Proxy(targets, differentiator);
+    };
+
+    fastn.wrapMutable = function (obj) {
+        if (
+            !(obj instanceof Mutable) &&
+            !(obj instanceof RecordInstance) &&
+            !(obj instanceof MutableList)
+        ) {
+            obj = new Mutable(obj);
+        }
+        return obj;
+    };
+
+    fastn.mutableList = function (list) {
+        return new MutableList(list);
+    };
+
+    class RecordInstance {
+        #fields;
+        #closures;
+        constructor(obj) {
+            this.#fields = {};
+            this.#closures = [];
+
+            for (let key in obj) {
+                if (obj[key] instanceof fastn.mutableClass) {
+                    this.#fields[key] = fastn.mutable(null);
+                    this.#fields[key].setWithoutUpdate(obj[key]);
+                } else {
+                    this.#fields[key] = fastn.mutable(obj[key]);
+                }
+            }
+        }
+        getAllFields() {
+            return this.#fields;
+        }
+        getClonedFields() {
+            let clonedFields = {};
+            for (let key in this.#fields) {
+                let field_value = this.#fields[key];
+                if (
+                    field_value instanceof fastn.recordInstanceClass ||
+                    field_value instanceof fastn.mutableClass ||
+                    field_value instanceof fastn.mutableListClass
+                ) {
+                    clonedFields[key] = this.#fields[key].getClone();
+                } else {
+                    clonedFields[key] = this.#fields[key];
+                }
+            }
+            return clonedFields;
+        }
+        addClosure(closure) {
+            this.#closures.push(closure);
+        }
+        unlinkNode(node) {
+            this.#closures = this.#closures.filter(
+                (closure) => closure.getNode() !== node,
+            );
+        }
+        get(key) {
+            return this.#fields[key];
+        }
+        set(key, value) {
+            if (value === undefined) {
+                value = key;
+                if (!(value instanceof RecordInstance)) {
+                    value = new RecordInstance(value);
+                }
+
+                let fields = {};
+                for (let key in value.#fields) {
+                    fields[key] = value.#fields[key];
+                }
+
+                this.#fields = fields;
+            } else if (this.#fields[key] === undefined) {
+                this.#fields[key] = fastn.mutable(null);
+                this.#fields[key].setWithoutUpdate(value);
+            } else {
+                this.#fields[key].set(value);
+            }
+            this.#closures.forEach((closure) => closure.update());
+        }
+        setAndReturn(key, value) {
+            this.set(key, value);
+            return this;
+        }
+        replace(obj) {
+            for (let key in this.#fields) {
+                if (!(key in obj.#fields)) {
+                    throw new Error(
+                        "RecordInstance.replace: key " +
+                            key +
+                            " not present in new object",
+                    );
+                }
+                this.#fields[key] = fastn.wrapMutable(obj.#fields[key]);
+            }
+            this.#closures.forEach((closure) => closure.update());
+        }
+        toObject() {
+            return Object.fromEntries(
+                Object.entries(this.#fields).map(([key, value]) => [
+                    key,
+                    fastn_utils.getFlattenStaticValue(value),
+                ]),
+            );
+        }
+        getClone() {
+            let current_fields = this.#fields;
+            let cloned_fields = {};
+            for (let key in current_fields) {
+                let value = fastn_utils.clone(current_fields[key]);
+                if (value instanceof fastn.mutableClass) {
+                    value = value.get();
+                }
+                cloned_fields[key] = value;
+            }
+            return new RecordInstance(cloned_fields);
+        }
+    }
+
+    class Module {
+        #name;
+        #global;
+        constructor(name, global) {
+            this.#name = name;
+            this.#global = global;
+        }
+
+        getName() {
+            return this.#name;
+        }
+
+        get(function_name) {
+            return this.#global[`${this.#name}__${function_name}`];
+        }
+    }
+
+    fastn.recordInstance = function (obj) {
+        return new RecordInstance(obj);
+    };
+
+    fastn.color = function (r, g, b) {
+        return `rgb(${r},${g},${b})`;
+    };
+
+    fastn.mutableClass = Mutable;
+    fastn.mutableListClass = MutableList;
+    fastn.recordInstanceClass = RecordInstance;
+    fastn.module = function (name, global) {
+        return new Module(name, global);
+    };
+    fastn.moduleClass = Module;
+
+    return fastn;
+})({});
+let fastn_dom = {};
+
+fastn_dom.styleClasses = "";
+
+fastn_dom.InternalClass = {
+    FT_COLUMN: "ft_column",
+    FT_ROW: "ft_row",
+    FT_FULL_SIZE: "ft_full_size",
+};
+
+fastn_dom.codeData = {
+    availableThemes: {},
+    addedCssFile: [],
+};
+
+fastn_dom.externalCss = new Set();
+fastn_dom.externalJs = new Set();
+
+// Todo: Object (key, value) pair (counter type key)
+fastn_dom.webComponent = [];
+
+fastn_dom.commentNode = "comment";
+fastn_dom.wrapperNode = "wrapper";
+fastn_dom.commentMessage = "***FASTN***";
+fastn_dom.webComponentArgument = "args";
+
+fastn_dom.classes = {};
+fastn_dom.unsanitised_classes = {};
+fastn_dom.class_count = 0;
+fastn_dom.propertyMap = {
+    "align-items": "ali",
+    "align-self": "as",
+    "background-color": "bgc",
+    "background-image": "bgi",
+    "background-position": "bgp",
+    "background-repeat": "bgr",
+    "background-size": "bgs",
+    "border-bottom-color": "bbc",
+    "border-bottom-left-radius": "bblr",
+    "border-bottom-right-radius": "bbrr",
+    "border-bottom-style": "bbs",
+    "border-bottom-width": "bbw",
+    "border-color": "bc",
+    "border-left-color": "blc",
+    "border-left-style": "bls",
+    "border-left-width": "blw",
+    "border-radius": "br",
+    "border-right-color": "brc",
+    "border-right-style": "brs",
+    "border-right-width": "brw",
+    "border-style": "bs",
+    "border-top-color": "btc",
+    "border-top-left-radius": "btlr",
+    "border-top-right-radius": "btrr",
+    "border-top-style": "bts",
+    "border-top-width": "btw",
+    "border-width": "bw",
+    bottom: "b",
+    color: "c",
+    shadow: "sh",
+    "text-shadow": "tsh",
+    cursor: "cur",
+    display: "d",
+    "flex-wrap": "fw",
+    "font-style": "fst",
+    "font-weight": "fwt",
+    gap: "g",
+    height: "h",
+    "justify-content": "jc",
+    left: "l",
+    link: "lk",
+    "link-color": "lkc",
+    margin: "m",
+    "margin-bottom": "mb",
+    "margin-horizontal": "mh",
+    "margin-left": "ml",
+    "margin-right": "mr",
+    "margin-top": "mt",
+    "margin-vertical": "mv",
+    "max-height": "mxh",
+    "max-width": "mxw",
+    "min-height": "mnh",
+    "min-width": "mnw",
+    opacity: "op",
+    overflow: "o",
+    "overflow-x": "ox",
+    "overflow-y": "oy",
+    "object-fit": "of",
+    padding: "p",
+    "padding-bottom": "pb",
+    "padding-horizontal": "ph",
+    "padding-left": "pl",
+    "padding-right": "pr",
+    "padding-top": "pt",
+    "padding-vertical": "pv",
+    position: "pos",
+    resize: "res",
+    role: "rl",
+    right: "r",
+    sticky: "s",
+    "text-align": "ta",
+    "text-decoration": "td",
+    "text-transform": "tt",
+    top: "t",
+    width: "w",
+    "z-index": "z",
+    "-webkit-box-orient": "wbo",
+    "-webkit-line-clamp": "wlc",
+    "backdrop-filter": "bdf",
+    "mask-image": "mi",
+    "-webkit-mask-image": "wmi",
+    "mask-size": "ms",
+    "-webkit-mask-size": "wms",
+    "mask-repeat": "mre",
+    "-webkit-mask-repeat": "wmre",
+    "mask-position": "mp",
+    "-webkit-mask-position": "wmp",
+    "fetch-priority": "ftp",
+};
+
+// dynamic-class-css.md
+fastn_dom.getClassesAsString = function () {
+    return `<style id="styles">
+    ${fastn_dom.getClassesAsStringWithoutStyleTag()}
+    </style>`;
+};
+
+fastn_dom.getClassesAsStringWithoutStyleTag = function () {
+    let classes = Object.entries(fastn_dom.classes).map((entry) => {
+        return getClassAsString(entry[0], entry[1]);
+    });
+
+    /*.ft_text {
+        padding: 0;
+    }*/
+    return classes.join("\n\t");
+};
+
+function getClassAsString(className, obj) {
+    if (typeof obj.value === "object" && obj.value !== null) {
+        let value = "";
+        for (let key in obj.value) {
+            if (obj.value[key] === undefined || obj.value[key] === null) {
+                continue;
+            }
+            value = `${value} ${key}: ${obj.value[key]}${
+                key === "color" ? " !important" : ""
+            };`;
+        }
+        return `${className} { ${value} }`;
+    } else {
+        return `${className} { ${obj.property}: ${obj.value}${
+            obj.property === "color" ? " !important" : ""
+        }; }`;
+    }
 }
-!* HTML5 display-role reset for older browsers *!
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
-    display: block;
+
+fastn_dom.ElementKind = {
+    Row: 0,
+    Column: 1,
+    Integer: 2,
+    Decimal: 3,
+    Boolean: 4,
+    Text: 5,
+    Image: 6,
+    IFrame: 7,
+    // To create parent for dynamic DOM
+    Comment: 8,
+    CheckBox: 9,
+    TextInput: 10,
+    ContainerElement: 11,
+    Rive: 12,
+    Document: 13,
+    Wrapper: 14,
+    Code: 15,
+    // Note: This is called internally, it gives `code` as tagName. This is used
+    // along with the Code: 15.
+    CodeChild: 16,
+    // Note: 'arguments' cant be used as function parameter name bcoz it has
+    // internal usage in js functions.
+    WebComponent: (webcomponent, args) => {
+        return [17, [webcomponent, args]];
+    },
+    Video: 18,
+};
+
+fastn_dom.PropertyKind = {
+    Color: 0,
+    IntegerValue: 1,
+    StringValue: 2,
+    DecimalValue: 3,
+    BooleanValue: 4,
+    Width: 5,
+    Padding: 6,
+    Height: 7,
+    Id: 8,
+    BorderWidth: 9,
+    BorderStyle: 10,
+    Margin: 11,
+    Background: 12,
+    PaddingHorizontal: 13,
+    PaddingVertical: 14,
+    PaddingLeft: 15,
+    PaddingRight: 16,
+    PaddingTop: 17,
+    PaddingBottom: 18,
+    MarginHorizontal: 19,
+    MarginVertical: 20,
+    MarginLeft: 21,
+    MarginRight: 22,
+    MarginTop: 23,
+    MarginBottom: 24,
+    Role: 25,
+    ZIndex: 26,
+    Sticky: 27,
+    Top: 28,
+    Bottom: 29,
+    Left: 30,
+    Right: 31,
+    Overflow: 32,
+    OverflowX: 33,
+    OverflowY: 34,
+    Spacing: 35,
+    Wrap: 36,
+    TextTransform: 37,
+    TextIndent: 38,
+    TextAlign: 39,
+    LineClamp: 40,
+    Opacity: 41,
+    Cursor: 42,
+    Resize: 43,
+    MinHeight: 44,
+    MaxHeight: 45,
+    MinWidth: 46,
+    MaxWidth: 47,
+    WhiteSpace: 48,
+    BorderTopWidth: 49,
+    BorderBottomWidth: 50,
+    BorderLeftWidth: 51,
+    BorderRightWidth: 52,
+    BorderRadius: 53,
+    BorderTopLeftRadius: 54,
+    BorderTopRightRadius: 55,
+    BorderBottomLeftRadius: 56,
+    BorderBottomRightRadius: 57,
+    BorderStyleVertical: 58,
+    BorderStyleHorizontal: 59,
+    BorderLeftStyle: 60,
+    BorderRightStyle: 61,
+    BorderTopStyle: 62,
+    BorderBottomStyle: 63,
+    BorderColor: 64,
+    BorderLeftColor: 65,
+    BorderRightColor: 66,
+    BorderTopColor: 67,
+    BorderBottomColor: 68,
+    AlignSelf: 69,
+    Classes: 70,
+    Anchor: 71,
+    Link: 72,
+    Children: 73,
+    OpenInNewTab: 74,
+    TextStyle: 75,
+    Region: 76,
+    AlignContent: 77,
+    Display: 78,
+    Checked: 79,
+    Enabled: 80,
+    TextInputType: 81,
+    Placeholder: 82,
+    Multiline: 83,
+    DefaultTextInputValue: 84,
+    Loading: 85,
+    Src: 86,
+    YoutubeSrc: 87,
+    Code: 88,
+    ImageSrc: 89,
+    Alt: 90,
+    DocumentProperties: {
+        MetaTitle: 91,
+        MetaOGTitle: 92,
+        MetaTwitterTitle: 93,
+        MetaDescription: 94,
+        MetaOGDescription: 95,
+        MetaTwitterDescription: 96,
+        MetaOGImage: 97,
+        MetaTwitterImage: 98,
+        MetaThemeColor: 99,
+        MetaFacebookDomainVerification: 123,
+    },
+    Shadow: 100,
+    CodeTheme: 101,
+    CodeLanguage: 102,
+    CodeShowLineNumber: 103,
+    Css: 104,
+    Js: 105,
+    LinkRel: 106,
+    InputMaxLength: 107,
+    Favicon: 108,
+    Fit: 109,
+    VideoSrc: 110,
+    Autoplay: 111,
+    Poster: 112,
+    LoopVideo: 113,
+    Controls: 114,
+    Muted: 115,
+    LinkColor: 116,
+    TextShadow: 117,
+    Selectable: 118,
+    BackdropFilter: 119,
+    Mask: 120,
+    TextInputValue: 121,
+    FetchPriority: 122,
+};
+
+fastn_dom.Loading = {
+    Lazy: "lazy",
+    Eager: "eager",
+};
+
+fastn_dom.LinkRel = {
+    NoFollow: "nofollow",
+    Sponsored: "sponsored",
+    Ugc: "ugc",
+};
+
+fastn_dom.TextInputType = {
+    Text: "text",
+    Email: "email",
+    Password: "password",
+    Url: "url",
+    DateTime: "datetime",
+    Date: "date",
+    Time: "time",
+    Month: "month",
+    Week: "week",
+    Color: "color",
+    File: "file",
+};
+
+fastn_dom.AlignContent = {
+    TopLeft: "top-left",
+    TopCenter: "top-center",
+    TopRight: "top-right",
+    Right: "right",
+    Left: "left",
+    Center: "center",
+    BottomLeft: "bottom-left",
+    BottomRight: "bottom-right",
+    BottomCenter: "bottom-center",
+};
+
+fastn_dom.Region = {
+    H1: "h1",
+    H2: "h2",
+    H3: "h3",
+    H4: "h4",
+    H5: "h5",
+    H6: "h6",
+};
+
+fastn_dom.Anchor = {
+    Window: [1, "fixed"],
+    Parent: [2, "absolute"],
+    Id: (value) => {
+        return [3, value];
+    },
+};
+
+fastn_dom.DeviceData = {
+    Desktop: "desktop",
+    Mobile: "mobile",
+};
+
+fastn_dom.TextStyle = {
+    Underline: "underline",
+    Italic: "italic",
+    Strike: "line-through",
+    Heavy: "900",
+    Extrabold: "800",
+    Bold: "700",
+    SemiBold: "600",
+    Medium: "500",
+    Regular: "400",
+    Light: "300",
+    ExtraLight: "200",
+    Hairline: "100",
+};
+
+fastn_dom.Resizing = {
+    FillContainer: "100%",
+    HugContent: "fit-content",
+    Auto: "auto",
+    Fixed: (value) => {
+        return value;
+    },
+};
+
+fastn_dom.Spacing = {
+    SpaceEvenly: [1, "space-evenly"],
+    SpaceBetween: [2, "space-between"],
+    SpaceAround: [3, "space-around"],
+    Fixed: (value) => {
+        return [4, value];
+    },
+};
+
+fastn_dom.BorderStyle = {
+    Solid: "solid",
+    Dashed: "dashed",
+    Dotted: "dotted",
+    Double: "double",
+    Ridge: "ridge",
+    Groove: "groove",
+    Inset: "inset",
+    Outset: "outset",
+};
+
+fastn_dom.Fit = {
+    none: "none",
+    fill: "fill",
+    contain: "contain",
+    cover: "cover",
+    scaleDown: "scale-down",
+};
+
+fastn_dom.FetchPriority = {
+    auto: "auto",
+    high: "high",
+    low: "low",
+};
+
+fastn_dom.Overflow = {
+    Scroll: "scroll",
+    Visible: "visible",
+    Hidden: "hidden",
+    Auto: "auto",
+};
+
+fastn_dom.Display = {
+    Block: "block",
+    Inline: "inline",
+    InlineBlock: "inline-block",
+};
+
+fastn_dom.AlignSelf = {
+    Start: "start",
+    Center: "center",
+    End: "end",
+};
+
+fastn_dom.TextTransform = {
+    None: "none",
+    Capitalize: "capitalize",
+    Uppercase: "uppercase",
+    Lowercase: "lowercase",
+    Inherit: "inherit",
+    Initial: "initial",
+};
+
+fastn_dom.TextAlign = {
+    Start: "start",
+    Center: "center",
+    End: "end",
+    Justify: "justify",
+};
+
+fastn_dom.Cursor = {
+    None: "none",
+    Default: "default",
+    ContextMenu: "context-menu",
+    Help: "help",
+    Pointer: "pointer",
+    Progress: "progress",
+    Wait: "wait",
+    Cell: "cell",
+    CrossHair: "crosshair",
+    Text: "text",
+    VerticalText: "vertical-text",
+    Alias: "alias",
+    Copy: "copy",
+    Move: "move",
+    NoDrop: "no-drop",
+    NotAllowed: "not-allowed",
+    Grab: "grab",
+    Grabbing: "grabbing",
+    EResize: "e-resize",
+    NResize: "n-resize",
+    NeResize: "ne-resize",
+    SResize: "s-resize",
+    SeResize: "se-resize",
+    SwResize: "sw-resize",
+    Wresize: "w-resize",
+    Ewresize: "ew-resize",
+    NsResize: "ns-resize",
+    NeswResize: "nesw-resize",
+    NwseResize: "nwse-resize",
+    ColResize: "col-resize",
+    RowResize: "row-resize",
+    AllScroll: "all-scroll",
+    ZoomIn: "zoom-in",
+    ZoomOut: "zoom-out",
+};
+
+fastn_dom.Resize = {
+    Vertical: "vertical",
+    Horizontal: "horizontal",
+    Both: "both",
+};
+
+fastn_dom.WhiteSpace = {
+    Normal: "normal",
+    NoWrap: "nowrap",
+    Pre: "pre",
+    PreLine: "pre-line",
+    PreWrap: "pre-wrap",
+    BreakSpaces: "break-spaces",
+};
+
+fastn_dom.BackdropFilter = {
+    Blur: (value) => {
+        return [1, value];
+    },
+    Brightness: (value) => {
+        return [2, value];
+    },
+    Contrast: (value) => {
+        return [3, value];
+    },
+    Grayscale: (value) => {
+        return [4, value];
+    },
+    Invert: (value) => {
+        return [5, value];
+    },
+    Opacity: (value) => {
+        return [6, value];
+    },
+    Sepia: (value) => {
+        return [7, value];
+    },
+    Saturate: (value) => {
+        return [8, value];
+    },
+    Multi: (value) => {
+        return [9, value];
+    },
+};
+
+fastn_dom.BackgroundStyle = {
+    Solid: (value) => {
+        return [1, value];
+    },
+    Image: (value) => {
+        return [2, value];
+    },
+    LinearGradient: (value) => {
+        return [3, value];
+    },
+};
+
+fastn_dom.BackgroundRepeat = {
+    Repeat: "repeat",
+    RepeatX: "repeat-x",
+    RepeatY: "repeat-y",
+    NoRepeat: "no-repeat",
+    Space: "space",
+    Round: "round",
+};
+
+fastn_dom.BackgroundSize = {
+    Auto: "auto",
+    Cover: "cover",
+    Contain: "contain",
+    Length: (value) => {
+        return value;
+    },
+};
+
+fastn_dom.BackgroundPosition = {
+    Left: "left",
+    Right: "right",
+    Center: "center",
+    LeftTop: "left top",
+    LeftCenter: "left center",
+    LeftBottom: "left bottom",
+    CenterTop: "center top",
+    CenterCenter: "center center",
+    CenterBottom: "center bottom",
+    RightTop: "right top",
+    RightCenter: "right center",
+    RightBottom: "right bottom",
+    Length: (value) => {
+        return value;
+    },
+};
+
+fastn_dom.LinearGradientDirection = {
+    Angle: (value) => {
+        return `${value}deg`;
+    },
+    Turn: (value) => {
+        return `${value}turn`;
+    },
+    Left: "270deg",
+    Right: "90deg",
+    Top: "0deg",
+    Bottom: "180deg",
+    TopLeft: "315deg",
+    TopRight: "45deg",
+    BottomLeft: "225deg",
+    BottomRight: "135deg",
+};
+
+fastn_dom.FontSize = {
+    Px: (value) => {
+        if (value instanceof fastn.mutableClass) {
+            return fastn.formula([value], function () {
+                return `${value.get()}px`;
+            });
+        }
+        return `${value}px`;
+    },
+    Em: (value) => {
+        if (value instanceof fastn.mutableClass) {
+            return fastn.formula([value], function () {
+                return `${value.get()}em`;
+            });
+        }
+        return `${value}em`;
+    },
+    Rem: (value) => {
+        if (value instanceof fastn.mutableClass) {
+            return fastn.formula([value], function () {
+                return `${value.get()}rem`;
+            });
+        }
+        return `${value}rem`;
+    },
+};
+
+fastn_dom.Length = {
+    Px: (value) => {
+        if (value instanceof fastn.mutableClass) {
+            return fastn.formula([value], function () {
+                return `${fastn_utils.getStaticValue(value)}px`;
+            });
+        }
+        return `${value}px`;
+    },
+    Em: (value) => {
+        if (value instanceof fastn.mutableClass) {
+            return fastn.formula([value], function () {
+                return `${fastn_utils.getStaticValue(value)}em`;
+            });
+        }
+        return `${value}em`;
+    },
+    Rem: (value) => {
+        if (value instanceof fastn.mutableClass) {
+            return fastn.formula([value], function () {
+                return `${fastn_utils.getStaticValue(value)}rem`;
+            });
+        }
+        return `${value}rem`;
+    },
+    Percent: (value) => {
+        if (value instanceof fastn.mutableClass) {
+            return fastn.formula([value], function () {
+                return `${fastn_utils.getStaticValue(value)}%`;
+            });
+        }
+        return `${value}%`;
+    },
+    Calc: (value) => {
+        if (value instanceof fastn.mutableClass) {
+            return fastn.formula([value], function () {
+                return `calc(${fastn_utils.getStaticValue(value)})`;
+            });
+        }
+        return `calc(${value})`;
+    },
+    Vh: (value) => {
+        if (value instanceof fastn.mutableClass) {
+            return fastn.formula([value], function () {
+                return `${fastn_utils.getStaticValue(value)}vh`;
+            });
+        }
+        return `${value}vh`;
+    },
+    Vw: (value) => {
+        if (value instanceof fastn.mutableClass) {
+            return fastn.formula([value], function () {
+                return `${fastn_utils.getStaticValue(value)}vw`;
+            });
+        }
+        return `${value}vw`;
+    },
+    Dvh: (value) => {
+        if (value instanceof fastn.mutableClass) {
+            return fastn.formula([value], function () {
+                return `${fastn_utils.getStaticValue(value)}dvh`;
+            });
+        }
+        return `${value}dvh`;
+    },
+    Lvh: (value) => {
+        if (value instanceof fastn.mutableClass) {
+            return fastn.formula([value], function () {
+                return `${fastn_utils.getStaticValue(value)}lvh`;
+            });
+        }
+        return `${value}lvh`;
+    },
+    Svh: (value) => {
+        if (value instanceof fastn.mutableClass) {
+            return fastn.formula([value], function () {
+                return `${fastn_utils.getStaticValue(value)}svh`;
+            });
+        }
+        return `${value}svh`;
+    },
+
+    Vmin: (value) => {
+        if (value instanceof fastn.mutableClass) {
+            return fastn.formula([value], function () {
+                return `${fastn_utils.getStaticValue(value)}vmin`;
+            });
+        }
+        return `${value}vmin`;
+    },
+    Vmax: (value) => {
+        if (value instanceof fastn.mutableClass) {
+            return fastn.formula([value], function () {
+                return `${fastn_utils.getStaticValue(value)}vmax`;
+            });
+        }
+        return `${value}vmax`;
+    },
+    Responsive: (length) => {
+        return new PropertyValueAsClosure(() => {
+            if (ftd.device.get() === "desktop") {
+                return length.get("desktop");
+            } else {
+                let mobile = length.get("mobile");
+                let desktop = length.get("desktop");
+                return mobile ? mobile : desktop;
+            }
+        }, [ftd.device, length]);
+    },
+};
+
+fastn_dom.Mask = {
+    Image: (value) => {
+        return [1, value];
+    },
+    Multi: (value) => {
+        return [2, value];
+    },
+};
+
+fastn_dom.MaskSize = {
+    Auto: "auto",
+    Cover: "cover",
+    Contain: "contain",
+    Fixed: (value) => {
+        return value;
+    },
+};
+
+fastn_dom.MaskRepeat = {
+    Repeat: "repeat",
+    RepeatX: "repeat-x",
+    RepeatY: "repeat-y",
+    NoRepeat: "no-repeat",
+    Space: "space",
+    Round: "round",
+};
+
+fastn_dom.MaskPosition = {
+    Left: "left",
+    Right: "right",
+    Center: "center",
+    LeftTop: "left top",
+    LeftCenter: "left center",
+    LeftBottom: "left bottom",
+    CenterTop: "center top",
+    CenterCenter: "center center",
+    CenterBottom: "center bottom",
+    RightTop: "right top",
+    RightCenter: "right center",
+    RightBottom: "right bottom",
+    Length: (value) => {
+        return value;
+    },
+};
+
+fastn_dom.Event = {
+    Click: 0,
+    MouseEnter: 1,
+    MouseLeave: 2,
+    ClickOutside: 3,
+    GlobalKey: (val) => {
+        return [4, val];
+    },
+    GlobalKeySeq: (val) => {
+        return [5, val];
+    },
+    Input: 6,
+    Change: 7,
+    Blur: 8,
+    Focus: 9,
+};
+
+class PropertyValueAsClosure {
+    closureFunction;
+    deps;
+    constructor(closureFunction, deps) {
+        this.closureFunction = closureFunction;
+        this.deps = deps;
+    }
 }
-body {
-    line-height: 1;
+
+// Node2 -> Intermediate node
+// Node -> similar to HTML DOM node (Node2.#node)
+class Node2 {
+    #node;
+    #kind;
+    #parent;
+    #tagName;
+    #rawInnerValue;
+    /**
+     * This is where we store all the attached closures, so we can free them
+     * when we are done.
+     */
+    #mutables;
+    /**
+     * This is where we store the extraData related to node. This is
+     * especially useful to store data for integrated external library (like
+     * rive).
+     */
+    #extraData;
+    #children;
+    constructor(parentOrSibiling, kind) {
+        this.#kind = kind;
+        this.#parent = parentOrSibiling;
+        this.#children = [];
+        this.#rawInnerValue = null;
+
+        let sibiling = undefined;
+
+        if (parentOrSibiling instanceof ParentNodeWithSibiling) {
+            this.#parent = parentOrSibiling.getParent();
+            while (this.#parent instanceof ParentNodeWithSibiling) {
+                this.#parent = this.#parent.getParent();
+            }
+            sibiling = parentOrSibiling.getSibiling();
+        }
+
+        this.createNode(kind);
+
+        this.#mutables = [];
+        this.#extraData = {};
+        /*if (!!parent.parent) {
+            parent = parent.parent();
+        }*/
+
+        if (this.#parent.getNode) {
+            this.#parent = this.#parent.getNode();
+        }
+
+        if (fastn_utils.isWrapperNode(this.#tagName)) {
+            this.#parent = parentOrSibiling;
+            return;
+        }
+        if (sibiling) {
+            this.#parent.insertBefore(
+                this.#node,
+                fastn_utils.nextSibling(sibiling, this.#parent),
+            );
+        } else {
+            this.#parent.appendChild(this.#node);
+        }
+    }
+    createNode(kind) {
+        if (kind === fastn_dom.ElementKind.Code) {
+            let [node, classes, attributes] = fastn_utils.htmlNode(kind);
+            [this.#tagName, this.#node] = fastn_utils.createNodeHelper(
+                node,
+                classes,
+                attributes,
+            );
+            let codeNode = new Node2(
+                this.#node,
+                fastn_dom.ElementKind.CodeChild,
+            );
+            this.#children.push(codeNode);
+        } else {
+            let [node, classes, attributes] = fastn_utils.htmlNode(kind);
+            [this.#tagName, this.#node] = fastn_utils.createNodeHelper(
+                node,
+                classes,
+                attributes,
+            );
+        }
+    }
+    getTagName() {
+        return this.#tagName;
+    }
+    getParent() {
+        return this.#parent;
+    }
+    removeAllFaviconLinks() {
+        if (doubleBuffering) {
+            const links = document.head.querySelectorAll(
+                'link[rel="shortcut icon"]',
+            );
+            links.forEach((link) => {
+                link.parentNode.removeChild(link);
+            });
+        }
+    }
+    setFavicon(url) {
+        if (doubleBuffering) {
+            if (url instanceof fastn.recordInstanceClass) url = url.get("src");
+            while (true) {
+                if (url instanceof fastn.mutableClass) url = url.get();
+                else break;
+            }
+
+            let link_element = document.createElement("link");
+            link_element.rel = "shortcut icon";
+            link_element.href = url;
+
+            this.removeAllFaviconLinks();
+            document.head.appendChild(link_element);
+        }
+    }
+    updateTextInputValue() {
+        if (fastn_utils.isNull(this.#rawInnerValue)) {
+            this.attachAttribute("value");
+            return;
+        }
+        if (!ssr && this.#node.tagName.toLowerCase() === "textarea") {
+            this.#node.innerHTML = this.#rawInnerValue;
+        } else {
+            this.attachAttribute("value", this.#rawInnerValue);
+        }
+    }
+    // for attaching inline attributes
+    attachAttribute(property, value) {
+        // If the value is null, undefined, or false, the attribute will be removed.
+        // For example, if attributes like checked, muted, or autoplay have been assigned a "false" value.
+        if (fastn_utils.isNull(value)) {
+            this.#node.removeAttribute(property);
+            return;
+        }
+        this.#node.setAttribute(property, value);
+    }
+    removeAttribute(property) {
+        this.#node.removeAttribute(property);
+    }
+    updateTagName(name) {
+        if (ssr) {
+            this.#node.updateTagName(name);
+        } else {
+            let newElement = document.createElement(name);
+            newElement.innerHTML = this.#node.innerHTML;
+            newElement.className = this.#node.className;
+            newElement.style = this.#node.style;
+            for (var i = 0; i < this.#node.attributes.length; i++) {
+                var attr = this.#node.attributes[i];
+                newElement.setAttribute(attr.name, attr.value);
+            }
+            var eventListeners = fastn_utils.getEventListeners(this.#node);
+            for (var eventType in eventListeners) {
+                newElement[eventType] = eventListeners[eventType];
+            }
+            this.#parent.replaceChild(newElement, this.#node);
+            this.#node = newElement;
+        }
+    }
+    updateToAnchor(url) {
+        let node_kind = this.#kind;
+        if (ssr) {
+            if (node_kind !== fastn_dom.ElementKind.Image) {
+                this.updateTagName("a");
+                this.attachAttribute("href", url);
+            }
+            return;
+        }
+        if (node_kind === fastn_dom.ElementKind.Image) {
+            let anchorElement = document.createElement("a");
+            anchorElement.href = url;
+            anchorElement.appendChild(this.#node);
+            this.#parent.appendChild(anchorElement);
+            this.#node = anchorElement;
+        } else {
+            this.updateTagName("a");
+            this.#node.href = url;
+        }
+    }
+    updatePositionForNodeById(node_id, value) {
+        if (!ssr) {
+            const target_node = fastnVirtual.root.querySelector(
+                `[id="${node_id}"]`,
+            );
+            if (!fastn_utils.isNull(target_node))
+                target_node.style["position"] = value;
+        }
+    }
+    updateParentPosition(value) {
+        if (ssr) {
+            let parent = this.#parent;
+            if (parent.style) parent.style["position"] = value;
+        }
+        if (!ssr) {
+            let current_node = this.#node;
+            if (current_node) {
+                let parent_node = current_node.parentNode;
+                parent_node.style["position"] = value;
+            }
+        }
+    }
+    updateMetaTitle(value) {
+        if (!ssr && doubleBuffering) {
+            if (!fastn_utils.isNull(value)) window.document.title = value;
+        }
+    }
+    addMetaTagByName(name, value) {
+        if (value === null || value === undefined) {
+            this.removeMetaTagByName(name);
+            return;
+        }
+        if (!ssr && doubleBuffering) {
+            const metaTag = window.document.createElement("meta");
+            metaTag.setAttribute("name", name);
+            metaTag.setAttribute("content", value);
+            document.head.appendChild(metaTag);
+        }
+    }
+    addMetaTagByProperty(property, value) {
+        if (value === null || value === undefined) {
+            this.removeMetaTagByProperty(property);
+            return;
+        }
+        if (!ssr && doubleBuffering) {
+            const metaTag = window.document.createElement("meta");
+            metaTag.setAttribute("property", property);
+            metaTag.setAttribute("content", value);
+            document.head.appendChild(metaTag);
+        }
+    }
+    removeMetaTagByName(name) {
+        if (!ssr && doubleBuffering) {
+            const metaTags = document.getElementsByTagName("meta");
+            for (let i = 0; i < metaTags.length; i++) {
+                const metaTag = metaTags[i];
+                if (metaTag.getAttribute("name") === name) {
+                    metaTag.remove();
+                    break;
+                }
+            }
+        }
+    }
+    removeMetaTagByProperty(property) {
+        if (!ssr && doubleBuffering) {
+            const metaTags = document.getElementsByTagName("meta");
+            for (let i = 0; i < metaTags.length; i++) {
+                const metaTag = metaTags[i];
+                if (metaTag.getAttribute("property") === property) {
+                    metaTag.remove();
+                    break;
+                }
+            }
+        }
+    }
+    // dynamic-class-css
+    attachCss(property, value, createClass, className) {
+        let propertyShort = fastn_dom.propertyMap[property] || property;
+        propertyShort = `__${propertyShort}`;
+        let cls = `${propertyShort}-${fastn_dom.class_count}`;
+        if (!!className) {
+            cls = className;
+        } else {
+            if (!fastn_dom.unsanitised_classes[cls]) {
+                fastn_dom.unsanitised_classes[cls] = ++fastn_dom.class_count;
+            }
+            cls = `${propertyShort}-${fastn_dom.unsanitised_classes[cls]}`;
+        }
+        let cssClass = className ? cls : `.${cls}`;
+
+        const obj = { property, value };
+
+        if (value === undefined) {
+            if (!ssr) {
+                for (const className of this.#node.classList.values()) {
+                    if (className.startsWith(`${propertyShort}-`)) {
+                        this.#node.classList.remove(className);
+                    }
+                }
+                this.#node.style[property] = null;
+            }
+            return cls;
+        }
+
+        if (!ssr && !doubleBuffering) {
+            if (!!className) {
+                if (!fastn_dom.classes[cssClass]) {
+                    fastn_dom.classes[cssClass] =
+                        fastn_dom.classes[cssClass] || obj;
+                    fastn_utils.createStyle(cssClass, obj);
+                }
+                return cls;
+            }
+
+            for (const className of this.#node.classList.values()) {
+                if (className.startsWith(`${propertyShort}-`)) {
+                    this.#node.classList.remove(className);
+                }
+            }
+
+            if (createClass) {
+                if (!fastn_dom.classes[cssClass]) {
+                    fastn_dom.classes[cssClass] =
+                        fastn_dom.classes[cssClass] || obj;
+                    fastn_utils.createStyle(cssClass, obj);
+                }
+                this.#node.style.removeProperty(property);
+                this.#node.classList.add(cls);
+            } else if (!fastn_dom.classes[cssClass]) {
+                if (typeof value === "object" && value !== null) {
+                    for (let key in value) {
+                        this.#node.style[key] = value[key];
+                    }
+                } else {
+                    this.#node.style[property] = value;
+                }
+            } else {
+                this.#node.style.removeProperty(property);
+                this.#node.classList.add(cls);
+            }
+
+            return cls;
+        }
+
+        fastn_dom.classes[cssClass] = fastn_dom.classes[cssClass] || obj;
+
+        if (!!className) {
+            return cls;
+        }
+
+        this.#node.classList.add(cls);
+        return cls;
+    }
+    attachShadow(value) {
+        if (fastn_utils.isNull(value)) {
+            this.attachCss("box-shadow", value);
+            return;
+        }
+
+        const color = value.get("color");
+
+        const lightColor = fastn_utils.getStaticValue(color.get("light"));
+        const darkColor = fastn_utils.getStaticValue(color.get("dark"));
+
+        const blur = fastn_utils.getStaticValue(value.get("blur"));
+        const xOffset = fastn_utils.getStaticValue(value.get("x_offset"));
+        const yOffset = fastn_utils.getStaticValue(value.get("y_offset"));
+        const spread = fastn_utils.getStaticValue(value.get("spread"));
+        const inset = fastn_utils.getStaticValue(value.get("inset"));
+
+        const shadowCommonCss = `${
+            inset ? "inset " : ""
+        }${xOffset} ${yOffset} ${blur} ${spread}`;
+        const lightShadowCss = `${shadowCommonCss} ${lightColor}`;
+        const darkShadowCss = `${shadowCommonCss} ${darkColor}`;
+
+        if (lightShadowCss === darkShadowCss) {
+            this.attachCss("box-shadow", lightShadowCss, false);
+        } else {
+            let lightClass = this.attachCss("box-shadow", lightShadowCss, true);
+            this.attachCss(
+                "box-shadow",
+                darkShadowCss,
+                true,
+                `body.dark .${lightClass}`,
+            );
+        }
+    }
+    attachBackdropMultiFilter(value) {
+        const filters = {
+            blur: fastn_utils.getStaticValue(value.get("blur")),
+            brightness: fastn_utils.getStaticValue(value.get("brightness")),
+            contrast: fastn_utils.getStaticValue(value.get("contrast")),
+            grayscale: fastn_utils.getStaticValue(value.get("grayscale")),
+            invert: fastn_utils.getStaticValue(value.get("invert")),
+            opacity: fastn_utils.getStaticValue(value.get("opacity")),
+            sepia: fastn_utils.getStaticValue(value.get("sepia")),
+            saturate: fastn_utils.getStaticValue(value.get("saturate")),
+        };
+
+        const filterString = Object.entries(filters)
+            .filter(([_, value]) => !fastn_utils.isNull(value))
+            .map(([name, value]) => `${name}(${value})`)
+            .join(" ");
+
+        this.attachCss("backdrop-filter", filterString, false);
+    }
+    attachTextShadow(value) {
+        if (fastn_utils.isNull(value)) {
+            this.attachCss("text-shadow", value);
+            return;
+        }
+
+        const color = value.get("color");
+
+        const lightColor = fastn_utils.getStaticValue(color.get("light"));
+        const darkColor = fastn_utils.getStaticValue(color.get("dark"));
+
+        const blur = fastn_utils.getStaticValue(value.get("blur"));
+        const xOffset = fastn_utils.getStaticValue(value.get("x_offset"));
+        const yOffset = fastn_utils.getStaticValue(value.get("y_offset"));
+
+        const shadowCommonCss = `${xOffset} ${yOffset} ${blur}`;
+        const lightShadowCss = `${shadowCommonCss} ${lightColor}`;
+        const darkShadowCss = `${shadowCommonCss} ${darkColor}`;
+
+        if (lightShadowCss === darkShadowCss) {
+            this.attachCss("text-shadow", lightShadowCss, false);
+        } else {
+            let lightClass = this.attachCss("box-shadow", lightShadowCss, true);
+            this.attachCss(
+                "text-shadow",
+                darkShadowCss,
+                true,
+                `body.dark .${lightClass}`,
+            );
+        }
+    }
+    getLinearGradientString(value) {
+        var lightGradientString = "";
+        var darkGradientString = "";
+
+        let colorsList = value.get("colors").get().getList();
+        colorsList.map(function (element) {
+            // LinearGradient RecordInstance
+            let lg_color = element.item;
+
+            let color = lg_color.get("color").get();
+            let lightColor = fastn_utils.getStaticValue(color.get("light"));
+            let darkColor = fastn_utils.getStaticValue(color.get("dark"));
+
+            lightGradientString = `${lightGradientString} ${lightColor}`;
+            darkGradientString = `${darkGradientString} ${darkColor}`;
+
+            let start = fastn_utils.getStaticValue(lg_color.get("start"));
+            if (start !== undefined && start !== null) {
+                lightGradientString = `${lightGradientString} ${start}`;
+                darkGradientString = `${darkGradientString} ${start}`;
+            }
+
+            let end = fastn_utils.getStaticValue(lg_color.get("end"));
+            if (end !== undefined && end !== null) {
+                lightGradientString = `${lightGradientString} ${end}`;
+                darkGradientString = `${darkGradientString} ${end}`;
+            }
+
+            let stop_position = fastn_utils.getStaticValue(
+                lg_color.get("stop_position"),
+            );
+            if (stop_position !== undefined && stop_position !== null) {
+                lightGradientString = `${lightGradientString}, ${stop_position}`;
+                darkGradientString = `${darkGradientString}, ${stop_position}`;
+            }
+
+            lightGradientString = `${lightGradientString},`;
+            darkGradientString = `${darkGradientString},`;
+        });
+
+        lightGradientString = lightGradientString.trim().slice(0, -1);
+        darkGradientString = darkGradientString.trim().slice(0, -1);
+
+        return [lightGradientString, darkGradientString];
+    }
+    attachLinearGradientCss(value) {
+        if (fastn_utils.isNull(value)) {
+            this.attachCss("background-image", value);
+            return;
+        }
+
+        const closure = fastn
+            .closure(() => {
+                let direction = fastn_utils.getStaticValue(
+                    value.get("direction"),
+                );
+
+                const [lightGradientString, darkGradientString] =
+                    this.getLinearGradientString(value);
+
+                if (lightGradientString === darkGradientString) {
+                    this.attachCss(
+                        "background-image",
+                        `linear-gradient(${direction}, ${lightGradientString})`,
+                        false,
+                    );
+                } else {
+                    let lightClass = this.attachCss(
+                        "background-image",
+                        `linear-gradient(${direction}, ${lightGradientString})`,
+                        true,
+                    );
+                    this.attachCss(
+                        "background-image",
+                        `linear-gradient(${direction}, ${darkGradientString})`,
+                        true,
+                        `body.dark .${lightClass}`,
+                    );
+                }
+            })
+            .addNodeProperty(this, null, inherited);
+
+        const colorsList = value.get("colors").get().getList();
+
+        colorsList.forEach(({ item }) => {
+            const color = item.get("color");
+
+            [color.get("light"), color.get("dark")].forEach((variant) => {
+                variant.addClosure(closure);
+                this.#mutables.push(variant);
+            });
+        });
+    }
+    attachBackgroundImageCss(value) {
+        if (fastn_utils.isNull(value)) {
+            this.attachCss("background-repeat", value);
+            this.attachCss("background-position", value);
+            this.attachCss("background-size", value);
+            this.attachCss("background-image", value);
+            return;
+        }
+
+        let src = fastn_utils.getStaticValue(value.get("src"));
+        let lightValue = fastn_utils.getStaticValue(src.get("light"));
+        let darkValue = fastn_utils.getStaticValue(src.get("dark"));
+
+        let position = fastn_utils.getStaticValue(value.get("position"));
+        let positionX = null;
+        let positionY = null;
+        if (position !== null && position instanceof Object) {
+            positionX = fastn_utils.getStaticValue(position.get("x"));
+            positionY = fastn_utils.getStaticValue(position.get("y"));
+
+            if (positionX !== null) position = `${positionX}`;
+            if (positionY !== null) {
+                if (positionX === null) position = `0px ${positionY}`;
+                else position = `${position} ${positionY}`;
+            }
+        }
+        let repeat = fastn_utils.getStaticValue(value.get("repeat"));
+        let size = fastn_utils.getStaticValue(value.get("size"));
+        let sizeX = null;
+        let sizeY = null;
+        if (size !== null && size instanceof Object) {
+            sizeX = fastn_utils.getStaticValue(size.get("x"));
+            sizeY = fastn_utils.getStaticValue(size.get("y"));
+
+            if (sizeX !== null) size = `${sizeX}`;
+            if (sizeY !== null) {
+                if (sizeX === null) size = `0px ${sizeY}`;
+                else size = `${size} ${sizeY}`;
+            }
+        }
+
+        if (repeat !== null) this.attachCss("background-repeat", repeat);
+        if (position !== null) this.attachCss("background-position", position);
+        if (size !== null) this.attachCss("background-size", size);
+
+        if (lightValue === darkValue) {
+            this.attachCss("background-image", `url(${lightValue})`, false);
+        } else {
+            let lightClass = this.attachCss(
+                "background-image",
+                `url(${lightValue})`,
+                true,
+            );
+            this.attachCss(
+                "background-image",
+                `url(${darkValue})`,
+                true,
+                `body.dark .${lightClass}`,
+            );
+        }
+    }
+    attachMaskImageCss(value, vendorPrefix) {
+        const propertyWithPrefix = vendorPrefix
+            ? `${vendorPrefix}-mask-image`
+            : "mask-image";
+
+        if (fastn_utils.isNull(value)) {
+            this.attachCss(propertyWithPrefix, value);
+            return;
+        }
+
+        let src = fastn_utils.getStaticValue(value.get("src"));
+        let linearGradient = fastn_utils.getStaticValue(
+            value.get("linear_gradient"),
+        );
+        let color = fastn_utils.getStaticValue(value.get("color"));
+
+        const maskLightImageValues = [];
+        const maskDarkImageValues = [];
+
+        if (!fastn_utils.isNull(src)) {
+            let lightValue = fastn_utils.getStaticValue(src.get("light"));
+            let darkValue = fastn_utils.getStaticValue(src.get("dark"));
+
+            const lightUrl = `url(${lightValue})`;
+            const darkUrl = `url(${darkValue})`;
+
+            if (!fastn_utils.isNull(linearGradient)) {
+                const lightImageValues = [lightUrl];
+                const darkImageValues = [darkUrl];
+
+                if (!fastn_utils.isNull(color)) {
+                    const lightColor = fastn_utils.getStaticValue(
+                        color.get("light"),
+                    );
+                    const darkColor = fastn_utils.getStaticValue(
+                        color.get("dark"),
+                    );
+
+                    lightImageValues.push(lightColor);
+                    darkImageValues.push(darkColor);
+                }
+                maskLightImageValues.push(
+                    `image(${lightImageValues.join(", ")})`,
+                );
+                maskDarkImageValues.push(
+                    `image(${darkImageValues.join(", ")})`,
+                );
+            } else {
+                maskLightImageValues.push(lightUrl);
+                maskDarkImageValues.push(darkUrl);
+            }
+        }
+
+        if (!fastn_utils.isNull(linearGradient)) {
+            let direction = fastn_utils.getStaticValue(
+                linearGradient.get("direction"),
+            );
+
+            const [lightGradientString, darkGradientString] =
+                this.getLinearGradientString(linearGradient);
+
+            maskLightImageValues.push(
+                `linear-gradient(${direction}, ${lightGradientString})`,
+            );
+            maskDarkImageValues.push(
+                `linear-gradient(${direction}, ${darkGradientString})`,
+            );
+        }
+
+        const maskLightImageString = maskLightImageValues.join(", ");
+        const maskDarkImageString = maskDarkImageValues.join(", ");
+
+        if (maskLightImageString === maskDarkImageString) {
+            this.attachCss(propertyWithPrefix, maskLightImageString, true);
+        } else {
+            let lightClass = this.attachCss(
+                propertyWithPrefix,
+                maskLightImageString,
+                true,
+            );
+            this.attachCss(
+                propertyWithPrefix,
+                maskDarkImageString,
+                true,
+                `body.dark .${lightClass}`,
+            );
+        }
+    }
+    attachMaskSizeCss(value, vendorPrefix) {
+        const propertyNameWithPrefix = vendorPrefix
+            ? `${vendorPrefix}-mask-size`
+            : "mask-size";
+        if (fastn_utils.isNull(value)) {
+            this.attachCss(propertyNameWithPrefix, value);
+        }
+        const [size, ...two_values] = ["size", "size_x", "size_y"].map((size) =>
+            fastn_utils.getStaticValue(value.get(size)),
+        );
+
+        if (!fastn_utils.isNull(size)) {
+            this.attachCss(propertyNameWithPrefix, size, true);
+        } else {
+            const [size_x, size_y] = two_values.map((value) => value || "auto");
+            this.attachCss(propertyNameWithPrefix, `${size_x} ${size_y}`, true);
+        }
+    }
+    attachMaskMultiCss(value, vendorPrefix) {
+        if (fastn_utils.isNull(value)) {
+            this.attachCss("mask-repeat", value);
+            this.attachCss("mask-position", value);
+            this.attachCss("mask-size", value);
+            this.attachCss("mask-image", value);
+            return;
+        }
+
+        const maskImage = fastn_utils.getStaticValue(value.get("image"));
+        this.attachMaskImageCss(maskImage);
+        this.attachMaskImageCss(maskImage, vendorPrefix);
+        this.attachMaskSizeCss(value);
+        this.attachMaskSizeCss(value, vendorPrefix);
+        const maskRepeatValue = fastn_utils.getStaticValue(value.get("repeat"));
+        if (fastn_utils.isNull(maskRepeatValue)) {
+            this.attachCss("mask-repeat", maskRepeatValue, true);
+            this.attachCss("-webkit-mask-repeat", maskRepeatValue, true);
+        } else {
+            this.attachCss("mask-repeat", maskRepeatValue, true);
+            this.attachCss("-webkit-mask-repeat", maskRepeatValue, true);
+        }
+        const maskPositionValue = fastn_utils.getStaticValue(
+            value.get("position"),
+        );
+        if (fastn_utils.isNull(maskPositionValue)) {
+            this.attachCss("mask-position", maskPositionValue, true);
+            this.attachCss("-webkit-mask-position", maskPositionValue, true);
+        } else {
+            this.attachCss("mask-position", maskPositionValue, true);
+            this.attachCss("-webkit-mask-position", maskPositionValue, true);
+        }
+    }
+    attachExternalCss(css) {
+        if (!ssr) {
+            let css_tag = document.createElement("link");
+            css_tag.rel = "stylesheet";
+            css_tag.type = "text/css";
+            css_tag.href = css;
+
+            let head =
+                document.head || document.getElementsByTagName("head")[0];
+            if (!fastn_dom.externalCss.has(css)) {
+                head.appendChild(css_tag);
+                fastn_dom.externalCss.add(css);
+            }
+        }
+    }
+    attachExternalJs(js) {
+        if (!ssr) {
+            let js_tag = document.createElement("script");
+            js_tag.src = js;
+
+            let head =
+                document.head || document.getElementsByTagName("head")[0];
+            if (!fastn_dom.externalJs.has(js)) {
+                head.appendChild(js_tag);
+                fastn_dom.externalCss.add(js);
+            }
+        }
+    }
+    attachColorCss(property, value, visited) {
+        if (fastn_utils.isNull(value)) {
+            this.attachCss(property, value);
+            return;
+        }
+        value = value instanceof fastn.mutableClass ? value.get() : value;
+
+        const lightValue = value.get("light");
+        const darkValue = value.get("dark");
+
+        const closure = fastn
+            .closure(() => {
+                let lightValueStatic = fastn_utils.getStaticValue(lightValue);
+                let darkValueStatic = fastn_utils.getStaticValue(darkValue);
+
+                if (lightValueStatic === darkValueStatic) {
+                    this.attachCss(property, lightValueStatic, false);
+                } else {
+                    let lightClass = this.attachCss(
+                        property,
+                        lightValueStatic,
+                        true,
+                    );
+                    this.attachCss(
+                        property,
+                        darkValueStatic,
+                        true,
+                        `body.dark .${lightClass}`,
+                    );
+                    if (visited) {
+                        this.attachCss(
+                            property,
+                            lightValueStatic,
+                            true,
+                            `.${lightClass}:visited`,
+                        );
+                        this.attachCss(
+                            property,
+                            darkValueStatic,
+                            true,
+                            `body.dark  .${lightClass}:visited`,
+                        );
+                    }
+                }
+            })
+            .addNodeProperty(this, null, inherited);
+
+        [lightValue, darkValue].forEach((modeValue) => {
+            modeValue.addClosure(closure);
+            this.#mutables.push(modeValue);
+        });
+    }
+    attachRoleCss(value) {
+        if (fastn_utils.isNull(value)) {
+            this.attachCss("role", value);
+            return;
+        }
+        value.addClosure(
+            fastn
+                .closure(() => {
+                    let desktopValue = value.get("desktop");
+                    let mobileValue = value.get("mobile");
+                    if (
+                        fastn_utils.sameResponsiveRole(
+                            desktopValue,
+                            mobileValue,
+                        )
+                    ) {
+                        this.attachCss(
+                            "role",
+                            fastn_utils.getRoleValues(desktopValue),
+                            true,
+                        );
+                    } else {
+                        let desktopClass = this.attachCss(
+                            "role",
+                            fastn_utils.getRoleValues(desktopValue),
+                            true,
+                        );
+                        this.attachCss(
+                            "role",
+                            fastn_utils.getRoleValues(mobileValue),
+                            true,
+                            `body.mobile .${desktopClass}`,
+                        );
+                    }
+                })
+                .addNodeProperty(this, null, inherited),
+        );
+        this.#mutables.push(value);
+    }
+    attachTextStyles(styles) {
+        if (fastn_utils.isNull(styles)) {
+            this.attachCss("font-style", styles);
+            this.attachCss("font-weight", styles);
+            this.attachCss("text-decoration", styles);
+            return;
+        }
+        for (var s of styles) {
+            switch (s) {
+                case "italic":
+                    this.attachCss("font-style", s);
+                    break;
+                case "underline":
+                case "line-through":
+                    this.attachCss("text-decoration", s);
+                    break;
+                default:
+                    this.attachCss("font-weight", s);
+            }
+        }
+    }
+    attachAlignContent(value, node_kind) {
+        if (fastn_utils.isNull(value)) {
+            this.attachCss("align-items", value);
+            this.attachCss("justify-content", value);
+            return;
+        }
+        if (node_kind === fastn_dom.ElementKind.Column) {
+            switch (value) {
+                case "top-left":
+                    this.attachCss("justify-content", "start");
+                    this.attachCss("align-items", "start");
+                    break;
+                case "top-center":
+                    this.attachCss("justify-content", "start");
+                    this.attachCss("align-items", "center");
+                    break;
+                case "top-right":
+                    this.attachCss("justify-content", "start");
+                    this.attachCss("align-items", "end");
+                    break;
+                case "left":
+                    this.attachCss("justify-content", "center");
+                    this.attachCss("align-items", "start");
+                    break;
+                case "center":
+                    this.attachCss("justify-content", "center");
+                    this.attachCss("align-items", "center");
+                    break;
+                case "right":
+                    this.attachCss("justify-content", "center");
+                    this.attachCss("align-items", "end");
+                    break;
+                case "bottom-left":
+                    this.attachCss("justify-content", "end");
+                    this.attachCss("align-items", "left");
+                    break;
+                case "bottom-center":
+                    this.attachCss("justify-content", "end");
+                    this.attachCss("align-items", "center");
+                    break;
+                case "bottom-right":
+                    this.attachCss("justify-content", "end");
+                    this.attachCss("align-items", "end");
+                    break;
+            }
+        }
+
+        if (node_kind === fastn_dom.ElementKind.Row) {
+            switch (value) {
+                case "top-left":
+                    this.attachCss("justify-content", "start");
+                    this.attachCss("align-items", "start");
+                    break;
+                case "top-center":
+                    this.attachCss("justify-content", "center");
+                    this.attachCss("align-items", "start");
+                    break;
+                case "top-right":
+                    this.attachCss("justify-content", "end");
+                    this.attachCss("align-items", "start");
+                    break;
+                case "left":
+                    this.attachCss("justify-content", "start");
+                    this.attachCss("align-items", "center");
+                    break;
+                case "center":
+                    this.attachCss("justify-content", "center");
+                    this.attachCss("align-items", "center");
+                    break;
+                case "right":
+                    this.attachCss("justify-content", "right");
+                    this.attachCss("align-items", "center");
+                    break;
+                case "bottom-left":
+                    this.attachCss("justify-content", "start");
+                    this.attachCss("align-items", "end");
+                    break;
+                case "bottom-center":
+                    this.attachCss("justify-content", "center");
+                    this.attachCss("align-items", "end");
+                    break;
+                case "bottom-right":
+                    this.attachCss("justify-content", "end");
+                    this.attachCss("align-items", "end");
+                    break;
+            }
+        }
+    }
+    attachLinkColor(value) {
+        ftd.dark_mode.addClosure(
+            fastn
+                .closure(() => {
+                    if (!ssr) {
+                        const anchors =
+                            this.#node.tagName.toLowerCase() === "a"
+                                ? [this.#node]
+                                : Array.from(this.#node.querySelectorAll("a"));
+                        let propertyShort = `__${fastn_dom.propertyMap["link-color"]}`;
+
+                        if (fastn_utils.isNull(value)) {
+                            anchors.forEach((a) => {
+                                a.classList.values().forEach((className) => {
+                                    if (
+                                        className.startsWith(
+                                            `${propertyShort}-`,
+                                        )
+                                    ) {
+                                        a.classList.remove(className);
+                                    }
+                                });
+                            });
+                        } else {
+                            const lightValue = fastn_utils.getStaticValue(
+                                value.get("light"),
+                            );
+                            const darkValue = fastn_utils.getStaticValue(
+                                value.get("dark"),
+                            );
+                            let cls = `${propertyShort}-${JSON.stringify(
+                                lightValue,
+                            )}`;
+
+                            if (!fastn_dom.unsanitised_classes[cls]) {
+                                fastn_dom.unsanitised_classes[cls] =
+                                    ++fastn_dom.class_count;
+                            }
+
+                            cls = `${propertyShort}-${fastn_dom.unsanitised_classes[cls]}`;
+
+                            const cssClass = `.${cls}`;
+
+                            if (!fastn_dom.classes[cssClass]) {
+                                const obj = {
+                                    property: "color",
+                                    value: lightValue,
+                                };
+                                fastn_dom.classes[cssClass] =
+                                    fastn_dom.classes[cssClass] || obj;
+                                let styles = document.getElementById("styles");
+                                styles.innerHTML = `${
+                                    styles.innerHTML
+                                }${getClassAsString(cssClass, obj)}\n`;
+                            }
+
+                            if (lightValue !== darkValue) {
+                                const obj = {
+                                    property: "color",
+                                    value: darkValue,
+                                };
+                                let darkCls = `body.dark ${cssClass}`;
+                                if (!fastn_dom.classes[darkCls]) {
+                                    fastn_dom.classes[darkCls] =
+                                        fastn_dom.classes[darkCls] || obj;
+                                    let styles =
+                                        document.getElementById("styles");
+                                    styles.innerHTML = `${
+                                        styles.innerHTML
+                                    }${getClassAsString(darkCls, obj)}\n`;
+                                }
+                            }
+
+                            anchors.forEach((a) => a.classList.add(cls));
+                        }
+                    }
+                })
+                .addNodeProperty(this, null, inherited),
+        );
+        this.#mutables.push(ftd.dark_mode);
+    }
+    setStaticProperty(kind, value, inherited) {
+        // value can be either static or mutable
+        let staticValue = fastn_utils.getStaticValue(value);
+        if (kind === fastn_dom.PropertyKind.Children) {
+            if (fastn_utils.isWrapperNode(this.#tagName)) {
+                let parentWithSibiling = this.#parent;
+                if (Array.isArray(staticValue)) {
+                    staticValue.forEach((func, index) => {
+                        if (index !== 0) {
+                            parentWithSibiling = new ParentNodeWithSibiling(
+                                this.#parent.getParent(),
+                                this.#children[index - 1],
+                            );
+                        }
+                        this.#children.push(
+                            fastn_utils.getStaticValue(func.item)(
+                                parentWithSibiling,
+                                inherited,
+                            ),
+                        );
+                    });
+                } else {
+                    this.#children.push(
+                        staticValue(parentWithSibiling, inherited),
+                    );
+                }
+            } else {
+                if (Array.isArray(staticValue)) {
+                    staticValue.forEach((func) =>
+                        this.#children.push(
+                            fastn_utils.getStaticValue(func.item)(
+                                this,
+                                inherited,
+                            ),
+                        ),
+                    );
+                } else {
+                    this.#children.push(staticValue(this, inherited));
+                }
+            }
+        } else if (kind === fastn_dom.PropertyKind.Id) {
+            this.#node.id = staticValue;
+        } else if (kind === fastn_dom.PropertyKind.BreakpointWidth) {
+            if (fastn_utils.isNull(staticValue)) {
+                return;
+            }
+            ftd.breakpoint_width.set(fastn_utils.getStaticValue(staticValue));
+        } else if (kind === fastn_dom.PropertyKind.Css) {
+            let css_list = staticValue.map((obj) =>
+                fastn_utils.getStaticValue(obj.item),
+            );
+            css_list.forEach((css) => {
+                this.attachExternalCss(css);
+            });
+        } else if (kind === fastn_dom.PropertyKind.Js) {
+            let js_list = staticValue.map((obj) =>
+                fastn_utils.getStaticValue(obj.item),
+            );
+            js_list.forEach((js) => {
+                this.attachExternalJs(js);
+            });
+        } else if (kind === fastn_dom.PropertyKind.Width) {
+            this.attachCss("width", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.Height) {
+            fastn_utils.resetFullHeight();
+            this.attachCss("height", staticValue);
+            fastn_utils.setFullHeight();
+        } else if (kind === fastn_dom.PropertyKind.Padding) {
+            this.attachCss("padding", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.PaddingHorizontal) {
+            this.attachCss("padding-left", staticValue);
+            this.attachCss("padding-right", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.PaddingVertical) {
+            this.attachCss("padding-top", staticValue);
+            this.attachCss("padding-bottom", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.PaddingLeft) {
+            this.attachCss("padding-left", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.PaddingRight) {
+            this.attachCss("padding-right", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.PaddingTop) {
+            this.attachCss("padding-top", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.PaddingBottom) {
+            this.attachCss("padding-bottom", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.Margin) {
+            this.attachCss("margin", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.MarginHorizontal) {
+            this.attachCss("margin-left", staticValue);
+            this.attachCss("margin-right", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.MarginVertical) {
+            this.attachCss("margin-top", staticValue);
+            this.attachCss("margin-bottom", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.MarginLeft) {
+            this.attachCss("margin-left", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.MarginRight) {
+            this.attachCss("margin-right", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.MarginTop) {
+            this.attachCss("margin-top", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.MarginBottom) {
+            this.attachCss("margin-bottom", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BorderWidth) {
+            this.attachCss("border-width", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BorderTopWidth) {
+            this.attachCss("border-top-width", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BorderBottomWidth) {
+            this.attachCss("border-bottom-width", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BorderLeftWidth) {
+            this.attachCss("border-left-width", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BorderRightWidth) {
+            this.attachCss("border-right-width", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BorderRadius) {
+            this.attachCss("border-radius", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BorderTopLeftRadius) {
+            this.attachCss("border-top-left-radius", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BorderTopRightRadius) {
+            this.attachCss("border-top-right-radius", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BorderBottomLeftRadius) {
+            this.attachCss("border-bottom-left-radius", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BorderBottomRightRadius) {
+            this.attachCss("border-bottom-right-radius", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BorderStyle) {
+            this.attachCss("border-style", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BorderStyleVertical) {
+            this.attachCss("border-top-style", staticValue);
+            this.attachCss("border-bottom-style", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BorderStyleHorizontal) {
+            this.attachCss("border-left-style", staticValue);
+            this.attachCss("border-right-style", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BorderLeftStyle) {
+            this.attachCss("border-left-style", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BorderRightStyle) {
+            this.attachCss("border-right-style", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BorderTopStyle) {
+            this.attachCss("border-top-style", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BorderBottomStyle) {
+            this.attachCss("border-bottom-style", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.ZIndex) {
+            this.attachCss("z-index", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.Shadow) {
+            this.attachShadow(staticValue);
+        } else if (kind === fastn_dom.PropertyKind.TextShadow) {
+            this.attachTextShadow(staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BackdropFilter) {
+            if (fastn_utils.isNull(staticValue)) {
+                this.attachCss("backdrop-filter", staticValue);
+                return;
+            }
+
+            let backdropType = staticValue[0];
+            switch (backdropType) {
+                case 1:
+                    this.attachCss(
+                        "backdrop-filter",
+                        `blur(${fastn_utils.getStaticValue(staticValue[1])})`,
+                    );
+                    break;
+                case 2:
+                    this.attachCss(
+                        "backdrop-filter",
+                        `brightness(${fastn_utils.getStaticValue(
+                            staticValue[1],
+                        )})`,
+                    );
+                    break;
+                case 3:
+                    this.attachCss(
+                        "backdrop-filter",
+                        `contrast(${fastn_utils.getStaticValue(
+                            staticValue[1],
+                        )})`,
+                    );
+                    break;
+                case 4:
+                    this.attachCss(
+                        "backdrop-filter",
+                        `greyscale(${fastn_utils.getStaticValue(
+                            staticValue[1],
+                        )})`,
+                    );
+                    break;
+                case 5:
+                    this.attachCss(
+                        "backdrop-filter",
+                        `invert(${fastn_utils.getStaticValue(staticValue[1])})`,
+                    );
+                    break;
+                case 6:
+                    this.attachCss(
+                        "backdrop-filter",
+                        `opacity(${fastn_utils.getStaticValue(
+                            staticValue[1],
+                        )})`,
+                    );
+                    break;
+                case 7:
+                    this.attachCss(
+                        "backdrop-filter",
+                        `sepia(${fastn_utils.getStaticValue(staticValue[1])})`,
+                    );
+                    break;
+                case 8:
+                    this.attachCss(
+                        "backdrop-filter",
+                        `saturate(${fastn_utils.getStaticValue(
+                            staticValue[1],
+                        )})`,
+                    );
+                    break;
+                case 9:
+                    this.attachBackdropMultiFilter(staticValue[1]);
+                    break;
+            }
+        } else if (kind === fastn_dom.PropertyKind.Mask) {
+            if (fastn_utils.isNull(staticValue)) {
+                this.attachCss("mask-image", staticValue);
+                return;
+            }
+
+            const [backgroundType, value] = staticValue;
+
+            switch (backgroundType) {
+                case fastn_dom.Mask.Image()[0]:
+                    this.attachMaskImageCss(value);
+                    this.attachMaskImageCss(value, "-webkit");
+                    break;
+                case fastn_dom.Mask.Multi()[0]:
+                    this.attachMaskMultiCss(value);
+                    this.attachMaskMultiCss(value, "-webkit");
+                    break;
+            }
+        } else if (kind === fastn_dom.PropertyKind.Classes) {
+            fastn_utils.removeNonFastnClasses(this);
+            if (!fastn_utils.isNull(staticValue)) {
+                let cls = staticValue.map((obj) =>
+                    fastn_utils.getStaticValue(obj.item),
+                );
+                cls.forEach((c) => {
+                    this.#node.classList.add(c);
+                });
+            }
+        } else if (kind === fastn_dom.PropertyKind.Anchor) {
+            // todo: this needs fixed for anchor.id = v
+            // need to change position of element with id = v to relative
+            if (fastn_utils.isNull(staticValue)) {
+                this.attachCss("position", staticValue);
+                return;
+            }
+
+            let anchorType = staticValue[0];
+            switch (anchorType) {
+                case 1:
+                    this.attachCss("position", staticValue[1]);
+                    break;
+                case 2:
+                    this.attachCss("position", staticValue[1]);
+                    this.updateParentPosition("relative");
+                    break;
+                case 3:
+                    const parent_node_id = staticValue[1];
+                    this.attachCss("position", "absolute");
+                    this.updatePositionForNodeById(parent_node_id, "relative");
+                    break;
+            }
+        } else if (kind === fastn_dom.PropertyKind.Sticky) {
+            // sticky is boolean type
+            switch (staticValue) {
+                case "true":
+                case true:
+                    this.attachCss("position", "sticky");
+                    break;
+                case "false":
+                case false:
+                    this.attachCss("position", "static");
+                    break;
+                default:
+                    this.attachCss("position", staticValue);
+            }
+        } else if (kind === fastn_dom.PropertyKind.Top) {
+            this.attachCss("top", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.Bottom) {
+            this.attachCss("bottom", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.Left) {
+            this.attachCss("left", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.Right) {
+            this.attachCss("right", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.Overflow) {
+            this.attachCss("overflow", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.OverflowX) {
+            this.attachCss("overflow-x", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.OverflowY) {
+            this.attachCss("overflow-y", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.Spacing) {
+            if (fastn_utils.isNull(staticValue)) {
+                this.attachCss("justify-content", staticValue);
+                this.attachCss("gap", staticValue);
+                return;
+            }
+
+            let spacingType = staticValue[0];
+            switch (spacingType) {
+                case fastn_dom.Spacing.SpaceEvenly[0]:
+                case fastn_dom.Spacing.SpaceBetween[0]:
+                case fastn_dom.Spacing.SpaceAround[0]:
+                    this.attachCss("justify-content", staticValue[1]);
+                    break;
+                case fastn_dom.Spacing.Fixed()[0]:
+                    this.attachCss(
+                        "gap",
+                        fastn_utils.getStaticValue(staticValue[1]),
+                    );
+                    break;
+            }
+        } else if (kind === fastn_dom.PropertyKind.Wrap) {
+            // sticky is boolean type
+            switch (staticValue) {
+                case "true":
+                case true:
+                    this.attachCss("flex-wrap", "wrap");
+                    break;
+                case "false":
+                case false:
+                    this.attachCss("flex-wrap", "no-wrap");
+                    break;
+                default:
+                    this.attachCss("flex-wrap", staticValue);
+            }
+        } else if (kind === fastn_dom.PropertyKind.TextTransform) {
+            this.attachCss("text-transform", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.TextIndent) {
+            this.attachCss("text-indent", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.TextAlign) {
+            this.attachCss("text-align", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.LineClamp) {
+            // -webkit-line-clamp: staticValue
+            // display: -webkit-box, overflow: hidden
+            // -webkit-box-orient: vertical
+            this.attachCss("-webkit-line-clamp", staticValue);
+            this.attachCss("display", "-webkit-box");
+            this.attachCss("overflow", "hidden");
+            this.attachCss("-webkit-box-orient", "vertical");
+        } else if (kind === fastn_dom.PropertyKind.Opacity) {
+            this.attachCss("opacity", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.Cursor) {
+            this.attachCss("cursor", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.Resize) {
+            // overflow: auto, resize: staticValue
+            this.attachCss("resize", staticValue);
+            this.attachCss("overflow", "auto");
+        } else if (kind === fastn_dom.PropertyKind.Selectable) {
+            if (staticValue === false) {
+                this.attachCss("user-select", "none");
+            } else {
+                this.attachCss("user-select", null);
+            }
+        } else if (kind === fastn_dom.PropertyKind.MinHeight) {
+            this.attachCss("min-height", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.MaxHeight) {
+            this.attachCss("max-height", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.MinWidth) {
+            this.attachCss("min-width", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.MaxWidth) {
+            this.attachCss("max-width", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.WhiteSpace) {
+            this.attachCss("white-space", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.AlignSelf) {
+            this.attachCss("align-self", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BorderColor) {
+            this.attachColorCss("border-color", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BorderLeftColor) {
+            this.attachColorCss("border-left-color", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BorderRightColor) {
+            this.attachColorCss("border-right-color", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BorderTopColor) {
+            this.attachColorCss("border-top-color", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.BorderBottomColor) {
+            this.attachColorCss("border-bottom-color", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.LinkColor) {
+            this.attachLinkColor(staticValue);
+        } else if (kind === fastn_dom.PropertyKind.Color) {
+            this.attachColorCss("color", staticValue, true);
+        } else if (kind === fastn_dom.PropertyKind.Background) {
+            if (fastn_utils.isNull(staticValue)) {
+                this.attachColorCss("background-color", staticValue);
+                this.attachBackgroundImageCss(staticValue);
+                this.attachLinearGradientCss(staticValue);
+                return;
+            }
+
+            let backgroundType = staticValue[0];
+            switch (backgroundType) {
+                case fastn_dom.BackgroundStyle.Solid()[0]:
+                    this.attachColorCss("background-color", staticValue[1]);
+                    break;
+                case fastn_dom.BackgroundStyle.Image()[0]:
+                    this.attachBackgroundImageCss(staticValue[1]);
+                    break;
+                case fastn_dom.BackgroundStyle.LinearGradient()[0]:
+                    this.attachLinearGradientCss(staticValue[1]);
+                    break;
+            }
+        } else if (kind === fastn_dom.PropertyKind.Display) {
+            this.attachCss("display", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.Checked) {
+            switch (staticValue) {
+                case "true":
+                case true:
+                    this.attachAttribute("checked", "");
+                    break;
+                case "false":
+                case false:
+                    this.removeAttribute("checked");
+                    break;
+                default:
+                    this.attachAttribute("checked", staticValue);
+            }
+        } else if (kind === fastn_dom.PropertyKind.Enabled) {
+            switch (staticValue) {
+                case "false":
+                case false:
+                    this.attachAttribute("disabled", "");
+                    break;
+                case "true":
+                case true:
+                    this.removeAttribute("disabled");
+                    break;
+                default:
+                    this.attachAttribute("disabled", staticValue);
+            }
+        } else if (kind === fastn_dom.PropertyKind.TextInputType) {
+            this.attachAttribute("type", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.TextInputValue) {
+            this.#rawInnerValue = staticValue;
+            this.updateTextInputValue();
+        } else if (kind === fastn_dom.PropertyKind.DefaultTextInputValue) {
+            if (!fastn_utils.isNull(this.#rawInnerValue)) {
+                return;
+            }
+            this.#rawInnerValue = staticValue;
+            this.updateTextInputValue();
+        } else if (kind === fastn_dom.PropertyKind.InputMaxLength) {
+            this.attachAttribute("maxlength", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.Placeholder) {
+            this.attachAttribute("placeholder", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.Multiline) {
+            switch (staticValue) {
+                case "true":
+                case true:
+                    this.updateTagName("textarea");
+                    break;
+                case "false":
+                case false:
+                    this.updateTagName("input");
+                    break;
+            }
+            this.updateTextInputValue();
+        } else if (kind === fastn_dom.PropertyKind.Link) {
+            // Changing node type to `a` for link
+            // todo: needs fix for image links
+            if (fastn_utils.isNull(staticValue)) {
+                return;
+            }
+            this.updateToAnchor(staticValue);
+        } else if (kind === fastn_dom.PropertyKind.LinkRel) {
+            if (fastn_utils.isNull(staticValue)) {
+                this.removeAttribute("rel");
+            }
+            let rel_list = staticValue.map((obj) =>
+                fastn_utils.getStaticValue(obj.item),
+            );
+            this.attachAttribute("rel", rel_list.join(" "));
+        } else if (kind === fastn_dom.PropertyKind.OpenInNewTab) {
+            // open_in_new_tab is boolean type
+            switch (staticValue) {
+                case "true":
+                case true:
+                    this.attachAttribute("target", "_blank");
+                    break;
+                default:
+                    this.attachAttribute("target", staticValue);
+            }
+        } else if (kind === fastn_dom.PropertyKind.TextStyle) {
+            let styles = staticValue?.map((obj) =>
+                fastn_utils.getStaticValue(obj.item),
+            );
+            this.attachTextStyles(styles);
+        } else if (kind === fastn_dom.PropertyKind.Region) {
+            this.updateTagName(staticValue);
+            if (this.#node.innerHTML) {
+                this.#node.id = fastn_utils.slugify(this.#rawInnerValue);
+            }
+        } else if (kind === fastn_dom.PropertyKind.AlignContent) {
+            let node_kind = this.#kind;
+            this.attachAlignContent(staticValue, node_kind);
+        } else if (kind === fastn_dom.PropertyKind.Loading) {
+            this.attachAttribute("loading", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.Src) {
+            this.attachAttribute("src", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.ImageSrc) {
+            ftd.dark_mode.addClosure(
+                fastn
+                    .closure(() => {
+                        if (fastn_utils.isNull(staticValue)) {
+                            this.attachAttribute("src", staticValue);
+                            return;
+                        }
+                        const is_dark_mode = ftd.dark_mode.get();
+                        const src = staticValue.get(
+                            is_dark_mode ? "dark" : "light",
+                        );
+                        if (!ssr) {
+                            let image_node = this.#node;
+                            if (image_node.nodeName.toLowerCase() === "a") {
+                                let childNodes = image_node.childNodes;
+                                childNodes.forEach(function (child) {
+                                    if (child.nodeName.toLowerCase() === "img")
+                                        image_node = child;
+                                });
+                            }
+                            image_node.setAttribute(
+                                "src",
+                                fastn_utils.getStaticValue(src),
+                            );
+                        } else {
+                            this.attachAttribute(
+                                "src",
+                                fastn_utils.getStaticValue(src),
+                            );
+                        }
+                    })
+                    .addNodeProperty(this, null, inherited),
+            );
+            this.#mutables.push(ftd.dark_mode);
+        } else if (kind === fastn_dom.PropertyKind.Alt) {
+            this.attachAttribute("alt", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.VideoSrc) {
+            ftd.dark_mode.addClosure(
+                fastn
+                    .closure(() => {
+                        if (fastn_utils.isNull(staticValue)) {
+                            this.attachAttribute("src", staticValue);
+                            return;
+                        }
+                        const is_dark_mode = ftd.dark_mode.get();
+                        const src = staticValue.get(
+                            is_dark_mode ? "dark" : "light",
+                        );
+
+                        this.attachAttribute(
+                            "src",
+                            fastn_utils.getStaticValue(src),
+                        );
+                    })
+                    .addNodeProperty(this, null, inherited),
+            );
+            this.#mutables.push(ftd.dark_mode);
+        } else if (kind === fastn_dom.PropertyKind.Autoplay) {
+            if (staticValue) {
+                this.attachAttribute("autoplay", staticValue);
+            } else {
+                this.removeAttribute("autoplay");
+            }
+        } else if (kind === fastn_dom.PropertyKind.Muted) {
+            if (staticValue) {
+                this.attachAttribute("muted", staticValue);
+            } else {
+                this.removeAttribute("muted");
+            }
+        } else if (kind === fastn_dom.PropertyKind.Controls) {
+            if (staticValue) {
+                this.attachAttribute("controls", staticValue);
+            } else {
+                this.removeAttribute("controls");
+            }
+        } else if (kind === fastn_dom.PropertyKind.LoopVideo) {
+            if (staticValue) {
+                this.attachAttribute("loop", staticValue);
+            } else {
+                this.removeAttribute("loop");
+            }
+        } else if (kind === fastn_dom.PropertyKind.Poster) {
+            ftd.dark_mode.addClosure(
+                fastn
+                    .closure(() => {
+                        if (fastn_utils.isNull(staticValue)) {
+                            this.attachAttribute("poster", staticValue);
+                            return;
+                        }
+                        const is_dark_mode = ftd.dark_mode.get();
+                        const posterSrc = staticValue.get(
+                            is_dark_mode ? "dark" : "light",
+                        );
+
+                        this.attachAttribute(
+                            "poster",
+                            fastn_utils.getStaticValue(posterSrc),
+                        );
+                    })
+                    .addNodeProperty(this, null, inherited),
+            );
+            this.#mutables.push(ftd.dark_mode);
+        } else if (kind === fastn_dom.PropertyKind.Fit) {
+            this.attachCss("object-fit", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.FetchPriority) {
+            this.attachAttribute("fetchpriority", staticValue);
+        } else if (kind === fastn_dom.PropertyKind.YoutubeSrc) {
+            if (fastn_utils.isNull(staticValue)) {
+                this.attachAttribute("src", staticValue);
+                return;
+            }
+            const id_pattern = "^([a-zA-Z0-9_-]{11})$";
+            let id = staticValue.match(id_pattern);
+            if (!fastn_utils.isNull(id)) {
+                this.attachAttribute(
+                    "src",
+                    `https:\/\/youtube.com/embed/${id[0]}`,
+                );
+            } else {
+                this.attachAttribute("src", staticValue);
+            }
+        } else if (kind === fastn_dom.PropertyKind.Role) {
+            this.attachRoleCss(staticValue);
+        } else if (kind === fastn_dom.PropertyKind.Code) {
+            if (!fastn_utils.isNull(staticValue)) {
+                let { modifiedText, highlightedLines } =
+                    fastn_utils.findAndRemoveHighlighter(staticValue);
+                if (highlightedLines.length !== 0) {
+                    this.attachAttribute("data-line", highlightedLines);
+                }
+                staticValue = modifiedText;
+            }
+            let codeNode = this.#children[0].getNode();
+            let codeText = fastn_utils.escapeHtmlInCode(staticValue);
+            codeNode.innerHTML = codeText;
+            this.#extraData.code = this.#extraData.code
+                ? this.#extraData.code
+                : {};
+            fastn_utils.highlightCode(codeNode, this.#extraData.code);
+        } else if (kind === fastn_dom.PropertyKind.CodeShowLineNumber) {
+            if (staticValue) {
+                this.#node.classList.add("line-numbers");
+            } else {
+                this.#node.classList.remove("line-numbers");
+            }
+        } else if (kind === fastn_dom.PropertyKind.CodeTheme) {
+            this.#extraData.code = this.#extraData.code
+                ? this.#extraData.code
+                : {};
+            if (fastn_utils.isNull(staticValue)) {
+                if (!fastn_utils.isNull(this.#extraData.code.theme)) {
+                    this.#node.classList.remove(this.#extraData.code.theme);
+                }
+                return;
+            }
+            if (!ssr) {
+                fastn_utils.addCodeTheme(staticValue);
+            }
+            staticValue = fastn_utils.getStaticValue(staticValue);
+            let theme = staticValue.replace(".", "-");
+            if (this.#extraData.code.theme !== theme) {
+                let codeNode = this.#children[0].getNode();
+                this.#node.classList.remove(this.#extraData.code.theme);
+                codeNode.classList.remove(this.#extraData.code.theme);
+                this.#extraData.code.theme = theme;
+                this.#node.classList.add(theme);
+                codeNode.classList.add(theme);
+                fastn_utils.highlightCode(codeNode, this.#extraData.code);
+            }
+        } else if (kind === fastn_dom.PropertyKind.CodeLanguage) {
+            let language = `language-${staticValue}`;
+            this.#extraData.code = this.#extraData.code
+                ? this.#extraData.code
+                : {};
+            if (this.#extraData.code.language) {
+                this.#node.classList.remove(language);
+            }
+            this.#extraData.code.language = language;
+            this.#node.classList.add(language);
+            let codeNode = this.#children[0].getNode();
+            codeNode.classList.add(language);
+            fastn_utils.highlightCode(codeNode, this.#extraData.code);
+        } else if (kind === fastn_dom.PropertyKind.Favicon) {
+            if (fastn_utils.isNull(staticValue)) return;
+            this.setFavicon(staticValue);
+        } else if (
+            kind === fastn_dom.PropertyKind.DocumentProperties.MetaTitle
+        ) {
+            this.updateMetaTitle(staticValue);
+        } else if (
+            kind === fastn_dom.PropertyKind.DocumentProperties.MetaOGTitle
+        ) {
+            this.addMetaTagByProperty("og:title", staticValue);
+        } else if (
+            kind === fastn_dom.PropertyKind.DocumentProperties.MetaTwitterTitle
+        ) {
+            this.addMetaTagByName("twitter:title", staticValue);
+        } else if (
+            kind === fastn_dom.PropertyKind.DocumentProperties.MetaDescription
+        ) {
+            this.addMetaTagByName("description", staticValue);
+        } else if (
+            kind === fastn_dom.PropertyKind.DocumentProperties.MetaOGDescription
+        ) {
+            this.addMetaTagByProperty("og:description", staticValue);
+        } else if (
+            kind ===
+            fastn_dom.PropertyKind.DocumentProperties.MetaTwitterDescription
+        ) {
+            this.addMetaTagByName("twitter:description", staticValue);
+        } else if (
+            kind === fastn_dom.PropertyKind.DocumentProperties.MetaOGImage
+        ) {
+            // staticValue is of ftd.raw-image-src RecordInstance type
+            if (fastn_utils.isNull(staticValue)) {
+                this.removeMetaTagByProperty("og:image");
+                return;
+            }
+            this.addMetaTagByProperty(
+                "og:image",
+                fastn_utils.getStaticValue(staticValue.get("src")),
+            );
+        } else if (
+            kind === fastn_dom.PropertyKind.DocumentProperties.MetaTwitterImage
+        ) {
+            // staticValue is of ftd.raw-image-src RecordInstance type
+            if (fastn_utils.isNull(staticValue)) {
+                this.removeMetaTagByName("twitter:image");
+                return;
+            }
+            this.addMetaTagByName(
+                "twitter:image",
+                fastn_utils.getStaticValue(staticValue.get("src")),
+            );
+        } else if (
+            kind === fastn_dom.PropertyKind.DocumentProperties.MetaThemeColor
+        ) {
+            // staticValue is of ftd.color RecordInstance type
+            if (fastn_utils.isNull(staticValue)) {
+                this.removeMetaTagByName("theme-color");
+                return;
+            }
+            this.addMetaTagByName(
+                "theme-color",
+                fastn_utils.getStaticValue(staticValue.get("light")),
+            );
+        } else if (
+            kind ===
+            fastn_dom.PropertyKind.DocumentProperties
+                .MetaFacebookDomainVerification
+        ) {
+            if (fastn_utils.isNull(staticValue)) {
+                this.removeMetaTagByName("facebook-domain-verification");
+                return;
+            }
+            this.addMetaTagByName(
+                "facebook-domain-verification",
+                fastn_utils.getStaticValue(staticValue),
+            );
+        } else if (
+            kind === fastn_dom.PropertyKind.IntegerValue ||
+            kind === fastn_dom.PropertyKind.DecimalValue ||
+            kind === fastn_dom.PropertyKind.BooleanValue
+        ) {
+            this.#node.innerHTML = staticValue;
+            this.#rawInnerValue = staticValue;
+        } else if (kind === fastn_dom.PropertyKind.StringValue) {
+            this.#rawInnerValue = staticValue;
+            staticValue = fastn_utils.markdown_inline(
+                fastn_utils.escapeHtmlInMarkdown(staticValue),
+            );
+            staticValue = fastn_utils.process_post_markdown(
+                this.#node,
+                staticValue,
+            );
+            if (!fastn_utils.isNull(staticValue)) {
+                this.#node.innerHTML = staticValue;
+            } else {
+                this.#node.innerHTML = "";
+            }
+        } else {
+            throw "invalid fastn_dom.PropertyKind: " + kind;
+        }
+    }
+    setProperty(kind, value, inherited) {
+        if (value instanceof fastn.mutableClass) {
+            this.setDynamicProperty(
+                kind,
+                [value],
+                () => {
+                    return value.get();
+                },
+                inherited,
+            );
+        } else if (value instanceof PropertyValueAsClosure) {
+            this.setDynamicProperty(
+                kind,
+                value.deps,
+                value.closureFunction,
+                inherited,
+            );
+        } else {
+            this.setStaticProperty(kind, value, inherited);
+        }
+    }
+    setDynamicProperty(kind, deps, func, inherited) {
+        let closure = fastn
+            .closure(func)
+            .addNodeProperty(this, kind, inherited);
+        for (let dep in deps) {
+            if (fastn_utils.isNull(deps[dep]) || !deps[dep].addClosure) {
+                continue;
+            }
+            deps[dep].addClosure(closure);
+            this.#mutables.push(deps[dep]);
+        }
+    }
+    getNode() {
+        return this.#node;
+    }
+    getExtraData() {
+        return this.#extraData;
+    }
+    getChildren() {
+        return this.#children;
+    }
+    mergeFnCalls(current, newFunc) {
+        return () => {
+            if (current instanceof Function) current();
+            if (newFunc instanceof Function) newFunc();
+        };
+    }
+    addEventHandler(event, func) {
+        if (event === fastn_dom.Event.Click) {
+            let onclickEvents = this.mergeFnCalls(this.#node.onclick, func);
+            if (fastn_utils.isNull(this.#node.onclick))
+                this.attachCss("cursor", "pointer");
+            this.#node.onclick = onclickEvents;
+        } else if (event === fastn_dom.Event.MouseEnter) {
+            let mouseEnterEvents = this.mergeFnCalls(
+                this.#node.onmouseenter,
+                func,
+            );
+            this.#node.onmouseenter = mouseEnterEvents;
+        } else if (event === fastn_dom.Event.MouseLeave) {
+            let mouseLeaveEvents = this.mergeFnCalls(
+                this.#node.onmouseleave,
+                func,
+            );
+            this.#node.onmouseleave = mouseLeaveEvents;
+        } else if (event === fastn_dom.Event.ClickOutside) {
+            ftd.clickOutsideEvents.push([this, func]);
+        } else if (!!event[0] && event[0] === fastn_dom.Event.GlobalKey()[0]) {
+            ftd.globalKeyEvents.push([this, func, event[1]]);
+        } else if (
+            !!event[0] &&
+            event[0] === fastn_dom.Event.GlobalKeySeq()[0]
+        ) {
+            ftd.globalKeySeqEvents.push([this, func, event[1]]);
+        } else if (event === fastn_dom.Event.Input) {
+            let onInputEvents = this.mergeFnCalls(this.#node.oninput, func);
+            this.#node.oninput = onInputEvents;
+        } else if (event === fastn_dom.Event.Change) {
+            let onChangeEvents = this.mergeFnCalls(this.#node.onchange, func);
+            this.#node.onchange = onChangeEvents;
+        } else if (event === fastn_dom.Event.Blur) {
+            let onBlurEvents = this.mergeFnCalls(this.#node.onblur, func);
+            this.#node.onblur = onBlurEvents;
+        } else if (event === fastn_dom.Event.Focus) {
+            let onFocusEvents = this.mergeFnCalls(this.#node.onfocus, func);
+            this.#node.onfocus = onFocusEvents;
+        }
+    }
+    destroy() {
+        for (let i = 0; i < this.#mutables.length; i++) {
+            this.#mutables[i].unlinkNode(this);
+        }
+        // Todo: We don't need this condition as after destroying this node
+        //  ConditionalDom reset this.#conditionUI to null or some different
+        //  value. Not sure why this is still needed.
+        if (!fastn_utils.isNull(this.#node)) {
+            this.#node.remove();
+        }
+        this.#mutables = [];
+        this.#parent = null;
+        this.#node = null;
+    }
 }
-ol, ul {
-    list-style: none;
+
+class ConditionalDom {
+    #marker;
+    #parent;
+    #node_constructor;
+    #condition;
+    #mutables;
+    #conditionUI;
+
+    constructor(parent, deps, condition, node_constructor) {
+        this.#marker = fastn_dom.createKernel(
+            parent,
+            fastn_dom.ElementKind.Comment,
+        );
+        this.#parent = parent;
+
+        this.#conditionUI = null;
+        let closure = fastn.closure(() => {
+            fastn_utils.resetFullHeight();
+            if (condition()) {
+                if (this.#conditionUI) {
+                    let conditionUI = fastn_utils.flattenArray(
+                        this.#conditionUI,
+                    );
+                    while (conditionUI.length > 0) {
+                        let poppedElement = conditionUI.pop();
+                        poppedElement.destroy();
+                    }
+                }
+                this.#conditionUI = node_constructor(
+                    new ParentNodeWithSibiling(this.#parent, this.#marker),
+                );
+                if (
+                    !Array.isArray(this.#conditionUI) &&
+                    fastn_utils.isWrapperNode(this.#conditionUI.getTagName())
+                ) {
+                    this.#conditionUI = this.#conditionUI.getChildren();
+                }
+            } else if (this.#conditionUI) {
+                let conditionUI = fastn_utils.flattenArray(this.#conditionUI);
+                while (conditionUI.length > 0) {
+                    let poppedElement = conditionUI.pop();
+                    poppedElement.destroy();
+                }
+                this.#conditionUI = null;
+            }
+            fastn_utils.setFullHeight();
+        });
+        deps.forEach((dep) => {
+            if (!fastn_utils.isNull(dep) && dep.addClosure) {
+                dep.addClosure(closure);
+            }
+        });
+
+        this.#node_constructor = node_constructor;
+        this.#condition = condition;
+        this.#mutables = [];
+    }
+
+    getParent() {
+        let nodes = [this.#marker];
+        if (this.#conditionUI) {
+            nodes.push(this.#conditionUI);
+        }
+        return nodes;
+    }
 }
-blockquote, q {
-    quotes: none;
+
+fastn_dom.createKernel = function (parent, kind) {
+    return new Node2(parent, kind);
+};
+
+fastn_dom.conditionalDom = function (
+    parent,
+    deps,
+    condition,
+    node_constructor,
+) {
+    return new ConditionalDom(parent, deps, condition, node_constructor);
+};
+
+class ParentNodeWithSibiling {
+    #parent;
+    #sibiling;
+    constructor(parent, sibiling) {
+        this.#parent = parent;
+        this.#sibiling = sibiling;
+    }
+    getParent() {
+        return this.#parent;
+    }
+    getSibiling() {
+        return this.#sibiling;
+    }
 }
-blockquote:before, blockquote:after,
-q:before, q:after {
-    content: '';
-    content: none;
+
+class ForLoop {
+    #node_constructor;
+    #list;
+    #wrapper;
+    #parent;
+    #nodes;
+    constructor(parent, node_constructor, list) {
+        this.#wrapper = fastn_dom.createKernel(
+            parent,
+            fastn_dom.ElementKind.Comment,
+        );
+        this.#parent = parent;
+        this.#node_constructor = node_constructor;
+        this.#list = list;
+        this.#nodes = [];
+
+        fastn_utils.resetFullHeight();
+        for (let idx in list.getList()) {
+            this.createNode(idx, false);
+        }
+        fastn_utils.setFullHeight();
+    }
+    createNode(index, resizeBodyHeight = true) {
+        if (resizeBodyHeight) {
+            fastn_utils.resetFullHeight();
+        }
+        let parentWithSibiling = new ParentNodeWithSibiling(
+            this.#parent,
+            this.#wrapper,
+        );
+        if (index !== 0) {
+            parentWithSibiling = new ParentNodeWithSibiling(
+                this.#parent,
+                this.#nodes[index - 1],
+            );
+        }
+        let v = this.#list.get(index);
+        let node = this.#node_constructor(parentWithSibiling, v.item, v.index);
+        this.#nodes.splice(index, 0, node);
+        if (resizeBodyHeight) {
+            fastn_utils.setFullHeight();
+        }
+        return node;
+    }
+    createAllNode() {
+        fastn_utils.resetFullHeight();
+        this.deleteAllNode(false);
+        for (let idx in this.#list.getList()) {
+            this.createNode(idx, false);
+        }
+        fastn_utils.setFullHeight();
+    }
+    deleteAllNode(resizeBodyHeight = true) {
+        if (resizeBodyHeight) {
+            fastn_utils.resetFullHeight();
+        }
+        while (this.#nodes.length > 0) {
+            this.#nodes.pop().destroy();
+        }
+        if (resizeBodyHeight) {
+            fastn_utils.setFullHeight();
+        }
+    }
+    getWrapper() {
+        return this.#wrapper;
+    }
+    deleteNode(index) {
+        fastn_utils.resetFullHeight();
+        let node = this.#nodes.splice(index, 1)[0];
+        node.destroy();
+        fastn_utils.setFullHeight();
+    }
+    getParent() {
+        return this.#parent;
+    }
 }
-table {
-    border-collapse: collapse;
-    border-spacing: 0;
+
+fastn_dom.forLoop = function (parent, node_constructor, list) {
+    return new ForLoop(parent, node_constructor, list);
+};
+let fastn_utils = {
+    htmlNode(kind) {
+        let node = "div";
+        let css = [];
+        let attributes = {};
+        if (kind === fastn_dom.ElementKind.Column) {
+            css.push(fastn_dom.InternalClass.FT_COLUMN);
+        } else if (kind === fastn_dom.ElementKind.Document) {
+            css.push(fastn_dom.InternalClass.FT_COLUMN);
+            css.push(fastn_dom.InternalClass.FT_FULL_SIZE);
+        } else if (kind === fastn_dom.ElementKind.Row) {
+            css.push(fastn_dom.InternalClass.FT_ROW);
+        } else if (kind === fastn_dom.ElementKind.IFrame) {
+            node = "iframe";
+            // To allow fullscreen support
+            // Reference: https://stackoverflow.com/questions/27723423/youtube-iframe-embed-full-screen
+            attributes["allowfullscreen"] = "";
+        } else if (kind === fastn_dom.ElementKind.Image) {
+            node = "img";
+        } else if (kind === fastn_dom.ElementKind.Video) {
+            node = "video";
+        } else if (
+            kind === fastn_dom.ElementKind.ContainerElement ||
+            kind === fastn_dom.ElementKind.Text
+        ) {
+            node = "div";
+        } else if (kind === fastn_dom.ElementKind.Rive) {
+            node = "canvas";
+        } else if (kind === fastn_dom.ElementKind.CheckBox) {
+            node = "input";
+            attributes["type"] = "checkbox";
+        } else if (kind === fastn_dom.ElementKind.TextInput) {
+            node = "input";
+        } else if (kind === fastn_dom.ElementKind.Comment) {
+            node = fastn_dom.commentNode;
+        } else if (kind === fastn_dom.ElementKind.Wrapper) {
+            node = fastn_dom.wrapperNode;
+        } else if (kind === fastn_dom.ElementKind.Code) {
+            node = "pre";
+        } else if (kind === fastn_dom.ElementKind.CodeChild) {
+            node = "code";
+        } else if (kind[0] === fastn_dom.ElementKind.WebComponent()[0]) {
+            let [webcomponent, args] = kind[1];
+            node = `${webcomponent}`;
+            fastn_dom.webComponent.push(args);
+            attributes[fastn_dom.webComponentArgument] =
+                fastn_dom.webComponent.length - 1;
+        }
+        return [node, css, attributes];
+    },
+    createStyle(cssClass, obj) {
+        if (doubleBuffering) {
+            fastn_dom.styleClasses = `${
+                fastn_dom.styleClasses
+            }${getClassAsString(cssClass, obj)}\n`;
+        } else {
+            let styles = document.getElementById("styles");
+            let newClasses = getClassAsString(cssClass, obj);
+            let textNode = document.createTextNode(newClasses);
+            if (styles.styleSheet) {
+                styles.styleSheet.cssText = newClasses;
+            } else {
+                styles.appendChild(textNode);
+            }
+        }
+    },
+    getStaticValue(obj) {
+        if (obj instanceof fastn.mutableClass) {
+            return this.getStaticValue(obj.get());
+        } else if (obj instanceof fastn.mutableListClass) {
+            return obj.getList();
+        } /*
+        Todo: Make this work
+        else if (obj instanceof fastn.recordInstanceClass) {
+            return obj.getAllFields();
+        }*/ else {
+            return obj;
+        }
+    },
+    getInheritedValues(default_args, inherited, function_args) {
+        let record_fields = {
+            colors: ftd.default_colors.getClone().setAndReturn("is_root", true),
+            types: ftd.default_types.getClone().setAndReturn("is_root", true),
+        };
+        Object.assign(record_fields, default_args);
+        let fields = {};
+        if (inherited instanceof fastn.recordInstanceClass) {
+            fields = inherited.getClonedFields();
+            if (fastn_utils.getStaticValue(fields["colors"].get("is_root"))) {
+                delete fields.colors;
+            }
+            if (fastn_utils.getStaticValue(fields["types"].get("is_root"))) {
+                delete fields.types;
+            }
+        }
+        Object.assign(record_fields, fields);
+        Object.assign(record_fields, function_args);
+        return fastn.recordInstance({
+            ...record_fields,
+        });
+    },
+    removeNonFastnClasses(node) {
+        let classList = node.getNode().classList;
+        let extraCodeData = node.getExtraData().code;
+        let iterativeClassList = classList;
+        if (ssr) {
+            iterativeClassList = iterativeClassList.getClasses();
+        }
+        const internalClassNames = Object.values(fastn_dom.InternalClass);
+        const classesToRemove = [];
+
+        for (const className of iterativeClassList) {
+            if (
+                !className.startsWith("__") &&
+                !internalClassNames.includes(className) &&
+                className !== extraCodeData?.language &&
+                className !== extraCodeData?.theme
+            ) {
+                classesToRemove.push(className);
+            }
+        }
+
+        for (const classNameToRemove of classesToRemove) {
+            classList.remove(classNameToRemove);
+        }
+    },
+    staticToMutables(obj) {
+        if (
+            !(obj instanceof fastn.mutableClass) &&
+            !(obj instanceof fastn.mutableListClass) &&
+            !(obj instanceof fastn.recordInstanceClass)
+        ) {
+            if (Array.isArray(obj)) {
+                let list = [];
+                for (let index in obj) {
+                    list.push(fastn_utils.staticToMutables(obj[index]));
+                }
+                return fastn.mutableList(list);
+            } else if (obj instanceof Object) {
+                let fields = {};
+                for (let objKey in obj) {
+                    fields[objKey] = fastn_utils.staticToMutables(obj[objKey]);
+                }
+                return fastn.recordInstance(fields);
+            } else {
+                return fastn.mutable(obj);
+            }
+        } else {
+            return obj;
+        }
+    },
+    getFlattenStaticValue(obj) {
+        let staticValue = fastn_utils.getStaticValue(obj);
+        if (Array.isArray(staticValue)) {
+            return staticValue.map((func) =>
+                fastn_utils.getFlattenStaticValue(func.item),
+            );
+        } /*
+        Todo: Make this work
+        else if (typeof staticValue === 'object' && fastn_utils.isNull(staticValue)) {
+            return Object.fromEntries(
+                Object.entries(staticValue).map(([k,v]) =>
+                    [k, fastn_utils.getFlattenStaticValue(v)]
+                )
+            );
+        }*/
+        return staticValue;
+    },
+    getter(value) {
+        if (value instanceof fastn.mutableClass) {
+            return value.get();
+        } else {
+            return value;
+        }
+    },
+    // Todo: Merge getterByKey with getter
+    getterByKey(value, index) {
+        if (
+            value instanceof fastn.mutableClass ||
+            value instanceof fastn.recordInstanceClass
+        ) {
+            return value.get(index);
+        } else if (value instanceof fastn.mutableListClass) {
+            return value.get(index).item;
+        } else {
+            return value;
+        }
+    },
+    setter(variable, value) {
+        if (!fastn_utils.isNull(variable) && variable.set) {
+            variable.set(value);
+            return true;
+        }
+        return false;
+    },
+    defaultPropertyValue(_propertyValue) {
+        return null;
+    },
+    sameResponsiveRole(desktop, mobile) {
+        return (
+            desktop.get("font_family") === mobile.get("font_family") &&
+            desktop.get("letter_spacing") === mobile.get("letter_spacing") &&
+            desktop.get("line_height") === mobile.get("line_height") &&
+            desktop.get("size") === mobile.get("size") &&
+            desktop.get("weight") === mobile.get("weight")
+        );
+    },
+    getRoleValues(value) {
+        let font_families = fastn_utils.getStaticValue(
+            value.get("font_family"),
+        );
+        if (Array.isArray(font_families))
+            font_families = font_families
+                .map((obj) => fastn_utils.getStaticValue(obj.item))
+                .join(", ");
+        return {
+            "font-family": font_families,
+            "letter-spacing": fastn_utils.getStaticValue(
+                value.get("letter_spacing"),
+            ),
+            "font-size": fastn_utils.getStaticValue(value.get("size")),
+            "font-weight": fastn_utils.getStaticValue(value.get("weight")),
+            "line-height": fastn_utils.getStaticValue(value.get("line_height")),
+        };
+    },
+    clone(value) {
+        if (value === null || value === undefined) {
+            return value;
+        }
+        if (
+            value instanceof fastn.mutableClass ||
+            value instanceof fastn.mutableListClass
+        ) {
+            return value.getClone();
+        }
+        if (value instanceof fastn.recordInstanceClass) {
+            return value.getClone();
+        }
+        return value;
+    },
+    getListItem(value) {
+        if (value === undefined) {
+            return null;
+        }
+        if (value instanceof Object && value.hasOwnProperty("item")) {
+            value = value.item;
+        }
+        return value;
+    },
+    getEventKey(event) {
+        if (65 <= event.keyCode && event.keyCode <= 90) {
+            return String.fromCharCode(event.keyCode).toLowerCase();
+        } else {
+            return event.key;
+        }
+    },
+    createNestedObject(currentObject, path, value) {
+        const properties = path.split(".");
+
+        for (let i = 0; i < properties.length - 1; i++) {
+            let property = fastn_utils.private.addUnderscoreToStart(
+                properties[i],
+            );
+            if (currentObject instanceof fastn.recordInstanceClass) {
+                if (currentObject.get(property) === undefined) {
+                    currentObject.set(property, fastn.recordInstance({}));
+                }
+                currentObject = currentObject.get(property).get();
+            } else {
+                if (!currentObject.hasOwnProperty(property)) {
+                    currentObject[property] = fastn.recordInstance({});
+                }
+                currentObject = currentObject[property];
+            }
+        }
+
+        const innermostProperty = properties[properties.length - 1];
+        if (currentObject instanceof fastn.recordInstanceClass) {
+            currentObject.set(innermostProperty, value);
+        } else {
+            currentObject[innermostProperty] = value;
+        }
+    },
+    /**
+     * Takes an input string and processes it as inline markdown using the
+     * 'marked' library. The function removes the last occurrence of
+     * wrapping <p> tags (i.e. <p> tag found at the end) from the result and
+     * adjusts spaces around the content.
+     *
+     * @param {string} i - The input string to be processed as inline markdown.
+     * @returns {string} - The processed string with inline markdown.
+     */
+    markdown_inline(i) {
+        if (fastn_utils.isNull(i)) return;
+        i = i.toString();
+        const { space_before, space_after } = fastn_utils.private.spaces(i);
+        const o = (() => {
+            let g = fastn_utils.private.replace_last_occurrence(
+                marked.parse(i),
+                "<p>",
+                "",
+            );
+            g = fastn_utils.private.replace_last_occurrence(g, "</p>", "");
+            return g;
+        })();
+        return `${fastn_utils.private.repeated_space(
+            space_before,
+        )}${o}${fastn_utils.private.repeated_space(space_after)}`.replace(
+            /\n+$/,
+            "",
+        );
+    },
+
+    process_post_markdown(node, body) {
+        if (!ssr) {
+            const divElement = document.createElement("div");
+            divElement.innerHTML = body;
+
+            const current_node = node;
+            const colorClasses = Array.from(current_node.classList).filter(
+                (className) => className.startsWith("__c"),
+            );
+            const roleClasses = Array.from(current_node.classList).filter(
+                (className) => className.startsWith("__rl"),
+            );
+            const tableElements = Array.from(
+                divElement.getElementsByTagName("table"),
+            );
+            const codeElements = Array.from(
+                divElement.getElementsByTagName("code"),
+            );
+
+            tableElements.forEach((table) => {
+                colorClasses.forEach((colorClass) => {
+                    table.classList.add(colorClass);
+                });
+            });
+
+            codeElements.forEach((code) => {
+                roleClasses.forEach((roleClass) => {
+                    var roleCls = "." + roleClass;
+                    let role = fastn_dom.classes[roleCls];
+                    let roleValue = role["value"];
+                    let fontFamily = roleValue["font-family"];
+                    code.style.fontFamily = fontFamily;
+                });
+            });
+
+            body = divElement.innerHTML;
+        }
+        return body;
+    },
+    isNull(a) {
+        return a === null || a === undefined;
+    },
+    isCommentNode(node) {
+        return node === fastn_dom.commentNode;
+    },
+    isWrapperNode(node) {
+        return node === fastn_dom.wrapperNode;
+    },
+    nextSibling(node, parent) {
+        // For Conditional DOM
+        while (Array.isArray(node)) {
+            node = node[node.length - 1];
+        }
+        if (node.nextSibling) {
+            return node.nextSibling;
+        }
+        if (node.getNode && node.getNode().nextSibling !== undefined) {
+            return node.getNode().nextSibling;
+        }
+        return parent.getChildren().indexOf(node.getNode()) + 1;
+    },
+    createNodeHelper(node, classes, attributes) {
+        let tagName = node;
+        let element = fastnVirtual.document.createElement(node);
+        for (let key in attributes) {
+            element.setAttribute(key, attributes[key]);
+        }
+        for (let c in classes) {
+            element.classList.add(classes[c]);
+        }
+
+        return [tagName, element];
+    },
+    addCssFile(url) {
+        // Create a new link element
+        const linkElement = document.createElement("link");
+
+        // Set the attributes of the link element
+        linkElement.rel = "stylesheet";
+        linkElement.href = url;
+
+        // Append the link element to the head section of the document
+        document.head.appendChild(linkElement);
+    },
+    addCodeTheme(theme) {
+        if (!fastn_dom.codeData.addedCssFile.includes(theme)) {
+            let themeCssUrl = fastn_dom.codeData.availableThemes[theme];
+            fastn_utils.addCssFile(themeCssUrl);
+            fastn_dom.codeData.addedCssFile.push(theme);
+        }
+    },
+    /**
+     * Searches for highlighter occurrences in the text, removes them,
+     * and returns the modified text along with highlighted line numbers.
+     *
+     * @param {string} text - The input text to process.
+     * @returns {{ modifiedText: string, highlightedLines: number[] }}
+     *   Object containing modified text and an array of highlighted line numbers.
+     *
+     * @example
+     * const text = `/-- ftd.text: Hello ;; hello
+     *
+     * -- some-component: caption-value
+     * attr-name: attr-value ;; <hl>
+     *
+     *
+     * -- other-component: caption-value ;; <hl>
+     * attr-name: attr-value`;
+     *
+     * const result = findAndRemoveHighlighter(text);
+     * console.log(result.modifiedText);
+     * console.log(result.highlightedLines);
+     */
+    findAndRemoveHighlighter(text) {
+        const lines = text.split("\n");
+        const highlighter = ";; <hl>";
+        const result = {
+            modifiedText: "",
+            highlightedLines: "",
+        };
+
+        let highlightedLines = [];
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            const highlighterIndex = line.indexOf(highlighter);
+
+            if (highlighterIndex !== -1) {
+                highlightedLines.push(i + 1); // Adding 1 to convert to human-readable line numbers
+                result.modifiedText +=
+                    line.substring(0, highlighterIndex) +
+                    line.substring(highlighterIndex + highlighter.length) +
+                    "\n";
+            } else {
+                result.modifiedText += line + "\n";
+            }
+        }
+
+        result.highlightedLines =
+            fastn_utils.private.mergeNumbers(highlightedLines);
+
+        return result;
+    },
+    getNodeValue(node) {
+        return node.getNode().value;
+    },
+    setFullHeight() {
+        if (!ssr) {
+            document.body.style.height = `max(${document.documentElement.scrollHeight}px, 100%)`;
+        }
+    },
+    resetFullHeight() {
+        if (!ssr) {
+            document.body.style.height = `100%`;
+        }
+    },
+    highlightCode(codeElement, extraCodeData) {
+        if (
+            !ssr &&
+            !fastn_utils.isNull(extraCodeData.language) &&
+            !fastn_utils.isNull(extraCodeData.theme)
+        ) {
+            Prism.highlightElement(codeElement);
+        }
+    },
+
+    //Taken from: https://byby.dev/js-slugify-string
+    slugify(str) {
+        return String(str)
+            .normalize("NFKD") // split accented characters into their base characters and diacritical marks
+            .replace(".", "-")
+            .replace(/[\u0300-\u036f]/g, "") // remove all the accents, which happen to be all in the \u03xx UNICODE block.
+            .trim() // trim leading or trailing whitespace
+            .toLowerCase() // convert to lowercase
+            .replace(/[^a-z0-9 -]/g, "") // remove non-alphanumeric characters
+            .replace(/\s+/g, "-") // replace spaces with hyphens
+            .replace(/-+/g, "-"); // remove consecutive hyphens
+    },
+
+    getEventListeners(node) {
+        return {
+            onclick: node.onclick,
+            onmouseleave: node.onmouseleave,
+            onmouseenter: node.onmouseenter,
+            oninput: node.oninput,
+            onblur: node.onblur,
+            onfocus: node.onfocus,
+        };
+    },
+
+    flattenArray(arr) {
+        return fastn_utils.private.flattenArray([arr]);
+    },
+    toSnakeCase(value) {
+        return value
+            .trim()
+            .split("")
+            .map((v, i) => {
+                const lowercased = v.toLowerCase();
+                if (v == " ") {
+                    return "_";
+                }
+                if (v != lowercased && i > 0) {
+                    return `_${lowercased}`;
+                }
+                return lowercased;
+            })
+            .join("");
+    },
+    escapeHtmlInCode(str) {
+        return str.replace(/[<]/g, "&lt;");
+    },
+
+    escapeHtmlInMarkdown(str) {
+        if (typeof str !== "string") {
+            return str;
+        }
+
+        let result = "";
+        let ch_map = {
+            "<": "&lt;",
+            ">": "&gt;",
+            "&": "&amp;",
+            '"': "&quot;",
+            "'": "&#39;",
+            "/": "&#47;",
+        };
+        let foundBackTick = false;
+        for (var i = 0; i < str.length; i++) {
+            let current = str[i];
+            if (current === "`") {
+                foundBackTick = !foundBackTick;
+            }
+            // Ignore escaping html inside backtick (as marked function
+            // escape html for backtick content):
+            // For instance: In `hello <title>`, `<` and `>` should not be
+            // escaped. (`foundBackTick`)
+            // Also the `/` which is followed by `<` should be escaped.
+            // For instance: `</` should be escaped but `http://` should not
+            // be escaped. (`(current === '/' && !(i > 0 && str[i-1] === "<"))`)
+            if (
+                foundBackTick ||
+                (current === "/" && !(i > 0 && str[i - 1] === "<"))
+            ) {
+                result += current;
+                continue;
+            }
+            result += ch_map[current] ?? current;
+        }
+        return result;
+    },
+
+    // Used to initialize __args__ inside component and UDF js functions
+    getArgs(default_args, passed_args) {
+        // Note: arguments as variable name not allowed in strict mode
+        let args = default_args;
+        for (var arg in passed_args) {
+            if (!default_args.hasOwnProperty(arg)) {
+                args[arg] = passed_args[arg];
+                continue;
+            }
+            if (
+                default_args.hasOwnProperty(arg) &&
+                fastn_utils.getStaticValue(passed_args[arg]) !== undefined
+            ) {
+                args[arg] = passed_args[arg];
+            }
+        }
+        return args;
+    },
+
+    /**
+     * Replaces the children of `document.body` with the children from
+     * newChildrenWrapper and updates the styles based on the
+     * `fastn_dom.styleClasses`.
+     *
+     * @param {HTMLElement} newChildrenWrapper - The wrapper element
+     * containing the new children.
+     */
+    replaceBodyStyleAndChildren(newChildrenWrapper) {
+        // Update styles based on `fastn_dom.styleClasses`
+        let styles = document.getElementById("styles");
+        styles.innerHTML = fastn_dom.getClassesAsStringWithoutStyleTag();
+
+        // Replace the children of document.body with the children from
+        // newChildrenWrapper
+        fastn_utils.private.replaceChildren(document.body, newChildrenWrapper);
+    },
+};
+
+fastn_utils.private = {
+    flattenArray(arr) {
+        return arr.reduce((acc, item) => {
+            return acc.concat(
+                Array.isArray(item)
+                    ? fastn_utils.private.flattenArray(item)
+                    : item,
+            );
+        }, []);
+    },
+    /**
+     * Helper function for `fastn_utils.markdown_inline` to find the number of
+     * spaces before and after the content.
+     *
+     * @param {string} s - The input string.
+     * @returns {Object} - An object with 'space_before' and 'space_after' properties
+     * representing the number of spaces before and after the content.
+     */
+    spaces(s) {
+        let space_before = 0;
+        for (let i = 0; i < s.length; i++) {
+            if (s[i] !== " ") {
+                space_before = i;
+                break;
+            }
+            space_before = i + 1;
+        }
+        if (space_before === s.length) {
+            return { space_before, space_after: 0 };
+        }
+
+        let space_after = 0;
+        for (let i = s.length - 1; i >= 0; i--) {
+            if (s[i] !== " ") {
+                space_after = s.length - 1 - i;
+                break;
+            }
+            space_after = i + 1;
+        }
+
+        return { space_before, space_after };
+    },
+    /**
+     * Helper function for `fastn_utils.markdown_inline` to replace the last
+     * occurrence of a substring in a string.
+     *
+     * @param {string} s - The input string.
+     * @param {string} old_word - The substring to be replaced.
+     * @param {string} new_word - The replacement substring.
+     * @returns {string} - The string with the last occurrence of 'old_word' replaced by 'new_word'.
+     */
+    replace_last_occurrence(s, old_word, new_word) {
+        if (!s.includes(old_word)) {
+            return s;
+        }
+
+        const idx = s.lastIndexOf(old_word);
+        return s.slice(0, idx) + new_word + s.slice(idx + old_word.length);
+    },
+    /**
+     * Helper function for `fastn_utils.markdown_inline` to generate a string
+     * containing a specified number of spaces.
+     *
+     * @param {number} n - The number of spaces to be generated.
+     * @returns {string} - A string with 'n' spaces concatenated together.
+     */
+    repeated_space(n) {
+        return Array.from({ length: n }, () => " ").join("");
+    },
+    /**
+     * Merges consecutive numbers in a comma-separated list into ranges.
+     *
+     * @param {string} input - Comma-separated list of numbers.
+     * @returns {string} Merged number ranges.
+     *
+     * @example
+     * const input = '1,2,3,5,6,7,8,9,11';
+     * const output = mergeNumbers(input);
+     * console.log(output); // Output: '1-3,5-9,11'
+     */
+    mergeNumbers(numbers) {
+        if (numbers.length === 0) {
+            return "";
+        }
+        const mergedRanges = [];
+
+        let start = numbers[0];
+        let end = numbers[0];
+
+        for (let i = 1; i < numbers.length; i++) {
+            if (numbers[i] === end + 1) {
+                end = numbers[i];
+            } else {
+                if (start === end) {
+                    mergedRanges.push(start.toString());
+                } else {
+                    mergedRanges.push(`${start}-${end}`);
+                }
+                start = end = numbers[i];
+            }
+        }
+
+        if (start === end) {
+            mergedRanges.push(start.toString());
+        } else {
+            mergedRanges.push(`${start}-${end}`);
+        }
+
+        return mergedRanges.join(",");
+    },
+    addUnderscoreToStart(text) {
+        if (/^\d/.test(text)) {
+            return "_" + text;
+        }
+        return text;
+    },
+
+    /**
+     * Replaces the children of a parent element with the children from a
+     * new children wrapper.
+     *
+     * @param {HTMLElement} parent - The parent element whose children will
+     * be replaced.
+     * @param {HTMLElement} newChildrenWrapper - The wrapper element
+     * containing the new children.
+     * @returns {void}
+     */
+    replaceChildren(parent, newChildrenWrapper) {
+        // Remove existing children of the parent
+        var children = parent.children;
+        // Loop through the direct children and remove those with tagName 'div'
+        for (var i = children.length - 1; i >= 0; i--) {
+            var child = children[i];
+            if (child.tagName === "DIV") {
+                parent.removeChild(child);
+            }
+        }
+
+        // Cut and append the children from newChildrenWrapper to the parent
+        while (newChildrenWrapper.firstChild) {
+            parent.appendChild(newChildrenWrapper.firstChild);
+        }
+    },
+
+    // Cookie related functions ----------------------------------------------
+    setCookie(cookieName, cookieValue) {
+        cookieName = fastn_utils.getStaticValue(cookieName);
+        cookieValue = fastn_utils.getStaticValue(cookieValue);
+
+        // Default expiration period of 30 days
+        var expires = "";
+        var expirationDays = 30;
+        if (expirationDays) {
+            var date = new Date();
+            date.setTime(date.getTime() + expirationDays * 24 * 60 * 60 * 1000);
+            expires = "; expires=" + date.toUTCString();
+        }
+
+        document.cookie =
+            cookieName +
+            "=" +
+            encodeURIComponent(cookieValue) +
+            expires +
+            "; path=/";
+    },
+    getCookie(cookieName) {
+        cookieName = fastn_utils.getStaticValue(cookieName);
+        var name = cookieName + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var cookieArray = decodedCookie.split(";");
+
+        for (var i = 0; i < cookieArray.length; i++) {
+            var cookie = cookieArray[i].trim();
+            if (cookie.indexOf(name) === 0) {
+                return cookie.substring(name.length, cookie.length);
+            }
+        }
+
+        return "None";
+    },
+};
+
+/*Object.prototype.get = function(index) {
+    return this[index];
 }*/
+let fastnVirtual = {};
 
-*, :after, :before {
-    /*box-sizing: inherit;*/
-    box-sizing: border-box;
-    text-decoration: none;
-    box-sizing: border-box;
-    border-top-width: 0px;
-    border-bottom-width: 0px;
-    border-left-width: 0px;
-    border-right-width: 0px;
-    border-style: solid;
-    height: auto;
-    width: auto;
-}
+let id_counter = 0;
+let ssr = false;
+let doubleBuffering = false;
 
-*, pre, div {
-    padding: 0;
-    margin: 0;
-    gap: 0;
-    outline: none;
-}
+class ClassList {
+    #classes = [];
+    add(item) {
+        this.#classes.push(item);
+    }
 
-
-body, ol ol, ol ul, ul ol, ul ul {
-    margin:0
-}
-pre, table{
-    overflow:auto
-}
-html {
-    height: 100%;
-    width: 100%;
+    remove(itemToRemove) {
+        this.#classes.filter((item) => item !== itemToRemove);
+    }
+    toString() {
+        return this.#classes.join(" ");
+    }
+    getClasses() {
+        return this.#classes;
+    }
 }
 
-body {
-    height: 100%;
-    width: 100%;
+class Node {
+    id;
+    #dataId;
+    #tagName;
+    #children;
+    #attributes;
+    constructor(id, tagName) {
+        this.#tagName = tagName;
+        this.#dataId = id;
+        this.classList = new ClassList();
+        this.#children = [];
+        this.#attributes = {};
+        this.innerHTML = "";
+        this.style = {};
+        this.onclick = null;
+        this.id = null;
+    }
+    appendChild(c) {
+        this.#children.push(c);
+    }
+
+    insertBefore(node, index) {
+        this.#children.splice(index, 0, node);
+    }
+
+    getChildren() {
+        return this.#children;
+    }
+
+    setAttribute(attribute, value) {
+        this.#attributes[attribute] = value;
+    }
+
+    getAttribute(attribute) {
+        return this.#attributes[attribute];
+    }
+
+    removeAttribute(attribute) {
+        if (attribute in this.#attributes) delete this.#attributes[attribute];
+    }
+
+    // Caution: This is only supported in ssr mode
+    updateTagName(tagName) {
+        this.#tagName = tagName;
+    }
+    // Caution: This is only supported in ssr mode
+    toHtmlAsString() {
+        const openingTag = `<${
+            this.#tagName
+        }${this.getDataIdString()}${this.getIdString()}${this.getAttributesString()}${this.getClassString()}${this.getStyleString()}>`;
+        const closingTag = `</${this.#tagName}>`;
+        const innerHTML = this.innerHTML;
+        const childNodes = this.#children
+            .map((child) => child.toHtmlAsString())
+            .join("");
+
+        return `${openingTag}${innerHTML}${childNodes}${closingTag}`;
+    }
+    // Caution: This is only supported in ssr mode
+    getDataIdString() {
+        return ` data-id="${this.#dataId}"`;
+    }
+    // Caution: This is only supported in ssr mode
+    getIdString() {
+        return fastn_utils.isNull(this.id) ? "" : ` id="${this.id}"`;
+    }
+    // Caution: This is only supported in ssr mode
+    getClassString() {
+        const classList = this.classList.toString();
+        return classList ? ` class="${classList}"` : "";
+    }
+    // Caution: This is only supported in ssr mode
+    getStyleString() {
+        const styleProperties = Object.entries(this.style)
+            .map(([prop, value]) => `${prop}:${value}`)
+            .join(";");
+        return styleProperties ? ` style="${styleProperties}"` : "";
+    }
+    // Caution: This is only supported in ssr mode
+    getAttributesString() {
+        const nodeAttributes = Object.entries(this.#attributes)
+            .map(([attribute, value]) => {
+                if (value !== undefined && value !== null && value !== "") {
+                    return `${attribute}=\"${value}\"`;
+                }
+                return `${attribute}`;
+            })
+            .join(" ");
+        return nodeAttributes ? ` ${nodeAttributes}` : "";
+    }
 }
 
-input {
-    vertical-align: middle;
-}
-pre {
-    white-space: break-spaces;
-    word-wrap: break-word;
-}
-html {
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizelegibility;
-    -webkit-text-size-adjust: 100%;
-    text-size-adjust: 100%;
-}
-iframe {
-    border: 0;
-    color-scheme: auto;
+class Document2 {
+    createElement(tagName) {
+        id_counter++;
+
+        if (ssr) {
+            return new Node(id_counter, tagName);
+        }
+
+        if (tagName === "body") {
+            return window.document.body;
+        }
+
+        if (fastn_utils.isWrapperNode(tagName)) {
+            return window.document.createComment(fastn_dom.commentMessage);
+        }
+        if (fastn_utils.isCommentNode(tagName)) {
+            return window.document.createComment(fastn_dom.commentMessage);
+        }
+        return window.document.createElement(tagName);
+    }
 }
 
-pre code {
+fastnVirtual.document = new Document2();
+
+function addClosureToBreakpointWidth() {
+    let closure = fastn.closureWithoutExecute(function () {
+        let current = ftd.get_device();
+        let lastDevice = ftd.device.get();
+        if (current === lastDevice) {
+            return;
+        }
+        console.log("last_device", lastDevice, "current_device", current);
+        ftd.device.set(current);
+    });
+
+    ftd.breakpoint_width.addClosure(closure);
+}
+
+fastnVirtual.doubleBuffer = function (main) {
+    addClosureToBreakpointWidth();
+    let parent = document.createElement("div");
+    let current_device = ftd.get_device();
+    ftd.device = fastn.mutable(current_device);
+    doubleBuffering = true;
+    fastnVirtual.root = parent;
+    main(parent);
+    fastn_utils.replaceBodyStyleAndChildren(parent);
+    doubleBuffering = false;
+    fastnVirtual.root = document.body;
+};
+
+fastnVirtual.ssr = function (main) {
+    ssr = true;
+    let body = fastnVirtual.document.createElement("body");
+    main(body);
+    ssr = false;
+    id_counter = 0;
+    return body.toHtmlAsString() + fastn_dom.getClassesAsString();
+};
+class MutableVariable {
+    #value;
+    constructor(value) {
+        this.#value = value;
+    }
+
+    get() {
+        return fastn_utils.getStaticValue(this.#value);
+    }
+
+    set(value) {
+        this.#value.set(value);
+    }
+    // Todo: Remove closure when node is removed.
+    on_change(func) {
+        this.#value.addClosure(fastn.closureWithoutExecute(func));
+    }
+}
+
+class MutableListVariable {
+    #value;
+    constructor(value) {
+        this.#value = value;
+    }
+    get() {
+        return fastn_utils.getStaticValue(this.#value);
+    }
+    set(index, list) {
+        if (list === undefined) {
+            this.#value.set(fastn_utils.staticToMutables(index));
+            return;
+        }
+        this.#value.set(index, fastn_utils.staticToMutables(list));
+    }
+    insertAt(index, value) {
+        this.#value.insertAt(index, fastn_utils.staticToMutables(value));
+    }
+    deleteAt(index) {
+        this.#value.deleteAt(index);
+    }
+    push(value) {
+        this.#value.push(value);
+    }
+    pop() {
+        this.#value.pop();
+    }
+    clearAll() {
+        this.#value.clearAll();
+    }
+    on_change(func) {
+        this.#value.addClosure(fastn.closureWithoutExecute(func));
+    }
+}
+
+class RecordVariable {
+    #value;
+    constructor(value) {
+        this.#value = value;
+    }
+
+    get() {
+        return fastn_utils.getStaticValue(this.#value);
+    }
+
+    set(record) {
+        this.#value.set(fastn_utils.staticToMutables(record));
+    }
+
+    on_change(func) {
+        this.#value.addClosure(fastn.closureWithoutExecute(func));
+    }
+}
+class StaticVariable {
+    #value;
+    #closures;
+    constructor(value) {
+        this.#value = value;
+        this.#closures = [];
+        if (this.#value instanceof fastn.mutableClass) {
+            this.#value.addClosure(
+                fastn.closure(() =>
+                    this.#closures.forEach((closure) => closure.update()),
+                ),
+            );
+        }
+    }
+
+    get() {
+        return fastn_utils.getStaticValue(this.#value);
+    }
+
+    on_change(func) {
+        if (this.#value instanceof fastn.mutableClass) {
+            this.#value.addClosure(fastn.closure(func));
+        }
+    }
+}
+
+fastn.webComponentVariable = {
+    mutable: (value) => {
+        return new MutableVariable(value);
+    },
+    mutableList: (value) => {
+        return new MutableListVariable(value);
+    },
+    static: (value) => {
+        return new StaticVariable(value);
+    },
+    record: (value) => {
+        return new RecordVariable(value);
+    },
+};
+const ftd = (function () {
+    const exports = {};
+
+    const riveNodes = {};
+
+    const global = {};
+
+    const onLoadListeners = new Set();
+
+    let fastnLoaded = false;
+
+    exports.global = global;
+
+    exports.riveNodes = riveNodes;
+
+    exports.is_empty = (value) => {
+        value = fastn_utils.getFlattenStaticValue(value);
+        return fastn_utils.isNull(value) || value.length === 0;
+    };
+
+    exports.len = (data) => {
+        if (!!data && data instanceof fastn.mutableListClass) {
+            if (data.getLength) return data.getLength();
+            return -1;
+        }
+        if (!!data && data instanceof fastn.mutableClass) {
+            let inner_data = data.get();
+            return exports.len(inner_data);
+        }
+        if (!!data && data.length) {
+            return data.length;
+        }
+        return -2;
+    };
+
+    exports.copy_to_clipboard = (args) => {
+        let text = args.a;
+        if (text instanceof fastn.mutableClass)
+            text = fastn_utils.getStaticValue(text);
+        if (text.startsWith("\\", 0)) {
+            text = text.substring(1);
+        }
+        if (!navigator.clipboard) {
+            fallbackCopyTextToClipboard(text);
+            return;
+        }
+        navigator.clipboard.writeText(text).then(
+            function () {
+                console.log("Async: Copying to clipboard was successful!");
+            },
+            function (err) {
+                console.error("Async: Could not copy text: ", err);
+            },
+        );
+    };
+
+    // Todo: Implement this (Remove highlighter)
+    exports.clean_code = (args) => args.a;
+
+    exports.set_rive_boolean = (args, node) => {
+        if (!!args.rive) {
+            let riveNode = riveNodes[`${args.rive}__${exports.device.get()}`];
+            node = riveNode ? riveNode : node;
+        }
+        let riveConst = node.getExtraData().rive;
+        const stateMachineName = riveConst.stateMachineNames[0];
+        const inputs = riveConst.stateMachineInputs(stateMachineName);
+        const bumpTrigger = inputs.find((i) => i.name === args.input);
+        bumpTrigger.value = args.value;
+    };
+
+    exports.toggle_rive_boolean = (args, node) => {
+        if (!!args.rive) {
+            let riveNode = riveNodes[`${args.rive}__${exports.device.get()}`];
+            node = riveNode ? riveNode : node;
+        }
+        let riveConst = node.getExtraData().rive;
+        const stateMachineName = riveConst.stateMachineNames[0];
+        const inputs = riveConst.stateMachineInputs(stateMachineName);
+        const trigger = inputs.find((i) => i.name === args.input);
+        trigger.value = !trigger.value;
+    };
+
+    exports.set_rive_integer = (args, node) => {
+        if (!!args.rive) {
+            let riveNode = riveNodes[`${args.rive}__${exports.device.get()}`];
+            node = riveNode ? riveNode : node;
+        }
+        let riveConst = node.getExtraData().rive;
+        const stateMachineName = riveConst.stateMachineNames[0];
+        const inputs = riveConst.stateMachineInputs(stateMachineName);
+        const trigger = inputs.find((i) => i.name === args.input);
+        trigger.value = args.value;
+    };
+
+    exports.fire_rive = (args, node) => {
+        if (!!args.rive) {
+            let riveNode = riveNodes[`${args.rive}__${exports.device.get()}`];
+            node = riveNode ? riveNode : node;
+        }
+        let riveConst = node.getExtraData().rive;
+        const stateMachineName = riveConst.stateMachineNames[0];
+        const inputs = riveConst.stateMachineInputs(stateMachineName);
+        const trigger = inputs.find((i) => i.name === args.input);
+        trigger.fire();
+    };
+
+    exports.play_rive = (args, node) => {
+        if (!!args.rive) {
+            let riveNode = riveNodes[`${args.rive}__${exports.device.get()}`];
+            node = riveNode ? riveNode : node;
+        }
+        node.getExtraData().rive.play(args.input);
+    };
+
+    exports.pause_rive = (args, node) => {
+        if (!!args.rive) {
+            let riveNode = riveNodes[`${args.rive}__${exports.device.get()}`];
+            node = riveNode ? riveNode : node;
+        }
+        node.getExtraData().rive.pause(args.input);
+    };
+
+    exports.toggle_play_rive = (args, node) => {
+        if (!!args.rive) {
+            let riveNode = riveNodes[`${args.rive}__${exports.device.get()}`];
+            node = riveNode ? riveNode : node;
+        }
+        let riveConst = node.getExtraData().rive;
+        riveConst.playingAnimationNames.includes(args.input)
+            ? riveConst.pause(args.input)
+            : riveConst.play(args.input);
+    };
+
+    exports.get = (value, index) => {
+        return fastn_utils.getStaticValue(
+            fastn_utils.getterByKey(value, index),
+        );
+    };
+
+    exports.component_data = (component) => {
+        let attributesIndex = component.getAttribute(
+            fastn_dom.webComponentArgument,
+        );
+        let attributes = fastn_dom.webComponent[attributesIndex];
+        return Object.fromEntries(
+            Object.entries(attributes).map(([k, v]) => {
+                // Todo: check if argument is mutable reference or not
+                if (v instanceof fastn.mutableClass) {
+                    v = fastn.webComponentVariable.mutable(v);
+                } else if (v instanceof fastn.mutableListClass) {
+                    v = fastn.webComponentVariable.mutableList(v);
+                } else if (v instanceof fastn.recordInstanceClass) {
+                    v = fastn.webComponentVariable.record(v);
+                } else {
+                    v = fastn.webComponentVariable.static(v);
+                }
+                return [k, v];
+            }),
+        );
+    };
+
+    exports.append = function (list, item) {
+        list.push(item);
+    };
+    exports.pop = function (list) {
+        list.pop();
+    };
+    exports.insert_at = function (list, index, item) {
+        list.insertAt(index, item);
+    };
+    exports.delete_at = function (list, index) {
+        list.deleteAt(index);
+    };
+    exports.clear_all = function (list) {
+        list.clearAll();
+    };
+    exports.clear = exports.clear_all;
+    exports.set_list = function (list, value) {
+        list.set(value);
+    };
+
+    exports.http = function (url, opts, ...body) {
+        if ((!opts) instanceof fastn.recordInstanceClass) {
+            console.info(`opts must be a record instance of
+                -- record ftd.http-options:
+                string method: GET
+                string redirect: manual
+                string fastn-module:
+            `);
+            throw new Error("invalid opts");
+        }
+
+        let method = opts.get("method").get();
+        let fastn_module = opts.get("fastn_module").get();
+        let redirect = opts.get("redirect").get();
+
+        if (!["manual", "follow", "error"].includes(redirect)) {
+            throw new Error(
+                `redirect must be one of "manual", "follow", "error"`,
+            );
+        }
+
+        if (url instanceof fastn.mutableClass) url = url.get();
+        method = method.trim().toUpperCase();
+        let request_json = {};
+
+        const init = {
+            method,
+            headers: { "Content-Type": "application/json" },
+            json: null,
+            redirect,
+        };
+
+        if (body && method !== "GET") {
+            if (body[0] instanceof fastn.recordInstanceClass) {
+                if (body.length !== 1) {
+                    console.warn(
+                        "body is a record instance, but has more than 1 element, ignoring",
+                    );
+                }
+                request_json = body[0].toObject();
+            } else {
+                let json = body[0];
+                if (
+                    body.length !== 1 ||
+                    (body[0].length === 2 && Array.isArray(body[0]))
+                ) {
+                    let new_json = {};
+                    // @ts-ignore
+                    for (let [header, value] of Object.entries(body)) {
+                        let [key, val] =
+                            value.length === 2 ? value : [header, value];
+                        new_json[key] = fastn_utils.getStaticValue(val);
+                    }
+                    json = new_json;
+                }
+                request_json = json;
+            }
+        }
+
+        init.body = JSON.stringify(request_json);
+
+        let json;
+        fetch(url, init)
+            .then((res) => {
+                if (res.redirected) {
+                    window.location.href = res.url;
+                    return;
+                }
+
+                if (!res.ok) {
+                    return new Error("[http]: Request failed", res);
+                }
+
+                return res.json();
+            })
+            .then((response) => {
+                console.log("[http]: Response OK", response);
+                if (response.redirect) {
+                    window.location.href = response.redirect;
+                } else if (!!response && !!response.reload) {
+                    window.location.reload();
+                } else {
+                    let data = {};
+                    if (!!response.errors) {
+                        for (let key of Object.keys(response.errors)) {
+                            let value = response.errors[key];
+                            if (Array.isArray(value)) {
+                                // django returns a list of strings
+                                value = value.join(" ");
+                            }
+                            // also django does not append `-error`
+                            key = key + "-error";
+                            key = fastn_module + "#" + key;
+                            data[key] = value;
+                        }
+                    }
+                    if (!!response.data) {
+                        if (Object.keys(data).length !== 0) {
+                            console.log(
+                                "both .errors and .data are present in response, ignoring .data",
+                            );
+                        } else {
+                            data = response.data;
+                        }
+                    }
+                    for (let ftd_variable of Object.keys(data)) {
+                        // @ts-ignore
+                        window.ftd.set_value(ftd_variable, data[ftd_variable]);
+                    }
+                }
+            })
+            .catch(console.error);
+        return json;
+    };
+
+    exports.navigate = function (url, request_data) {
+        let query_parameters = new URLSearchParams();
+        if (request_data instanceof fastn.recordInstanceClass) {
+            // @ts-ignore
+            for (let [header, value] of Object.entries(
+                request_data.toObject(),
+            )) {
+                let [key, val] = value.length === 2 ? value : [header, value];
+                query_parameters.set(key, val);
+            }
+        }
+        let query_string = query_parameters.toString();
+        if (query_string) {
+            window.location.href = url + "?" + query_parameters.toString();
+        } else {
+            window.location.href = url;
+        }
+    };
+
+    exports.toggle_dark_mode = function () {
+        const is_dark_mode = exports.get(exports.dark_mode);
+        if (is_dark_mode) {
+            enable_light_mode();
+        } else {
+            enable_dark_mode();
+        }
+    };
+
+    exports.local_storage = {
+        _get_key(key) {
+            if (key instanceof fastn.mutableClass) {
+                key = key.get();
+            }
+            const packageNamePrefix = __fastn_package_name__
+                ? `${__fastn_package_name__}_`
+                : "";
+            const snakeCaseKey = fastn_utils.toSnakeCase(key);
+
+            return `${packageNamePrefix}${snakeCaseKey}`;
+        },
+        set(key, value) {
+            key = this._get_key(key);
+            value = fastn_utils.getFlattenStaticValue(value);
+            localStorage.setItem(
+                key,
+                value && typeof value === "object"
+                    ? JSON.stringify(value)
+                    : value,
+            );
+        },
+        get(key) {
+            key = this._get_key(key);
+            if (ssr) {
+                return;
+            }
+            const item = localStorage.getItem(key);
+            if (!item) {
+                return;
+            }
+            try {
+                const obj = JSON.parse(item);
+
+                return fastn_utils.staticToMutables(obj);
+            } catch {
+                return item;
+            }
+        },
+        delete(key) {
+            key = this._get_key(key);
+            localStorage.removeItem(key);
+        },
+    };
+
+    exports.on_load = (listener) => {
+        if (typeof listener !== "function") {
+            throw new Error("listener must be a function");
+        }
+
+        if (fastnLoaded) {
+            listener();
+            return;
+        }
+
+        onLoadListeners.add(listener);
+    };
+
+    exports.emit_on_load = () => {
+        if (fastnLoaded) return;
+
+        fastnLoaded = true;
+        onLoadListeners.forEach((listener) => listener());
+    };
+
+    // LEGACY
+
+    function legacyNameToJS(s) {
+        let name = s.toString();
+
+        if (name[0].charCodeAt(0) >= 48 && name[0].charCodeAt(0) <= 57) {
+            name = "_" + name;
+        }
+
+        return name
+            .replaceAll("#", "__")
+            .replaceAll("-", "_")
+            .replaceAll(":", "___")
+            .replaceAll(",", "$")
+            .replaceAll("\\", "/")
+            .replaceAll("/", "_")
+            .replaceAll(".", "_");
+    }
+
+    function getDocNameAndRemaining(s) {
+        let part1 = "";
+        let patternToSplitAt = s;
+
+        const split1 = s.split("#");
+        if (split1.length === 2) {
+            part1 = split1[0] + "#";
+            patternToSplitAt = split1[1];
+        }
+
+        const split2 = patternToSplitAt.split(".");
+        if (split2.length === 2) {
+            return [part1 + split2[0], split2[1]];
+        } else {
+            return [s, null];
+        }
+    }
+
+    function isMutable(obj) {
+        return (
+            obj instanceof fastn.mutableClass ||
+            obj instanceof fastn.mutableListClass ||
+            obj instanceof fastn.recordInstanceClass
+        );
+    }
+
+    exports.set_value = function (variable, value) {
+        const [var_name, remaining] = getDocNameAndRemaining(variable);
+        let name = legacyNameToJS(var_name);
+        if (global[name] === undefined) {
+            console.log(
+                `[ftd-legacy]: ${variable} is not in global map, ignoring`,
+            );
+            return;
+        }
+        const mutable = global[name];
+        if (!isMutable(mutable)) {
+            console.log(`[ftd-legacy]: ${variable} is not a mutable, ignoring`);
+            return;
+        }
+        if (remaining) {
+            mutable.get(remaining).set(value);
+        } else {
+            mutable.set(value);
+        }
+    };
+
+    exports.get_value = function (variable) {
+        const [var_name, remaining] = getDocNameAndRemaining(variable);
+        let name = legacyNameToJS(var_name);
+        if (global[name] === undefined) {
+            console.log(
+                `[ftd-legacy]: ${variable} is not in global map, ignoring`,
+            );
+            return;
+        }
+        const value = global[name];
+        if (isMutable(value)) {
+            if (remaining) {
+                return value.get(remaining);
+            } else {
+                return value.get();
+            }
+        } else {
+            return value;
+        }
+    };
+
+    // Language related functions ---------------------------------------------
+    exports.set_current_language = function (language) {
+        language = fastn_utils.getStaticValue(language);
+        fastn_utils.private.setCookie("fastn-lang", language);
+        location.reload();
+    };
+
+    exports.get_current_language = function () {
+        return fastn_utils.private.getCookie("fastn-lang");
+    };
+
+    return exports;
+})();
+
+const len = ftd.len;
+
+const global = ftd.global;
+ftd.clickOutsideEvents = [];
+ftd.globalKeyEvents = [];
+ftd.globalKeySeqEvents = [];
+
+ftd.get_device = function () {
+    const MOBILE_CLASS = "mobile";
+    // not at all sure about this function logic.
+    let width = window.innerWidth;
+    // In the future, we may want to have more than one break points, and
+    // then we may also want the theme builders to decide where the
+    // breakpoints should go. we should be able to fetch fpm variables
+    // here, or maybe simply pass the width, user agent etc. to fpm and
+    // let people put the checks on width user agent etc., but it would
+    // be good if we can standardize few breakpoints. or maybe we should
+    // do both, some standard breakpoints and pass the raw data.
+    // we would then rename this function to detect_device() which will
+    // return one of "desktop", "mobile". and also maybe have another
+    // function detect_orientation(), "landscape" and "portrait" etc.,
+    // and instead of setting `ftd#mobile: boolean` we set `ftd#device`
+    // and `ftd#view-port-orientation` etc.
+    let mobile_breakpoint = fastn_utils.getStaticValue(
+        ftd.breakpoint_width.get("mobile"),
+    );
+    if (width <= mobile_breakpoint) {
+        document.body.classList.add(MOBILE_CLASS);
+        return fastn_dom.DeviceData.Mobile;
+    }
+    if (document.body.classList.contains(MOBILE_CLASS)) {
+        document.body.classList.remove(MOBILE_CLASS);
+    }
+    return fastn_dom.DeviceData.Desktop;
+};
+
+ftd.post_init = function () {
+    const DARK_MODE_COOKIE = "fastn-dark-mode";
+    const COOKIE_SYSTEM_LIGHT = "system-light";
+    const COOKIE_SYSTEM_DARK = "system-dark";
+    const COOKIE_DARK_MODE = "dark";
+    const COOKIE_LIGHT_MODE = "light";
+    const DARK_MODE_CLASS = "dark";
+    let last_device = ftd.device.get();
+
+    window.onresize = function () {
+        initialise_device();
+    };
+    function initialise_click_outside_events() {
+        document.addEventListener("click", function (event) {
+            ftd.clickOutsideEvents.forEach(([ftdNode, func]) => {
+                let node = ftdNode.getNode();
+                if (
+                    !!node &&
+                    node.style.display !== "none" &&
+                    !node.contains(event.target)
+                ) {
+                    func();
+                }
+            });
+        });
+    }
+    function initialise_global_key_events() {
+        let globalKeys = {};
+        let buffer = [];
+        let lastKeyTime = Date.now();
+
+        document.addEventListener("keydown", function (event) {
+            let eventKey = fastn_utils.getEventKey(event);
+            globalKeys[eventKey] = true;
+            const currentTime = Date.now();
+            if (currentTime - lastKeyTime > 1000) {
+                buffer = [];
+            }
+            lastKeyTime = currentTime;
+            if (
+                (event.target.nodeName === "INPUT" ||
+                    event.target.nodeName === "TEXTAREA") &&
+                eventKey !== "ArrowDown" &&
+                eventKey !== "ArrowUp" &&
+                eventKey !== "ArrowRight" &&
+                eventKey !== "ArrowLeft" &&
+                event.target.nodeName === "INPUT" &&
+                eventKey !== "Enter"
+            ) {
+                return;
+            }
+            buffer.push(eventKey);
+
+            ftd.globalKeyEvents.forEach(([_ftdNode, func, array]) => {
+                let globalKeysPresent = array.reduce(
+                    (accumulator, currentValue) =>
+                        accumulator && !!globalKeys[currentValue],
+                    true,
+                );
+                if (
+                    globalKeysPresent &&
+                    buffer.join(",").includes(array.join(","))
+                ) {
+                    func();
+                    globalKeys[eventKey] = false;
+                    buffer = [];
+                }
+                return;
+            });
+
+            ftd.globalKeySeqEvents.forEach(([_ftdNode, func, array]) => {
+                if (buffer.join(",").includes(array.join(","))) {
+                    func();
+                    globalKeys[eventKey] = false;
+                    buffer = [];
+                }
+                return;
+            });
+        });
+
+        document.addEventListener("keyup", function (event) {
+            globalKeys[fastn_utils.getEventKey(event)] = false;
+        });
+    }
+    function initialise_device() {
+        let current = ftd.get_device();
+        if (current === last_device) {
+            return;
+        }
+        console.log("last_device", last_device, "current_device", current);
+        ftd.device.set(current);
+        last_device = current;
+    }
+
     /*
-    This break show-line-number in `ftd.code`
-    overflow-x: auto;
-    */
-    display: block;
-    padding: 0 1em !important;
-}
+        ftd.dark-mode behaviour:
 
-/* Common styles  */
-.ft_common{
-    text-decoration: none;
-    box-sizing: border-box;
-    border-top-width: 0px;
-    border-bottom-width: 0px;
-    border-left-width: 0px;
-    border-right-width: 0px;
-    border-style: solid;
-    height: auto;
-    width: auto;
-}
+        ftd.dark-mode is a boolean, default false, it tells the UI to show
+        the UI in dark or light mode. Themes should use this variable to decide
+        which mode to show in UI.
 
-/* Common container attributes */
-.ft_row, .ft_column {
-    display: flex;
-    align-items: start;
-    justify-content: start
-}
+        ftd.follow-system-dark-mode, boolean, default true, keeps track if
+        we are reading the value of `dark-mode` from system preference, or user
+        has overridden the system preference.
 
-.ft_full_size {
-    width: 100%;
-    height: 100%;
-}
+        These two variables must not be set by ftd code directly, but they must
+        use `$on-click$: message-host enable-dark-mode`, to ignore system
+        preference and use dark mode. `$on-click$: message-host
+        disable-dark-mode` to ignore system preference and use light mode and
+        `$on-click$: message-host follow-system-dark-mode` to ignore user
+        preference and start following system preference.
 
-.ft_row {
-    display: flex;
-    align-items: start;
-    justify-content: start;
-    flex-direction: row;
-    box-sizing: border-box;
-}
-.ft_column {
-    display: flex;
-    align-items: start;
-    justify-content: start;
-    flex-direction: column;
-    box-sizing: border-box;
-}
+        we use a cookie: `ftd-dark-mode` to store the preference. The cookie can
+        have three values:
 
-.ft_row {
-    flex-direction: row;
-}
+           cookie missing /          user wants us to honour system preference
+               system-light          and currently its light.
 
-.ft_column {
-    flex-direction: column;
-}
+           system-dark               follow system and currently its dark.
 
-.ft_md ul,
-.ft_md ol{
-    margin: 10px 0;
-}
+           light:                    user prefers light
 
-.ft_md ul ul,
-.ft_md ul ol,
-.ft_md ol ul,
-.ft_md ol ol {
-    margin: 0;
-}
+           dark:                     user prefers light
 
-.ft_md ul li,
-.ft_md ol li,
-.ft_md ul ol li .ft_md ul ul li .ft_md ol ul li .ft_md ol ol li {
-    position: relative;
-    padding-left: 32px;
-    margin: 4px 0;
-}
+        We use cookie instead of localstorage so in future `fpm-repo` can see
+        users preferences up front and renders the HTML on service wide
+        following user's preference.
 
-.ft_md ul {
-    list-style: none;
-    padding-left: 0;
-}
-
-.ft_md ol {
-    list-style: none;
-    padding-left: 0;
-    counter-reset: item;
-}
-
-.ft_md ol li:before,
-.ft_md ol ol li:before,
-.ft_md ul ol li:before {
-    content: counter(item);
-    counter-increment: item;
-    font-size: 11px;
-    line-height: 10px;
-    text-align: center;
-    padding: 4px 0;
-    height: 10px;
-    width: 18px;
-    border-radius: 10px;
-    position: absolute;
-    left: 0;
-    top: 5px;
-}
-
-.ft_md ul li::before,
-.ft_md ul ul li::before,
-.ft_md ol ul li::before {
-    content: "";
-    position: absolute;
-    width: 6px;
-    height: 6px;
-    left: 8px;
-    top: 10px;
-    border-radius: 50%;
-    background: #c1c8ce;
-}
-
-ul, ol {
-    /* Added padding to the left to move the ol number/ ul bullet to the right */
-    padding-left: 20px;
-}
-
-a {
-    color: #2952a3;
-}
-
-a:visited {
-    color: #856ab9;
-}
-
-a:hover {
-    color: #24478f;
-}
-
-.ft_md a {
-    text-decoration: none;
-}
-
-.ft_md a:visited {
-    text-decoration: none;
-}
-
-.ft_md a:hover {
-    text-decoration: none;
-}
-
-code {
-    padding: 0.1rem 0.25rem;
-    border-radius: 4px;
-    background-color: #0000000d;
-}
-
-.ft_md blockquote {
-    padding: 0.25rem 1rem;
-    margin: 1rem 0;
-    border-radius: 3px;
-}
-
-.ft_md blockquote > blockquote {
-    margin: 0;
-}
-
-
-body.dark code {
-    padding: 0.1rem 0.25rem;
-    border-radius: 4px;
-    background-color: #ffffff1f;
-}
-
-
-body.dark a {
-    color: #6498ff
-}
-
-body.dark a:visited {
-    color: #b793fb;
-}
-
-
-p {
-    margin-block-end: 1em;
-}
-
-h1:only-child {
-    margin-block-end: 0.67em
-}
-
-table, td, th {
-  border: 1px solid;
-}
-
-th {
-    padding: 6px;
-}
-
-td {
-    padding-left: 6px;
-    padding-right: 6px;
-    padding-top: 3px;
-    padding-bottom: 3px;
-}
-
-    </style>
-</head>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-<body data-id="1"><div data-id="2" class="ft_column __w-1 __h-2"><div data-id="3" class="ft_column ft_full_size"><div data-id="4" class="ft_column __w-3"><div data-id="5" class="ft_column __w-4 __pt-5 __pb-6 __bgc-7"><div data-id="6" class="ft_column __w-8 __pl-9 __pr-10 __mxw-11"><div data-id="7" class="ft_row __w-12 __jc-13 __ali-14"><div data-id="8" class="ft_row __w-15"><comment data-id="9"></comment><img data-id="10" src="-/fifthtry.github.io/admint-cs/static/fastn-logo.svg" class="__w-16 __h-17"></img></div><div data-id="11" class="ft_column __g-18"><div data-id="12" class="__rl-19 __c-20 __fwt-21">THEME</div><div data-id="13" class="__rl-22 __c-23 __white-space-24 __tt-25 __fwt-26"><code>admint-cs</code></div></div></div></div></div><div data-id="14" class="ft_column __w-27 __pl-28 __pr-29 __pt-30 __pb-31 __bgc-32 __mxw-33"><div data-id="15" class="ft_row __jc-34 __ali-35 __g-36"><div data-id="16" class="__rl-37 __c-38">Adding warmth and energy to your designs with the <code>admint-cs</code> Color Scheme</div><div data-id="17" class="ft_row __jc-39 __ali-40 __g-41"><comment data-id="18"></comment><comment data-id="19"></comment><img data-id="20" src="-/fastn-community.github.io/color-doc/static/dark-icon.svg" class="__cur-42 __w-43 __h-44 __p-45 __br-46"></img><div data-id="21" class="__rl-53 __c-54">Dark / Light mode</div></div></div><div data-id="22" class="ft_column __w-55"><div data-id="23" class="ft_column __w-56 __ox-57"><comment data-id="24"></comment><comment data-id="25"></comment><div data-id="26" class="ft_column __w-59"><div data-id="27" class="ft_column __w-60"><div data-id="28" class="ft_column __w-61 __p-62 __br-63 __bgc-64 __g-65"><div data-id="29" class="ft_row __w-66 __jc-67 __ali-68 __jc-69"><div data-id="30" class="ft_column __br-70 __bgc-71 __mnh-72 __mnw-73 __jc-74 __ali-75"><img data-id="31" src="-/fastn-community.github.io/color-doc/static/plus.svg" class="__w-76 __h-77"></img></div><div data-id="32" class="ft_column __br-78 __bgc-79 __mnh-80 __mnw-81 __jc-82 __ali-83"><img data-id="33" src="-/fastn-community.github.io/color-doc/static/avatar.svg" class="__w-84 __h-85"></img></div><div data-id="34" class="ft_row __p-86 __br-87 __bgc-88 __mnh-89 __jc-90 __ali-91 __g-92"><img data-id="35" src="-/fastn-community.github.io/color-doc/static/plus.svg"></img><div data-id="36" class="__rl-93 __c-94">Label</div></div></div><div data-id="37" class="ft_row __w-95 __jc-96 __ali-97 __g-98"><div data-id="38" class="ft_column __w-99 __h-100 __pl-101 __pr-102 __pt-103 __pb-104 __br-105 __bgc-106 __jc-107 __ali-108"><div data-id="39" class="__rl-109 __c-110 __fwt-111">Button</div></div><div data-id="40" class="ft_column __w-112 __h-113 __pl-114 __pr-115 __pt-116 __pb-117 __bw-118 __br-119 __bc-120 __bgc-121 __jc-122 __ali-123"><div data-id="41" class="__rl-124 __c-125 __fwt-126">Button</div></div></div><div data-id="42" class="ft_row __w-127 __h-128 __p-129 __br-130 __bgc-131 __jc-132"><div data-id="43" class="ft_row __as-133 __jc-134 __ali-135 __g-136"><img data-id="44" src="-/fifthtry.github.io/admint-cs/static/menu.svg" class="__w-137"></img><div data-id="45" class="__rl-138 __c-139 __white-space-140">Page Title</div></div><div data-id="46" class="ft_row __jc-141 __ali-142 __g-143"><img data-id="47" src="-/fifthtry.github.io/admint-cs/static/share.svg" class="__w-144"></img><img data-id="48" src="-/fifthtry.github.io/admint-cs/static/search.svg" class="__w-145"></img><img data-id="49" src="-/fifthtry.github.io/admint-cs/static/more.svg" class="__w-146"></img></div></div><div data-id="50" class="ft_row __w-147 __h-148 __mb-149 __jc-150 __ali-151 __jc-152"><img data-id="51" src="-/fastn-community.github.io/color-doc/static/left.svg" class="__w-153"></img><div data-id="52" class="ft_row __h-154 __br-155 __bgc-156 __mnw-157 __jc-158 __ali-159"><div data-id="53" class="__rl-160 __c-161 __fwt-162">1</div></div><div data-id="54" class="ft_row __h-163 __bw-164 __br-165 __bc-166 __mnw-167 __jc-168 __ali-169"><div data-id="55" class="__rl-170 __c-171 __fwt-172">2</div></div><div data-id="56" class="ft_row __h-173 __bw-174 __br-175 __bc-176 __mnw-177 __jc-178 __ali-179"><div data-id="57" class="__rl-180 __c-181 __fwt-182">3</div></div><img data-id="58" src="-/fastn-community.github.io/color-doc/static/dot.svg" class="__w-183"></img><div data-id="59" class="ft_row __h-184 __bw-185 __br-186 __bc-187 __mnw-188 __jc-189 __ali-190"><div data-id="60" class="__rl-191 __c-192 __fwt-193">9</div></div><img data-id="61" src="-/fastn-community.github.io/color-doc/static/right.svg" class="__w-194"></img></div><div data-id="62" class="ft_row __w-195 __p-196 __mb-197 __bw-198 __br-199 __bc-200 __mnh-201 __jc-202 __ali-203 __g-204" style="position:relative"><div data-id="63" class="ft_row __pos-205 __h-206 __pl-207 __pr-208 __t-209 __l-210 __bgc-211 __jc-212 __ali-213"><div data-id="64" class="__rl-214 __c-215">Label</div></div><img data-id="65" src="-/fastn-community.github.io/color-doc/static/heart.svg" class="__w-216"></img><input data-id="66" placeholder="Input Text" type="text" class="__w-217 __bgc-218"></input></div><div data-id="67" class="ft_row __w-219 __pl-220 __pr-221 __bw-222 __br-223 __bc-224 __mnh-225 __jc-226 __ali-227 __jc-228" style="position:relative"><div data-id="68" class="ft_row __pos-229 __h-230 __pl-231 __pr-232 __t-233 __l-234 __bgc-235 __jc-236 __ali-237"><div data-id="69" class="__rl-238 __c-239">Label</div></div><input data-id="70" placeholder="Input Text" type="text" class="__w-240 __bgc-241"></input><img data-id="71" src="-/fastn-community.github.io/color-doc/static/calender.svg" class="__w-242"></img></div><div data-id="72" class="ft_column __w-243 __h-244 __pl-245 __pr-246 __pt-247 __pb-248 __br-249 __bgc-250 __jc-251 __ali-252"><div data-id="73" class="__rl-253 __c-254 __fwt-255">Restricted</div></div><div data-id="74" class="ft_row __w-256 __jc-257 __ali-258 __g-259"><div data-id="75" class="ft_column __w-260 __h-261 __br-262 __bgc-263 __jc-264 __ali-265"><div data-id="76" class="ft_row __pl-266 __pr-267 __pt-268 __pb-269 __jc-270 __ali-271 __g-272"><img data-id="77" src="-/fastn-community.github.io/color-doc/static/point.svg"></img><div data-id="78" class="__rl-273 __c-274 __fwt-275">Accepted</div></div></div><div data-id="79" class="ft_column __w-276 __h-277 __pl-278 __pr-279 __pt-280 __pb-281 __br-282 __bgc-283 __jc-284 __ali-285"><div data-id="80" class="__rl-286 __c-287 __fwt-288">In-progress</div></div></div><div data-id="81" class="ft_column __as-289 __w-290 __br-291 __bgc-292 __g-293"><img data-id="82" src="-/fifthtry.github.io/admint-cs/static/img.svg" class="__w-294"></img><div data-id="83" class="ft_column __pl-295 __pr-296 __pb-297 __g-298"><div data-id="84" class="ft_row __jc-299 __ali-300 __g-301"><div data-id="85" class="ft_row __jc-302 __ali-303 __g-304"><img data-id="86" src="-/fastn-community.github.io/color-doc/static/like.svg"></img><div data-id="87" class="__rl-305 __c-306">2,729 Like</div></div><div data-id="88" class="ft_row __jc-307 __ali-308 __g-309"><img data-id="89" src="-/fastn-community.github.io/color-doc/static/comment.svg"></img><div data-id="90" class="__rl-310 __c-311">273 Comment</div></div></div><div data-id="91" class="__rl-312 __w-313 __c-314">Mauris ullamcorper tortor sed purus interdum, fermentum efficitur est dictu.</div><div data-id="92" class="ft_row __pt-315 __jc-316 __ali-317 __g-318"><img data-id="93" src="-/fifthtry.github.io/admint-cs/static/image.svg"></img><div data-id="94" class="ft_column"><div data-id="95" class="__rl-319 __c-320">Patrica AVA</div><div data-id="96" class="__rl-321 __c-322">UI Designer</div></div></div></div></div></div></div><div data-id="97" class="ft_column __w-323"><div data-id="98" class="ft_column __w-324 __g-325"><div data-id="99" class="ft_column __w-326 __br-327 __bgc-328"><div data-id="100" class="ft_row __w-329 __p-330 __btlr-331 __btrr-332 __bgc-333"><div data-id="101" class="ft_row __as-334 __w-335 __pt-336 __g-337"><div data-id="102" class="__rl-338 __as-339 __c-340 __fwt-341">fastn</div><div data-id="103" class="ft_row __as-342 __g-343"><comment data-id="104"></comment></div></div><div data-id="105" class="ft_row __as-344 __jc-345 __ali-346 __g-347"><a data-id="106" href="index.html" class="ft_column __w-348 __h-349 __pl-350 __pr-351 __pt-352 __pb-353 __bw-354 __br-355 __bc-356 __jc-357 __ali-358"><div data-id="107" class="__rl-359 __c-360 __fwt-361">Button</div></a><a data-id="108" href="index.html" class="ft_column __w-362 __h-363 __pl-364 __pr-365 __pt-366 __pb-367 __br-368 __bgc-369 __jc-370 __ali-371"><div data-id="109" class="__rl-372 __c-373 __fwt-374">Button</div></a></div></div><div data-id="110" class="ft_row __w-375 __p-376 __jc-377"><div data-id="111" class="ft_column __as-378 __w-379"><div data-id="112" class="__rl-380 __c-381 __fwt-382">We transform ideas into digital outcomes.</div><div data-id="113" class="__rl-383 __mt-384 __mb-385 __c-386">We are an award-winning strategic design company that provides consultancy
-services and help you create outstanding digital products.</div><a data-id="114" href="index.html" class="ft_row __h-387 __p-388 __br-389 __bgc-390 __jc-391 __ali-392 __g-393"><div data-id="115" class="__rl-394 __c-395 __fwt-396">Button</div><img data-id="116" src="-/fastn-community.github.io/color-doc/static/tick.svg"></img></a></div><div data-id="117" class="ft_column __w-397 __h-398 __bgc-399 __mnh-400"><img data-id="118" src="-/fastn-community.github.io/color-doc/static/image-placeholder.png" class="__h-401 __mxw-402"></img></div></div></div><div data-id="119" class="ft_column __w-403"><comment data-id="120"></comment><comment data-id="121"></comment><div data-id="122" class="ft_column __w-404 __p-405 __br-406 __bgc-407 __g-408"><div data-id="123" class="ft_column __as-409 __w-410 __br-411 __bgc-412 __g-413"><img data-id="124" src="-/fifthtry.github.io/admint-cs/static/img.svg" class="__w-414"></img><div data-id="125" class="ft_column __pl-415 __pr-416 __pb-417 __g-418"><div data-id="126" class="ft_row __jc-419 __ali-420 __g-421"><div data-id="127" class="ft_row __jc-422 __ali-423 __g-424"><img data-id="128" src="-/fastn-community.github.io/color-doc/static/like.svg"></img><div data-id="129" class="__rl-425 __c-426">2,729 Like</div></div><div data-id="130" class="ft_row __jc-427 __ali-428 __g-429"><img data-id="131" src="-/fastn-community.github.io/color-doc/static/comment.svg"></img><div data-id="132" class="__rl-430 __c-431">273 Comment</div></div></div><div data-id="133" class="__rl-432 __w-433 __c-434">Mauris ullamcorper tortor sed purus interdum, fermentum efficitur est dictu.</div><div data-id="134" class="ft_row __pt-435 __jc-436 __ali-437 __g-438"><img data-id="135" src="-/fifthtry.github.io/admint-cs/static/image.svg"></img><div data-id="136" class="ft_column"><div data-id="137" class="__rl-439 __c-440">Patrica AVA</div><div data-id="138" class="__rl-441 __c-442">UI Designer</div></div></div></div></div><div data-id="139" class="ft_column __as-443 __w-444 __br-445 __bgc-446 __g-447"><img data-id="140" src="-/fifthtry.github.io/admint-cs/static/img.svg" class="__w-448"></img><div data-id="141" class="ft_column __pl-449 __pr-450 __pb-451 __g-452"><div data-id="142" class="ft_row __jc-453 __ali-454 __g-455"><div data-id="143" class="ft_row __jc-456 __ali-457 __g-458"><img data-id="144" src="-/fastn-community.github.io/color-doc/static/like.svg"></img><div data-id="145" class="__rl-459 __c-460">2,729 Like</div></div><div data-id="146" class="ft_row __jc-461 __ali-462 __g-463"><img data-id="147" src="-/fastn-community.github.io/color-doc/static/comment.svg"></img><div data-id="148" class="__rl-464 __c-465">273 Comment</div></div></div><div data-id="149" class="__rl-466 __w-467 __c-468">Mauris ullamcorper tortor sed purus interdum, fermentum efficitur est dictu.</div><div data-id="150" class="ft_row __pt-469 __jc-470 __ali-471 __g-472"><img data-id="151" src="-/fifthtry.github.io/admint-cs/static/image.svg"></img><div data-id="152" class="ft_column"><div data-id="153" class="__rl-473 __c-474">Patrica AVA</div><div data-id="154" class="__rl-475 __c-476">UI Designer</div></div></div></div></div><div data-id="155" class="ft_column __as-477 __w-478 __br-479 __bgc-480 __g-481"><img data-id="156" src="-/fifthtry.github.io/admint-cs/static/img.svg" class="__w-482"></img><div data-id="157" class="ft_column __pl-483 __pr-484 __pb-485 __g-486"><div data-id="158" class="ft_row __jc-487 __ali-488 __g-489"><div data-id="159" class="ft_row __jc-490 __ali-491 __g-492"><img data-id="160" src="-/fastn-community.github.io/color-doc/static/like.svg"></img><div data-id="161" class="__rl-493 __c-494">2,729 Like</div></div><div data-id="162" class="ft_row __jc-495 __ali-496 __g-497"><img data-id="163" src="-/fastn-community.github.io/color-doc/static/comment.svg"></img><div data-id="164" class="__rl-498 __c-499">273 Comment</div></div></div><div data-id="165" class="__rl-500 __w-501 __c-502">Mauris ullamcorper tortor sed purus interdum, fermentum efficitur est dictu.</div><div data-id="166" class="ft_row __pt-503 __jc-504 __ali-505 __g-506"><img data-id="167" src="-/fifthtry.github.io/admint-cs/static/image.svg"></img><div data-id="168" class="ft_column"><div data-id="169" class="__rl-507 __c-508">Patrica AVA</div><div data-id="170" class="__rl-509 __c-510">UI Designer</div></div></div></div></div></div></div><div data-id="171" class="ft_column __w-511 __pt-512 __pb-513 __br-514 __bgc-515 __g-516"><div data-id="172" class="ft_row __w-517 __jc-518 __ali-519"><comment data-id="173"></comment></div><div data-id="174" class="ft_row __w-520 __pl-521 __pr-522 __jc-523 __ali-524 __jc-525"><div data-id="175" class="ft_column"><div data-id="176" class="__rl-526 __c-527">Fastn</div><div data-id="177" class="ft_row __g-528"><div data-id="178" class="ft_row __g-529"><img data-id="179" src="-/fastn-community.github.io/color-doc/static/facebook.svg" class="__w-530 __h-531"></img><img data-id="180" src="-/fastn-community.github.io/color-doc/static/figma.svg" class="__w-532 __h-533"></img><img data-id="181" src="-/fastn-community.github.io/color-doc/static/google.svg" class="__w-534 __h-535"></img><img data-id="182" src="-/fastn-community.github.io/color-doc/static/msg.svg" class="__w-536 __h-537"></img><img data-id="183" src="-/fastn-community.github.io/color-doc/static/ball.svg" class="__w-538 __h-539"></img></div></div><div data-id="184" class="__rl-540 __c-541 __ta-542">Copyright © 2023 - <a href="https://www.fifthtry.com/">FifthTry.com</a></div></div><div data-id="185" class="ft_row __g-543"><div data-id="186" class="ft_row __w-544 __h-545 __pl-546 __pr-547 __bw-548 __br-549 __bc-550 __jc-551 __ali-552 __jc-553"><div data-id="187" class="__rl-554 __c-555">Label</div><img data-id="188" src="-/fastn-community.github.io/color-doc/static/search.svg" class="__w-556 __h-557"></img></div><a data-id="189" href="index.html" class="ft_row __h-558 __pl-559 __pr-560 __pt-561 __pb-562 __br-563 __bgc-564 __jc-565 __ali-566 __g-567"><div data-id="190" class="__rl-568 __c-569 __fwt-570">Button</div><img data-id="191" src="-/fastn-community.github.io/color-doc/static/tick.svg"></img></a></div></div></div></div></div><div data-id="192" class="ft_column __w-571"><div data-id="193" class="ft_column __w-572 __g-574"><div data-id="194" class="ft_column __w-575 __h-576 __pl-577 __pr-578 __pt-579 __pb-580 __pr-581 __bw-582 __br-583 __bc-584 __bgc-585 __g-586"><div data-id="195" class="ft_column __w-587"><div data-id="196" class="__rl-588 __c-589 __fwt-590">Fastn</div></div><comment data-id="197"></comment><div data-id="198" class="ft_column __w-591 __pl-592"><div data-id="199" class="ft_row __w-593"><div data-id="200" class="ft_row __w-594 __g-595"><comment data-id="201"></comment><img data-id="202" src="-/fastn-community.github.io/color-doc/static/home.svg"></img><div data-id="203" class="__rl-596 __c-597">Home</div></div><comment data-id="204"></comment><div data-id="205" class="ft_row __cur-598 __mt-599"><comment data-id="206"></comment><comment data-id="207"></comment><img data-id="208" src="-/fastn-community.github.io/color-doc/static/up.svg"></img></div></div><comment data-id="209"></comment></div><div data-id="210" class="ft_column __w-600 __pl-601"><div data-id="211" class="ft_row __w-602"><div data-id="212" class="ft_row __w-603 __g-604"><comment data-id="213"></comment><img data-id="214" src="-/fastn-community.github.io/color-doc/static/pocket.svg"></img><div data-id="215" class="__rl-605 __c-606">Pocket</div></div><comment data-id="216"></comment><div data-id="217" class="ft_row __cur-607 __mt-608"><comment data-id="218"></comment><comment data-id="219"></comment></div></div><comment data-id="220"></comment></div><div data-id="221" class="ft_column __w-609 __pl-610"><div data-id="222" class="ft_row __w-611"><div data-id="223" class="ft_row __w-612 __g-613"><comment data-id="224"></comment><img data-id="225" src="-/fastn-community.github.io/color-doc/static/history.svg"></img><div data-id="226" class="__rl-614 __c-615">History</div></div><comment data-id="227"></comment><div data-id="228" class="ft_row __as-616 __g-617"><div data-id="229" class="ft_row __w-618 __h-619 __br-620 __bgc-621 __jc-622 __ali-623"><div data-id="230" class="__rl-624 __c-625">New</div></div><div data-id="231" class="ft_row __w-626 __h-627 __br-628 __bgc-629 __jc-630 __ali-631"><div data-id="232" class="__rl-632 __c-633">6</div></div></div><div data-id="233" class="ft_row __cur-634 __mt-635"><comment data-id="234"></comment><comment data-id="235"></comment></div></div><comment data-id="236"></comment></div><div data-id="237" class="ft_column __w-636 __pl-637"><div data-id="238" class="ft_row __w-638"><div data-id="239" class="ft_row __w-639 __g-640"><comment data-id="240"></comment><img data-id="241" src="-/fastn-community.github.io/color-doc/static/service.svg"></img><div data-id="242" class="__rl-641 __c-642">Service</div></div><comment data-id="243"></comment><div data-id="244" class="ft_row __cur-643 __mt-644"><comment data-id="245"></comment><comment data-id="246"></comment><img data-id="247" src="-/fastn-community.github.io/color-doc/static/up.svg"></img></div></div><comment data-id="248"></comment><comment data-id="249"></comment><div data-id="250" class="ft_column __w-645"><comment data-id="251"></comment><div data-id="252" class="ft_row __w-646 __pl-647 __mt-648"><div data-id="253" class="__rl-649 __c-650">Credit</div></div><comment data-id="254"></comment></div><comment data-id="255"></comment><div data-id="256" class="ft_column __w-651"><comment data-id="257"></comment><div data-id="258" class="ft_row __w-652 __pl-653 __mt-654"><div data-id="259" class="__rl-655 __c-656">Transfer</div></div><comment data-id="260"></comment></div><comment data-id="261"></comment><div data-id="262" class="ft_column __w-657"><comment data-id="263"></comment><div data-id="264" class="ft_row __w-658 __pl-659 __mt-660"><div data-id="265" class="__rl-661 __c-662">Cash</div></div><comment data-id="266"></comment></div><comment data-id="267"></comment><div data-id="268" class="ft_column __w-663"><comment data-id="269"></comment><comment data-id="270"></comment><div data-id="271" class="ft_row __w-664 __pl-665 __mt-666"><div data-id="272" class="__rl-667 __w-668 __c-669">My Bills</div><div data-id="273" class="__rl-670 __as-671 __pl-672 __pr-673 __pt-674 __pb-675 __br-676 __c-677 __bgc-678">2</div></div></div></div><div data-id="274" class="ft_column __w-679 __pl-680"><div data-id="275" class="ft_row __w-681"><div data-id="276" class="ft_row __w-682 __g-683"><comment data-id="277"></comment><img data-id="278" src="-/fastn-community.github.io/color-doc/static/saved.svg"></img><div data-id="279" class="__rl-684 __c-685">Saved</div></div><comment data-id="280"></comment><div data-id="281" class="ft_row __cur-686 __mt-687"><comment data-id="282"></comment><comment data-id="283"></comment></div></div><comment data-id="284"></comment></div></div></div></div></div></div><div data-id="285" class="ft_column __w-688 __pt-689 __jc-690 __ali-691"><comment data-id="286"></comment><comment data-id="287"></comment><div data-id="288" class="ft_column __w-692 __g-693"><div data-id="289" class="ft_column __w-694 __g-695"><comment data-id="290"></comment><div data-id="291" class="__rl-696 __c-697 __fwt-698">Adding warmth and energy to your designs with the <code>admint-cs</code> color scheme</div><comment data-id="292"></comment><div data-id="293" class="__rl-699 __c-700">The colours we use in our designs can have a significant impact on the mood and
-feelings they inspire. The perfect colour palette may take your design to the
-next level, whether you&#39;re creating a website, app, or anything else. The
-<code>admint-cs</code> colour scheme is ideal for designs that aim to portray strength,
-warmth, and growth.</div><div data-id="294" class="ft_column __w-701"><div data-id="295" class="ft_column __w-702 __pt-703 __pb-704 __oy-705 __cur-706"><comment data-id="296"></comment><div data-id="297" class="ft_row __w-707 __pl-708 __pr-709 __pt-710 __pb-711 __btlr-712 __btrr-713 __bgc-714" style="position:relative"><comment data-id="298"></comment><div data-id="299" class="__rl-716 __as-717 __w-718 __c-719">Figma tokens json</div><comment data-id="300"></comment><div data-id="301" class="ft_row __as-720 __pos-721 __t-722 __r-723 __jc-724 __ali-725 __g-726"><comment data-id="302"></comment><comment data-id="303"></comment><comment data-id="304"></comment></div><comment data-id="305"></comment></div><comment data-id="306"></comment><comment data-id="307"></comment><pre data-id="308" class="language-json fastn-theme-light __w-727 __ox-732 __oy-733 __c-734 __bgc-735 __mxh-736 __rl-738"><code data-id="309" class="language-json fastn-theme-light">{
-"default-colors-light": {
-  "Accent Colors": {
-    "primary": {
-      "value": "#a53006",
-      "type": "color"
-    },
-    "secondary": {
-      "value": "#ef8435",
-      "type": "color"
-    },
-    "tertiary": {
-      "value": "#ffc136",
-      "type": "color"
+     */
+    window.enable_dark_mode = function () {
+        // TODO: coalesce the two set_bool-s into one so there is only one DOM
+        //       update
+        ftd.dark_mode.set(true);
+        ftd.follow_system_dark_mode.set(false);
+        ftd.system_dark_mode.set(system_dark_mode());
+        document.body.classList.add(DARK_MODE_CLASS);
+        set_cookie(DARK_MODE_COOKIE, COOKIE_DARK_MODE);
+    };
+    window.enable_light_mode = function () {
+        // TODO: coalesce the two set_bool-s into one so there is only one DOM
+        //       update
+        ftd.dark_mode.set(false);
+        ftd.follow_system_dark_mode.set(false);
+        ftd.system_dark_mode.set(system_dark_mode());
+        if (document.body.classList.contains(DARK_MODE_CLASS)) {
+            document.body.classList.remove(DARK_MODE_CLASS);
+        }
+        set_cookie(DARK_MODE_COOKIE, COOKIE_LIGHT_MODE);
+    };
+    window.enable_system_mode = function () {
+        // TODO: coalesce the two set_bool-s into one so there is only one DOM
+        //       update
+        let systemMode = system_dark_mode();
+        ftd.follow_system_dark_mode.set(true);
+        ftd.system_dark_mode.set(systemMode);
+        if (systemMode) {
+            ftd.dark_mode.set(true);
+            document.body.classList.add(DARK_MODE_CLASS);
+            set_cookie(DARK_MODE_COOKIE, COOKIE_SYSTEM_DARK);
+        } else {
+            ftd.dark_mode.set(false);
+            if (document.body.classList.contains(DARK_MODE_CLASS)) {
+                document.body.classList.remove(DARK_MODE_CLASS);
+            }
+            set_cookie(DARK_MODE_COOKIE, COOKIE_SYSTEM_LIGHT);
+        }
+    };
+    function set_cookie(name, value) {
+        document.cookie = name + "=" + value + "; path=/";
     }
-  },
-  "Background Colors": {
-    "base": {
-      "value": "#faf8f4",
-      "type": "color"
-    },
-    "code": {
-      "value": "#eaeaea",
-      "type": "color"
-    },
-    "overlay": {
-      "value": "rgba(0, 0, 0, 0.3)",
-      "type": "color"
-    },
-    "step-1": {
-      "value": "#ffffff",
-      "type": "color"
-    },
-    "step-2": {
-      "value": "#f4f4f4",
-      "type": "color"
+    function system_dark_mode() {
+        return !!(
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches
+        );
     }
-  },
-  "CTA Danger Colors": {
-    "base": {
-      "value": "#f9e4e1",
-      "type": "color"
-    },
-    "border": {
-      "value": "#e9968c",
-      "type": "color"
-    },
-    "border-disabled": {
-      "value": "#e9968c",
-      "type": "color"
-    },
-    "disabled": {
-      "value": "#faeceb",
-      "type": "color"
-    },
-    "focused": {
-      "value": "#d97973",
-      "type": "color"
-    },
-    "hover": {
-      "value": "#f1bdb6",
-      "type": "color"
-    },
-    "pressed": {
-      "value": "#d46a63",
-      "type": "color"
-    },
-    "text": {
-      "value": "#fffbfe",
-      "type": "color"
-    },
-    "text-disabled": {
-      "value": "#fffbfe",
-      "type": "color"
+    function initialise_dark_mode() {
+        update_dark_mode();
+        start_watching_dark_mode_system_preference();
     }
-  },
-  "CTA Primary Colors": {
-    "base": {
-      "value": "#3fb488",
-      "type": "color"
-    },
-    "border": {
-      "value": "#a53006",
-      "type": "color"
-    },
-    "border-disabled": {
-      "value": "#a53006",
-      "type": "color"
-    },
-    "disabled": {
-      "value": "#faad7b",
-      "type": "color"
-    },
-    "focused": {
-      "value": "#611c03",
-      "type": "color"
-    },
-    "hover": {
-      "value": "#8c2702",
-      "type": "color"
-    },
-    "pressed": {
-      "value": "#611c03",
-      "type": "color"
-    },
-    "text": {
-      "value": "#ffffff",
-      "type": "color"
-    },
-    "text-disabled": {
-      "value": "#ffffff",
-      "type": "color"
+    function get_cookie(name, def) {
+        // source: https://stackoverflow.com/questions/5639346/
+        let regex = document.cookie.match(
+            "(^|;)\\s*" + name + "\\s*=\\s*([^;]+)",
+        );
+        return regex !== null ? regex.pop() : def;
     }
-  },
-  "CTA Secondary Colors": {
-    "base": {
-      "value": "#ef8435",
-      "type": "color"
-    },
-    "border": {
-      "value": "#f3a063",
-      "type": "color"
-    },
-    "border-disabled": {
-      "value": "#f3a063",
-      "type": "color"
-    },
-    "disabled": {
-      "value": "#777777",
-      "type": "color"
-    },
-    "focused": {
-      "value": "#b36328",
-      "type": "color"
-    },
-    "hover": {
-      "value": "#d77730",
-      "type": "color"
-    },
-    "pressed": {
-      "value": "#bf6a2a",
-      "type": "color"
-    },
-    "text": {
-      "value": "#ffffff",
-      "type": "color"
-    },
-    "text-disabled": {
-      "value": "#ffffff",
-      "type": "color"
+    function update_dark_mode() {
+        let current_dark_mode_cookie = get_cookie(
+            DARK_MODE_COOKIE,
+            COOKIE_SYSTEM_LIGHT,
+        );
+        switch (current_dark_mode_cookie) {
+            case COOKIE_SYSTEM_LIGHT:
+            case COOKIE_SYSTEM_DARK:
+                window.enable_system_mode();
+                break;
+            case COOKIE_LIGHT_MODE:
+                window.enable_light_mode();
+                break;
+            case COOKIE_DARK_MODE:
+                window.enable_dark_mode();
+                break;
+            default:
+                console_log("cookie value is wrong", current_dark_mode_cookie);
+                window.enable_system_mode();
+        }
     }
-  },
-  "CTA Tertiary Colors": {
-    "base": {
-      "value": "#ebe8e5",
-      "type": "color"
-    },
-    "border": {
-      "value": "#b0aeac",
-      "type": "color"
-    },
-    "border-disabled": {
-      "value": "#b0aeac",
-      "type": "color"
-    },
-    "disabled": {
-      "value": "#f9f8f7",
-      "type": "color"
-    },
-    "focused": {
-      "value": "#b0aeac",
-      "type": "color"
-    },
-    "hover": {
-      "value": "#d4d1ce",
-      "type": "color"
-    },
-    "pressed": {
-      "value": "#bcbab7",
-      "type": "color"
-    },
-    "text": {
-      "value": "#333333",
-      "type": "color"
-    },
-    "text-disabled": {
-      "value": "#333333",
-      "type": "color"
+    function start_watching_dark_mode_system_preference() {
+        window
+            .matchMedia("(prefers-color-scheme: dark)")
+            .addEventListener("change", update_dark_mode);
     }
-  },
-  "Custom Colors": {
-    "eight": {
-      "value": "#d554b3",
-      "type": "color"
-    },
-    "five": {
-      "value": "#eb57be",
-      "type": "color"
-    },
-    "four": {
-      "value": "#3fb488",
-      "type": "color"
-    },
-    "nine": {
-      "value": "#54595f",
-      "type": "color"
-    },
-    "one": {
-      "value": "#000000",
-      "type": "color"
-    },
-    "seven": {
-      "value": "#7564be",
-      "type": "color"
-    },
-    "six": {
-      "value": "#ef8dd6",
-      "type": "color"
-    },
-    "ten": {
-      "value": "#0a0a0a",
-      "type": "color"
-    },
-    "three": {
-      "value": "#c9efde",
-      "type": "color"
-    },
-    "two": {
-      "value": "#c8c8c8",
-      "type": "color"
+    initialise_device();
+    initialise_dark_mode();
+    initialise_click_outside_events();
+    initialise_global_key_events();
+    fastn_utils.resetFullHeight();
+    fastn_utils.setFullHeight();
+};
+function assertKindIdIsUnique() {
+    let maps = [
+        fastn_dom.PropertyKind,
+        fastn_dom.ElementKind,
+        fastn_dom.Event,
+        fastn_dom.propertyMap,
+    ];
+    for (let idx in maps) {
+        let ids = new Set();
+        let values = Object.values(flattenObject(maps[idx]));
+        for (let vidx in values) {
+            let innerValue = values[vidx];
+            assertKindIdIsUniqueForValue(innerValue, ids);
+        }
     }
-  },
-  "Error Colors": {
-    "base": {
-      "value": "#f9e4e1",
-      "type": "color"
-    },
-    "border": {
-      "value": "#e9968c",
-      "type": "color"
-    },
-    "text": {
-      "value": "#d84836",
-      "type": "color"
+}
+
+function assertKindIdIsUniqueForValue(value, ids) {
+    if (value instanceof Function) {
+        value = value()[0];
+    } else if (value instanceof Object) {
+        for (key in value) {
+            let innerValue = value[key];
+            if (innerValue instanceof Object) {
+                assertKindIdIsUniqueForValue(innerValue, ids);
+            }
+
+            if (ids.has(innerValue)) {
+                throw `${innerValue} already found`;
+            }
+            ids.add(innerValue);
+        }
+        return;
+    } else if (value instanceof Array) {
+        value = value[0];
     }
-  },
-  "Info Colors": {
-    "base": {
-      "value": "#dae7fb",
-      "type": "color"
-    },
-    "border": {
-      "value": "#dae7fb",
-      "type": "color"
-    },
-    "text": {
-      "value": "#dae7fb",
-      "type": "color"
+
+    if (ids.has(value)) {
+        throw `${value} already found`;
     }
-  },
-  "Standalone Colors": {
-    "border": {
-      "value": "#3fb488",
-      "type": "color"
-    },
-    "border-strong": {
-      "value": "#d9d9d9",
-      "type": "color"
-    },
-    "scrim": {
-      "value": "#393939",
-      "type": "color"
-    },
-    "shadow": {
-      "value": "#6f0100",
-      "type": "color"
-    },
-    "text": {
-      "value": "#7d8180",
-      "type": "color"
-    },
-    "text-strong": {
-      "value": "#7d8180",
-      "type": "color"
+    ids.add(value);
+}
+
+assertKindIdIsUnique();
+
+function flattenObject(obj) {
+    let result = {};
+
+    for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            if (typeof obj[key] === "object" && !Array.isArray(obj[key])) {
+                let nested = flattenObject(obj[key]);
+                Object.assign(result, nested);
+            } else {
+                result[key] = obj[key];
+            }
+        }
     }
-  },
-  "Success Colors": {
-    "base": {
-      "value": "#dcefe4",
-      "type": "color"
-    },
-    "border": {
-      "value": "#95d0af",
-      "type": "color"
-    },
-    "text": {
-      "value": "#3e8d61",
-      "type": "color"
+
+    return result;
+}
+
+        let __fastn_package_name__ = "fifthtry.github.io/admint-cs";
+ftd.toggle = function (args) {
+  let __fastn_super_package_name__ = __fastn_package_name__;
+  __fastn_package_name__ = "fifthtry_github_io_admint_cs";
+  try {
+    let __args__ = fastn_utils.getArgs({
+    }, args);
+    let fastn_utils_val___args___a = fastn_utils.clone(!fastn_utils.getter(__args__.a));
+    if (fastn_utils_val___args___a instanceof fastn.mutableClass) {
+      fastn_utils_val___args___a = fastn_utils_val___args___a.get();
     }
-  },
-  "Warning Colors": {
-    "base": {
-      "value": "#fdf7f1",
-      "type": "color"
-    },
-    "border": {
-      "value": "#f2c097",
-      "type": "color"
-    },
-    "text": {
-      "value": "#e78b3e",
-      "type": "color"
+    if (!fastn_utils.setter(__args__.a, fastn_utils_val___args___a)) {
+      __args__.a = fastn_utils_val___args___a;
     }
-  }
-},
-"default-colors-dark": {
-  "Accent Colors": {
-    "primary": {
-      "value": "#a53006",
-      "type": "color"
-    },
-    "secondary": {
-      "value": "#ef8435",
-      "type": "color"
-    },
-    "tertiary": {
-      "value": "#ffc136",
-      "type": "color"
-    }
-  },
-  "Background Colors": {
-    "base": {
-      "value": "#faf8f4",
-      "type": "color"
-    },
-    "code": {
-      "value": "#2b303b",
-      "type": "color"
-    },
-    "overlay": {
-      "value": "rgba(0, 0, 0, 0.3)",
-      "type": "color"
-    },
-    "step-1": {
-      "value": "#ffffff",
-      "type": "color"
-    },
-    "step-2": {
-      "value": "#f4f4f4",
-      "type": "color"
-    }
-  },
-  "CTA Danger Colors": {
-    "base": {
-      "value": "#f9e4e1",
-      "type": "color"
-    },
-    "border": {
-      "value": "#e9968c",
-      "type": "color"
-    },
-    "border-disabled": {
-      "value": "#e9968c",
-      "type": "color"
-    },
-    "disabled": {
-      "value": "#faeceb",
-      "type": "color"
-    },
-    "focused": {
-      "value": "#d97973",
-      "type": "color"
-    },
-    "hover": {
-      "value": "#f1bdb6",
-      "type": "color"
-    },
-    "pressed": {
-      "value": "#d46a63",
-      "type": "color"
-    },
-    "text": {
-      "value": "#1c1b1f",
-      "type": "color"
-    },
-    "text-disabled": {
-      "value": "#1c1b1f",
-      "type": "color"
-    }
-  },
-  "CTA Primary Colors": {
-    "base": {
-      "value": "#3fb488",
-      "type": "color"
-    },
-    "border": {
-      "value": "#a53006",
-      "type": "color"
-    },
-    "border-disabled": {
-      "value": "#a53006",
-      "type": "color"
-    },
-    "disabled": {
-      "value": "#faad7b",
-      "type": "color"
-    },
-    "focused": {
-      "value": "#611c03",
-      "type": "color"
-    },
-    "hover": {
-      "value": "#8c2702",
-      "type": "color"
-    },
-    "pressed": {
-      "value": "#611c03",
-      "type": "color"
-    },
-    "text": {
-      "value": "#ffffff",
-      "type": "color"
-    },
-    "text-disabled": {
-      "value": "#ffffff",
-      "type": "color"
-    }
-  },
-  "CTA Secondary Colors": {
-    "base": {
-      "value": "#ef8435",
-      "type": "color"
-    },
-    "border": {
-      "value": "#f3a063",
-      "type": "color"
-    },
-    "border-disabled": {
-      "value": "#f3a063",
-      "type": "color"
-    },
-    "disabled": {
-      "value": "#777777",
-      "type": "color"
-    },
-    "focused": {
-      "value": "#b36328",
-      "type": "color"
-    },
-    "hover": {
-      "value": "#d77730",
-      "type": "color"
-    },
-    "pressed": {
-      "value": "#bf6a2a",
-      "type": "color"
-    },
-    "text": {
-      "value": "#ffffff",
-      "type": "color"
-    },
-    "text-disabled": {
-      "value": "#ffffff",
-      "type": "color"
-    }
-  },
-  "CTA Tertiary Colors": {
-    "base": {
-      "value": "#ebe8e5",
-      "type": "color"
-    },
-    "border": {
-      "value": "#b0aeac",
-      "type": "color"
-    },
-    "border-disabled": {
-      "value": "#b0aeac",
-      "type": "color"
-    },
-    "disabled": {
-      "value": "#f9f8f7",
-      "type": "color"
-    },
-    "focused": {
-      "value": "#b0aeac",
-      "type": "color"
-    },
-    "hover": {
-      "value": "#d4d1ce",
-      "type": "color"
-    },
-    "pressed": {
-      "value": "#bcbab7",
-      "type": "color"
-    },
-    "text": {
-      "value": "#333333",
-      "type": "color"
-    },
-    "text-disabled": {
-      "value": "#333333",
-      "type": "color"
-    }
-  },
-  "Custom Colors": {
-    "eight": {
-      "value": "#d554b3",
-      "type": "color"
-    },
-    "five": {
-      "value": "#eb57be",
-      "type": "color"
-    },
-    "four": {
-      "value": "#3fb488",
-      "type": "color"
-    },
-    "nine": {
-      "value": "#54595f",
-      "type": "color"
-    },
-    "one": {
-      "value": "#000000",
-      "type": "color"
-    },
-    "seven": {
-      "value": "#7564be",
-      "type": "color"
-    },
-    "six": {
-      "value": "#ef8dd6",
-      "type": "color"
-    },
-    "ten": {
-      "value": "#0a0a0a",
-      "type": "color"
-    },
-    "three": {
-      "value": "#c9efde",
-      "type": "color"
-    },
-    "two": {
-      "value": "#c8c8c8",
-      "type": "color"
-    }
-  },
-  "Error Colors": {
-    "base": {
-      "value": "#f9e4e1",
-      "type": "color"
-    },
-    "border": {
-      "value": "#e9968c",
-      "type": "color"
-    },
-    "text": {
-      "value": "#d84836",
-      "type": "color"
-    }
-  },
-  "Info Colors": {
-    "base": {
-      "value": "#dae7fb",
-      "type": "color"
-    },
-    "border": {
-      "value": "#dae7fb",
-      "type": "color"
-    },
-    "text": {
-      "value": "#dae7fb",
-      "type": "color"
-    }
-  },
-  "Standalone Colors": {
-    "border": {
-      "value": "#3fb488",
-      "type": "color"
-    },
-    "border-strong": {
-      "value": "#3e0306",
-      "type": "color"
-    },
-    "scrim": {
-      "value": "#393939",
-      "type": "color"
-    },
-    "shadow": {
-      "value": "#6f0100",
-      "type": "color"
-    },
-    "text": {
-      "value": "#7d8180",
-      "type": "color"
-    },
-    "text-strong": {
-      "value": "#7d8180",
-      "type": "color"
-    }
-  },
-  "Success Colors": {
-    "base": {
-      "value": "#dcefe4",
-      "type": "color"
-    },
-    "border": {
-      "value": "#95d0af",
-      "type": "color"
-    },
-    "text": {
-      "value": "#3e8d61",
-      "type": "color"
-    }
-  },
-  "Warning Colors": {
-    "base": {
-      "value": "#fdf7f1",
-      "type": "color"
-    },
-    "border": {
-      "value": "#f2c097",
-      "type": "color"
-    },
-    "text": {
-      "value": "#e78b3e",
-      "type": "color"
-    }
+  } finally {
+    __fastn_package_name__ = __fastn_super_package_name__;
   }
 }
+ftd.increment = function (args) {
+  let __fastn_super_package_name__ = __fastn_package_name__;
+  __fastn_package_name__ = "fifthtry_github_io_admint_cs";
+  try {
+    let __args__ = fastn_utils.getArgs({
+    }, args);
+    let fastn_utils_val___args___a = fastn_utils.clone(fastn_utils.getter(__args__.a) + 1);
+    if (fastn_utils_val___args___a instanceof fastn.mutableClass) {
+      fastn_utils_val___args___a = fastn_utils_val___args___a.get();
+    }
+    if (!fastn_utils.setter(__args__.a, fastn_utils_val___args___a)) {
+      __args__.a = fastn_utils_val___args___a;
+    }
+  } finally {
+    __fastn_package_name__ = __fastn_super_package_name__;
+  }
 }
-</code></pre><comment data-id="310"></comment></div></div></div><div data-id="311" class="ft_column __w-739 __g-740"><div data-id="312" class="ft_column __w-741 __g-742"><div data-id="313" class="__rl-743 __c-744 __fwt-745">Developed Using</div><a data-id="314" href="https://fastn.com/" class="ft_row __c-746 __jc-747 __ali-748 __g-749"><comment data-id="315"></comment><img data-id="316" src="-/fifthtry.github.io/admint-cs/static/code-outline-icon.svg"></img><comment data-id="317"></comment><div data-id="318" class="__rl-750 __c-751 __fwt-752">fastn</div></a></div><div data-id="319" class="ft_column __w-753 __g-754"><div data-id="320" class="__rl-755 __c-756 __fwt-757">Github Link</div><a data-id="321" href="https://github.com/fifthtry/admint-cs" class="ft_row __c-758 __jc-759 __ali-760 __g-761"><comment data-id="322"></comment><img data-id="323" src="-/fifthtry.github.io/admint-cs/static/link-icon.svg"></img><comment data-id="324"></comment><div data-id="325" class="__rl-762 __c-763 __fwt-764">github.com/fifthtry/admint-cs</div></a></div><div data-id="326" class="ft_column __w-765 __g-766"><div data-id="327" class="__rl-767 __c-768 __fwt-769">License Information</div><a data-id="328" href="https://github.com/fifthtry/admint-cs/blob/main/LICENSE" class="ft_row __c-770 __jc-771 __ali-772 __g-773"><comment data-id="329"></comment><img data-id="330" src="-/fifthtry.github.io/admint-cs/static/bsd-license-icon.svg"></img><comment data-id="331"></comment><div data-id="332" class="__rl-774 __c-775 __fwt-776">BSD 3-Clause License</div></a></div><div data-id="333" class="ft_column __w-777 __g-778"><div data-id="334" class="__rl-779 __c-780 __fwt-781">Author Information</div><a data-id="335" href="https://github.com/fifthtry/admint-cs/graphs/contributors" class="ft_row __c-782 __jc-783 __ali-784 __g-785"><comment data-id="336"></comment><img data-id="337" src="-/fifthtry.github.io/admint-cs/static/author-icon.svg"></img><comment data-id="338"></comment><div data-id="339" class="__rl-786 __c-787 __fwt-788">Contributors</div></a></div><div data-id="340" class="ft_column __w-789 __g-790"><div data-id="341" class="__rl-791 __c-792 __fwt-793">Discord Channel</div><a data-id="342" href="https://discord.gg/bucrdvptYd" class="ft_row __c-794 __jc-795 __ali-796 __g-797"><comment data-id="343"></comment><img data-id="344" src="-/fifthtry.github.io/admint-cs/static/discord-icon.svg"></img><comment data-id="345"></comment><div data-id="346" class="__rl-798 __c-799 __fwt-800">discord.gg/bucrdvptYd</div></a></div><div data-id="347" class="ft_column __w-801 __g-802"><div data-id="348" class="__rl-803 __c-804 __fwt-805">How to use this colour palette</div><a data-id="349" href="#how-to-use-cs" class="ft_row __c-806 __jc-807 __ali-808 __g-809"><comment data-id="350"></comment><img data-id="351" src="-/fifthtry.github.io/admint-cs/static/link-icon.svg"></img><comment data-id="352"></comment><div data-id="353" class="__rl-810 __c-811 __fwt-812">How to use?</div></a></div><div data-id="354" class="ft_column __w-813 __g-814"><div data-id="355" class="__rl-815 __c-816 __fwt-817">How to modify a colour palette</div><a data-id="356" href="https://fastn.com/modify-cs/" class="ft_row __c-818 __jc-819 __ali-820 __g-821"><comment data-id="357"></comment><img data-id="358" src="-/fifthtry.github.io/admint-cs/static/link-icon.svg"></img><comment data-id="359"></comment><div data-id="360" class="__rl-822 __c-823 __fwt-824">fastn.com/modify-cs</div></a></div><div data-id="361" class="ft_column __w-825 __g-826"><div data-id="362" class="__rl-827 __c-828 __fwt-829">How to create a colour palette</div><a data-id="363" href="https://fastn.com/figma-to-fastn-cs/" class="ft_row __c-830 __jc-831 __ali-832 __g-833"><comment data-id="364"></comment><img data-id="365" src="-/fifthtry.github.io/admint-cs/static/link-icon.svg"></img><comment data-id="366"></comment><div data-id="367" class="__rl-834 __c-835 __fwt-836">fastn.com/figma-to-fastn-cs</div></a></div></div></div></div><div data-id="368" class="ft_column __w-837 __mt-838"><div data-id="369" class="ft_row __w-839 __g-840"><h3 data-id="370" id="how-to-use-this-colour-scheme" class="__rl-841 __mb-842 __c-843 __fwt-844">How to use this colour scheme</h3><img data-id="371" src="-/fastn-community.github.io/color-doc/static/link-icon.svg"></img></div><div data-id="372" class="__rl-845 __mb-846 __c-847"><p>The importance of colour in a website’s overall look and feel is well known. The
-right colour scheme can evoke emotions, create visual interest, and direct a
-user’s attention to specific elements on a page. That’s why the ftd colour
-scheme framework provides an easy and powerful way to define colour schemes and
-apply them to your website. </p>
-<p>To start, you can choose from existing colour scheme packages or create your own
-custom colour scheme. To apply a colour scheme package on top of your package,
-you’ll need to import it into one of the module. </p>
-<p>For example, let’s say you’re using the page component from <code>doc-site</code> package
-and want to apply the admint-cs scheme package on top of it. You first create
-a new module, let’s say my-ds.ftd. Then you import admint-cs package module
-and then create a new component called page there. </p>
-Here’s what your my-ds.ftd module and FASTN.ftd import would look like:</div><div data-id="373" class="ft_column __w-848"><div data-id="374" class="ft_column __w-849 __pt-850 __pb-851 __oy-852 __cur-853"><comment data-id="375"></comment><div data-id="376" class="ft_row __w-854 __pl-855 __pr-856 __pt-857 __pb-858 __btlr-859 __btrr-860 __bgc-861" style="position:relative"><comment data-id="377"></comment><div data-id="378" class="__rl-863 __as-864 __w-865 __c-866">Add <code>admint-cs</code> as a dependency into FASTN.ftd</div><comment data-id="379"></comment><div data-id="380" class="ft_row __as-867 __pos-868 __t-869 __r-870 __jc-871 __ali-872 __g-873"><comment data-id="381"></comment><comment data-id="382"></comment><comment data-id="383"></comment></div><comment data-id="384"></comment></div><comment data-id="385"></comment><comment data-id="386"></comment><pre data-id="387" class="language-ftd fastn-theme-light __w-874 __ox-879 __oy-880 __c-881 __bgc-882 __rl-885"><code data-id="388" class="language-ftd fastn-theme-light">-- fastn.dependency: fifthtry.github.io/admint-cs
-</code></pre><comment data-id="389"></comment></div><div data-id="390" class="ft_column __w-886 __pt-887 __pb-888 __oy-889 __cur-890" style="position:relative"><comment data-id="391"></comment><div data-id="392" class="ft_row __w-891 __pl-892 __pr-893 __pt-894 __pb-895 __btlr-896 __btrr-897 __bgc-898" style="position:relative"><comment data-id="393"></comment><div data-id="394" class="__rl-900 __as-901 __w-902 __c-903">my-ds.ftd module</div><comment data-id="395"></comment><div data-id="396" class="ft_row __as-904 __pos-905 __t-906 __r-907 __jc-908 __ali-909 __g-910"><comment data-id="397"></comment><comment data-id="398"></comment><comment data-id="399"></comment></div><comment data-id="400"></comment></div><comment data-id="401"></comment><comment data-id="402"></comment><pre data-id="403" class="language-ftd fastn-theme-light __w-911 __ox-916 __oy-917 __c-918 __bgc-919 __rl-922"><code data-id="404" class="language-ftd fastn-theme-light">-- import: fifthtry.github.io/admint-cs as my-cs
--- import: fifthtry.github.io/doc-site as ds
+ftd.increment_by = function (args) {
+  let __fastn_super_package_name__ = __fastn_package_name__;
+  __fastn_package_name__ = "fifthtry_github_io_admint_cs";
+  try {
+    let __args__ = fastn_utils.getArgs({
+    }, args);
+    let fastn_utils_val___args___a = fastn_utils.clone(fastn_utils.getter(__args__.a) + fastn_utils.getter(__args__.v));
+    if (fastn_utils_val___args___a instanceof fastn.mutableClass) {
+      fastn_utils_val___args___a = fastn_utils_val___args___a.get();
+    }
+    if (!fastn_utils.setter(__args__.a, fastn_utils_val___args___a)) {
+      __args__.a = fastn_utils_val___args___a;
+    }
+  } finally {
+    __fastn_package_name__ = __fastn_super_package_name__;
+  }
+}
+ftd.decrement = function (args) {
+  let __fastn_super_package_name__ = __fastn_package_name__;
+  __fastn_package_name__ = "fifthtry_github_io_admint_cs";
+  try {
+    let __args__ = fastn_utils.getArgs({
+    }, args);
+    let fastn_utils_val___args___a = fastn_utils.clone(fastn_utils.getter(__args__.a) - 1);
+    if (fastn_utils_val___args___a instanceof fastn.mutableClass) {
+      fastn_utils_val___args___a = fastn_utils_val___args___a.get();
+    }
+    if (!fastn_utils.setter(__args__.a, fastn_utils_val___args___a)) {
+      __args__.a = fastn_utils_val___args___a;
+    }
+  } finally {
+    __fastn_package_name__ = __fastn_super_package_name__;
+  }
+}
+ftd.decrement_by = function (args) {
+  let __fastn_super_package_name__ = __fastn_package_name__;
+  __fastn_package_name__ = "fifthtry_github_io_admint_cs";
+  try {
+    let __args__ = fastn_utils.getArgs({
+    }, args);
+    let fastn_utils_val___args___a = fastn_utils.clone(fastn_utils.getter(__args__.a) - fastn_utils.getter(__args__.v));
+    if (fastn_utils_val___args___a instanceof fastn.mutableClass) {
+      fastn_utils_val___args___a = fastn_utils_val___args___a.get();
+    }
+    if (!fastn_utils.setter(__args__.a, fastn_utils_val___args___a)) {
+      __args__.a = fastn_utils_val___args___a;
+    }
+  } finally {
+    __fastn_package_name__ = __fastn_super_package_name__;
+  }
+}
+ftd.enable_light_mode = function (args) {
+  let __fastn_super_package_name__ = __fastn_package_name__;
+  __fastn_package_name__ = "fifthtry_github_io_admint_cs";
+  try {
+    let __args__ = fastn_utils.getArgs({
+    }, args);
+    return (enable_light_mode());
+  } finally {
+    __fastn_package_name__ = __fastn_super_package_name__;
+  }
+}
+ftd.enable_dark_mode = function (args) {
+  let __fastn_super_package_name__ = __fastn_package_name__;
+  __fastn_package_name__ = "fifthtry_github_io_admint_cs";
+  try {
+    let __args__ = fastn_utils.getArgs({
+    }, args);
+    return (enable_dark_mode());
+  } finally {
+    __fastn_package_name__ = __fastn_super_package_name__;
+  }
+}
+ftd.enable_system_mode = function (args) {
+  let __fastn_super_package_name__ = __fastn_package_name__;
+  __fastn_package_name__ = "fifthtry_github_io_admint_cs";
+  try {
+    let __args__ = fastn_utils.getArgs({
+    }, args);
+    return (enable_system_mode());
+  } finally {
+    __fastn_package_name__ = __fastn_super_package_name__;
+  }
+}
+ftd.set_bool = function (args) {
+  let __fastn_super_package_name__ = __fastn_package_name__;
+  __fastn_package_name__ = "fifthtry_github_io_admint_cs";
+  try {
+    let __args__ = fastn_utils.getArgs({
+    }, args);
+    let fastn_utils_val___args___a = fastn_utils.clone(__args__.v);
+    if (fastn_utils_val___args___a instanceof fastn.mutableClass) {
+      fastn_utils_val___args___a = fastn_utils_val___args___a.get();
+    }
+    if (!fastn_utils.setter(__args__.a, fastn_utils_val___args___a)) {
+      __args__.a = fastn_utils_val___args___a;
+    }
+  } finally {
+    __fastn_package_name__ = __fastn_super_package_name__;
+  }
+}
+ftd.set_boolean = function (args) {
+  let __fastn_super_package_name__ = __fastn_package_name__;
+  __fastn_package_name__ = "fifthtry_github_io_admint_cs";
+  try {
+    let __args__ = fastn_utils.getArgs({
+    }, args);
+    let fastn_utils_val___args___a = fastn_utils.clone(__args__.v);
+    if (fastn_utils_val___args___a instanceof fastn.mutableClass) {
+      fastn_utils_val___args___a = fastn_utils_val___args___a.get();
+    }
+    if (!fastn_utils.setter(__args__.a, fastn_utils_val___args___a)) {
+      __args__.a = fastn_utils_val___args___a;
+    }
+  } finally {
+    __fastn_package_name__ = __fastn_super_package_name__;
+  }
+}
+ftd.set_string = function (args) {
+  let __fastn_super_package_name__ = __fastn_package_name__;
+  __fastn_package_name__ = "fifthtry_github_io_admint_cs";
+  try {
+    let __args__ = fastn_utils.getArgs({
+    }, args);
+    let fastn_utils_val___args___a = fastn_utils.clone(__args__.v);
+    if (fastn_utils_val___args___a instanceof fastn.mutableClass) {
+      fastn_utils_val___args___a = fastn_utils_val___args___a.get();
+    }
+    if (!fastn_utils.setter(__args__.a, fastn_utils_val___args___a)) {
+      __args__.a = fastn_utils_val___args___a;
+    }
+  } finally {
+    __fastn_package_name__ = __fastn_super_package_name__;
+  }
+}
+ftd.set_integer = function (args) {
+  let __fastn_super_package_name__ = __fastn_package_name__;
+  __fastn_package_name__ = "fifthtry_github_io_admint_cs";
+  try {
+    let __args__ = fastn_utils.getArgs({
+    }, args);
+    let fastn_utils_val___args___a = fastn_utils.clone(__args__.v);
+    if (fastn_utils_val___args___a instanceof fastn.mutableClass) {
+      fastn_utils_val___args___a = fastn_utils_val___args___a.get();
+    }
+    if (!fastn_utils.setter(__args__.a, fastn_utils_val___args___a)) {
+      __args__.a = fastn_utils_val___args___a;
+    }
+  } finally {
+    __fastn_package_name__ = __fastn_super_package_name__;
+  }
+}
+ftd.dark_mode = fastn.mutable(false);
+ftd.empty = "";
+ftd.space = " ";
+ftd.nbsp = "&nbsp;";
+ftd.non_breaking_space = "&nbsp;";
+ftd.system_dark_mode = fastn.mutable(false);
+ftd.follow_system_dark_mode = fastn.mutable(true);
+ftd.font_display = fastn.mutable("sans-serif");
+ftd.font_copy = fastn.mutable("sans-serif");
+ftd.font_code = fastn.mutable("sans-serif");
+ftd.default_types = function () {
+  let record = fastn.recordInstance({
+  });
+  record.set("heading_large", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("desktop", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(50));
+      record.set("line_height", fastn_dom.FontSize.Px(65));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_display);
+      return record;
+    }());
+    record.set("mobile", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(36));
+      record.set("line_height", fastn_dom.FontSize.Px(54));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_display);
+      return record;
+    }());
+    return record;
+  }());
+  record.set("heading_medium", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("desktop", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(38));
+      record.set("line_height", fastn_dom.FontSize.Px(57));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_display);
+      return record;
+    }());
+    record.set("mobile", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(26));
+      record.set("line_height", fastn_dom.FontSize.Px(40));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_display);
+      return record;
+    }());
+    return record;
+  }());
+  record.set("heading_small", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("desktop", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(24));
+      record.set("line_height", fastn_dom.FontSize.Px(31));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_display);
+      return record;
+    }());
+    record.set("mobile", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(22));
+      record.set("line_height", fastn_dom.FontSize.Px(29));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_display);
+      return record;
+    }());
+    return record;
+  }());
+  record.set("heading_hero", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("desktop", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(80));
+      record.set("line_height", fastn_dom.FontSize.Px(104));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_display);
+      return record;
+    }());
+    record.set("mobile", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(48));
+      record.set("line_height", fastn_dom.FontSize.Px(64));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_display);
+      return record;
+    }());
+    return record;
+  }());
+  record.set("heading_tiny", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("desktop", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(20));
+      record.set("line_height", fastn_dom.FontSize.Px(26));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_display);
+      return record;
+    }());
+    record.set("mobile", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(18));
+      record.set("line_height", fastn_dom.FontSize.Px(24));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_display);
+      return record;
+    }());
+    return record;
+  }());
+  record.set("copy_small", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("desktop", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(14));
+      record.set("line_height", fastn_dom.FontSize.Px(24));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_copy);
+      return record;
+    }());
+    record.set("mobile", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(12));
+      record.set("line_height", fastn_dom.FontSize.Px(16));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_copy);
+      return record;
+    }());
+    return record;
+  }());
+  record.set("copy_regular", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("desktop", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(18));
+      record.set("line_height", fastn_dom.FontSize.Px(30));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_copy);
+      return record;
+    }());
+    record.set("mobile", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(16));
+      record.set("line_height", fastn_dom.FontSize.Px(24));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_copy);
+      return record;
+    }());
+    return record;
+  }());
+  record.set("copy_large", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("desktop", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(22));
+      record.set("line_height", fastn_dom.FontSize.Px(34));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_copy);
+      return record;
+    }());
+    record.set("mobile", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(18));
+      record.set("line_height", fastn_dom.FontSize.Px(28));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_copy);
+      return record;
+    }());
+    return record;
+  }());
+  record.set("fine_print", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("desktop", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(12));
+      record.set("line_height", fastn_dom.FontSize.Px(16));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_code);
+      return record;
+    }());
+    record.set("mobile", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(12));
+      record.set("line_height", fastn_dom.FontSize.Px(16));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_code);
+      return record;
+    }());
+    return record;
+  }());
+  record.set("blockquote", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("desktop", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(16));
+      record.set("line_height", fastn_dom.FontSize.Px(21));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_code);
+      return record;
+    }());
+    record.set("mobile", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(16));
+      record.set("line_height", fastn_dom.FontSize.Px(21));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_code);
+      return record;
+    }());
+    return record;
+  }());
+  record.set("source_code", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("desktop", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(18));
+      record.set("line_height", fastn_dom.FontSize.Px(30));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_code);
+      return record;
+    }());
+    record.set("mobile", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(16));
+      record.set("line_height", fastn_dom.FontSize.Px(21));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_code);
+      return record;
+    }());
+    return record;
+  }());
+  record.set("button_small", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("desktop", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(14));
+      record.set("line_height", fastn_dom.FontSize.Px(19));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_display);
+      return record;
+    }());
+    record.set("mobile", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(14));
+      record.set("line_height", fastn_dom.FontSize.Px(19));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_display);
+      return record;
+    }());
+    return record;
+  }());
+  record.set("button_medium", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("desktop", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(16));
+      record.set("line_height", fastn_dom.FontSize.Px(21));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_display);
+      return record;
+    }());
+    record.set("mobile", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(16));
+      record.set("line_height", fastn_dom.FontSize.Px(21));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_display);
+      return record;
+    }());
+    return record;
+  }());
+  record.set("button_large", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("desktop", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(18));
+      record.set("line_height", fastn_dom.FontSize.Px(24));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_display);
+      return record;
+    }());
+    record.set("mobile", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(18));
+      record.set("line_height", fastn_dom.FontSize.Px(24));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_display);
+      return record;
+    }());
+    return record;
+  }());
+  record.set("link", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("desktop", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(14));
+      record.set("line_height", fastn_dom.FontSize.Px(19));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_display);
+      return record;
+    }());
+    record.set("mobile", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(14));
+      record.set("line_height", fastn_dom.FontSize.Px(19));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_display);
+      return record;
+    }());
+    return record;
+  }());
+  record.set("label_large", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("desktop", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(14));
+      record.set("line_height", fastn_dom.FontSize.Px(19));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_display);
+      return record;
+    }());
+    record.set("mobile", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(14));
+      record.set("line_height", fastn_dom.FontSize.Px(19));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_display);
+      return record;
+    }());
+    return record;
+  }());
+  record.set("label_small", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("desktop", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(12));
+      record.set("line_height", fastn_dom.FontSize.Px(16));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_display);
+      return record;
+    }());
+    record.set("mobile", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("size", fastn_dom.FontSize.Px(12));
+      record.set("line_height", fastn_dom.FontSize.Px(16));
+      record.set("letter_spacing", null);
+      record.set("weight", 400);
+      record.set("font_family", ftd.font_display);
+      return record;
+    }());
+    return record;
+  }());
+  return record;
+}();
+ftd.default_colors = function () {
+  let record = fastn.recordInstance({
+  });
+  record.set("background", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("base", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#e7e7e4");
+      record.set("dark", "#18181b");
+      return record;
+    }());
+    record.set("step_1", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#f3f3f3");
+      record.set("dark", "#141414");
+      return record;
+    }());
+    record.set("step_2", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#c9cece");
+      record.set("dark", "#585656");
+      return record;
+    }());
+    record.set("overlay", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "rgba(0, 0, 0, 0.8)");
+      record.set("dark", "rgba(0, 0, 0, 0.8)");
+      return record;
+    }());
+    record.set("code", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#F5F5F5");
+      record.set("dark", "#21222C");
+      return record;
+    }());
+    return record;
+  }());
+  record.set("border", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("light", "#434547");
+    record.set("dark", "#434547");
+    return record;
+  }());
+  record.set("border_strong", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("light", "#919192");
+    record.set("dark", "#919192");
+    return record;
+  }());
+  record.set("text", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("light", "#584b42");
+    record.set("dark", "#a8a29e");
+    return record;
+  }());
+  record.set("text_strong", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("light", "#141414");
+    record.set("dark", "#ffffff");
+    return record;
+  }());
+  record.set("shadow", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("light", "#007f9b");
+    record.set("dark", "#007f9b");
+    return record;
+  }());
+  record.set("scrim", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("light", "#007f9b");
+    record.set("dark", "#007f9b");
+    return record;
+  }());
+  record.set("cta_primary", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("base", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#2dd4bf");
+      record.set("dark", "#2dd4bf");
+      return record;
+    }());
+    record.set("hover", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#2c9f90");
+      record.set("dark", "#2c9f90");
+      return record;
+    }());
+    record.set("pressed", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#2cc9b5");
+      record.set("dark", "#2cc9b5");
+      return record;
+    }());
+    record.set("disabled", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "rgba(44, 201, 181, 0.1)");
+      record.set("dark", "rgba(44, 201, 181, 0.1)");
+      return record;
+    }());
+    record.set("focused", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#2cbfac");
+      record.set("dark", "#2cbfac");
+      return record;
+    }());
+    record.set("border", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#2b8074");
+      record.set("dark", "#2b8074");
+      return record;
+    }());
+    record.set("border_disabled", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#65b693");
+      record.set("dark", "#65b693");
+      return record;
+    }());
+    record.set("text", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#feffff");
+      record.set("dark", "#feffff");
+      return record;
+    }());
+    record.set("text_disabled", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#65b693");
+      record.set("dark", "#65b693");
+      return record;
+    }());
+    return record;
+  }());
+  record.set("cta_secondary", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("base", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#4fb2df");
+      record.set("dark", "#4fb2df");
+      return record;
+    }());
+    record.set("hover", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#40afe1");
+      record.set("dark", "#40afe1");
+      return record;
+    }());
+    record.set("pressed", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#4fb2df");
+      record.set("dark", "#4fb2df");
+      return record;
+    }());
+    record.set("disabled", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "rgba(79, 178, 223, 0.1)");
+      record.set("dark", "rgba(79, 178, 223, 0.1)");
+      return record;
+    }());
+    record.set("focused", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#4fb1df");
+      record.set("dark", "#4fb1df");
+      return record;
+    }());
+    record.set("border", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#209fdb");
+      record.set("dark", "#209fdb");
+      return record;
+    }());
+    record.set("border_disabled", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#65b693");
+      record.set("dark", "#65b693");
+      return record;
+    }());
+    record.set("text", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#584b42");
+      record.set("dark", "#ffffff");
+      return record;
+    }());
+    record.set("text_disabled", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#65b693");
+      record.set("dark", "#65b693");
+      return record;
+    }());
+    return record;
+  }());
+  record.set("cta_tertiary", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("base", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#556375");
+      record.set("dark", "#556375");
+      return record;
+    }());
+    record.set("hover", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#c7cbd1");
+      record.set("dark", "#c7cbd1");
+      return record;
+    }());
+    record.set("pressed", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#3b4047");
+      record.set("dark", "#3b4047");
+      return record;
+    }());
+    record.set("disabled", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "rgba(85, 99, 117, 0.1)");
+      record.set("dark", "rgba(85, 99, 117, 0.1)");
+      return record;
+    }());
+    record.set("focused", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#e0e2e6");
+      record.set("dark", "#e0e2e6");
+      return record;
+    }());
+    record.set("border", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#e2e4e7");
+      record.set("dark", "#e2e4e7");
+      return record;
+    }());
+    record.set("border_disabled", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#65b693");
+      record.set("dark", "#65b693");
+      return record;
+    }());
+    record.set("text", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#ffffff");
+      record.set("dark", "#ffffff");
+      return record;
+    }());
+    record.set("text_disabled", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#65b693");
+      record.set("dark", "#65b693");
+      return record;
+    }());
+    return record;
+  }());
+  record.set("cta_danger", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("base", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#1C1B1F");
+      record.set("dark", "#1C1B1F");
+      return record;
+    }());
+    record.set("hover", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#1C1B1F");
+      record.set("dark", "#1C1B1F");
+      return record;
+    }());
+    record.set("pressed", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#1C1B1F");
+      record.set("dark", "#1C1B1F");
+      return record;
+    }());
+    record.set("disabled", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#1C1B1F");
+      record.set("dark", "#1C1B1F");
+      return record;
+    }());
+    record.set("focused", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#1C1B1F");
+      record.set("dark", "#1C1B1F");
+      return record;
+    }());
+    record.set("border", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#1C1B1F");
+      record.set("dark", "#1C1B1F");
+      return record;
+    }());
+    record.set("border_disabled", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#feffff");
+      record.set("dark", "#feffff");
+      return record;
+    }());
+    record.set("text", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#1C1B1F");
+      record.set("dark", "#1C1B1F");
+      return record;
+    }());
+    record.set("text_disabled", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#feffff");
+      record.set("dark", "#feffff");
+      return record;
+    }());
+    return record;
+  }());
+  record.set("accent", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("primary", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#2dd4bf");
+      record.set("dark", "#2dd4bf");
+      return record;
+    }());
+    record.set("secondary", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#4fb2df");
+      record.set("dark", "#4fb2df");
+      return record;
+    }());
+    record.set("tertiary", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#c5cbd7");
+      record.set("dark", "#c5cbd7");
+      return record;
+    }());
+    return record;
+  }());
+  record.set("error", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("base", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#f5bdbb");
+      record.set("dark", "#311b1f");
+      return record;
+    }());
+    record.set("text", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#c62a21");
+      record.set("dark", "#c62a21");
+      return record;
+    }());
+    record.set("border", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#df2b2b");
+      record.set("dark", "#df2b2b");
+      return record;
+    }());
+    return record;
+  }());
+  record.set("success", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("base", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#e3f0c4");
+      record.set("dark", "#405508ad");
+      return record;
+    }());
+    record.set("text", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#467b28");
+      record.set("dark", "#479f16");
+      return record;
+    }());
+    record.set("border", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#3d741f");
+      record.set("dark", "#3d741f");
+      return record;
+    }());
+    return record;
+  }());
+  record.set("info", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("base", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#c4edfd");
+      record.set("dark", "#15223a");
+      return record;
+    }());
+    record.set("text", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#205694");
+      record.set("dark", "#1f6feb");
+      return record;
+    }());
+    record.set("border", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#205694");
+      record.set("dark", "#205694");
+      return record;
+    }());
+    return record;
+  }());
+  record.set("warning", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("base", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#fbefba");
+      record.set("dark", "#544607a3");
+      return record;
+    }());
+    record.set("text", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#966220");
+      record.set("dark", "#d07f19");
+      return record;
+    }());
+    record.set("border", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#966220");
+      record.set("dark", "#966220");
+      return record;
+    }());
+    return record;
+  }());
+  record.set("custom", function () {
+    let record = fastn.recordInstance({
+    });
+    record.set("one", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#ed753a");
+      record.set("dark", "#ed753a");
+      return record;
+    }());
+    record.set("two", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#f3db5f");
+      record.set("dark", "#f3db5f");
+      return record;
+    }());
+    record.set("three", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#8fdcf8");
+      record.set("dark", "#8fdcf8");
+      return record;
+    }());
+    record.set("four", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#7a65c7");
+      record.set("dark", "#7a65c7");
+      return record;
+    }());
+    record.set("five", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#eb57be");
+      record.set("dark", "#eb57be");
+      return record;
+    }());
+    record.set("six", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#ef8dd6");
+      record.set("dark", "#ef8dd6");
+      return record;
+    }());
+    record.set("seven", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#7564be");
+      record.set("dark", "#7564be");
+      return record;
+    }());
+    record.set("eight", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#d554b3");
+      record.set("dark", "#d554b3");
+      return record;
+    }());
+    record.set("nine", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#ec8943");
+      record.set("dark", "#ec8943");
+      return record;
+    }());
+    record.set("ten", function () {
+      let record = fastn.recordInstance({
+      });
+      record.set("light", "#da7a4a");
+      record.set("dark", "#da7a4a");
+      return record;
+    }());
+    return record;
+  }());
+  return record;
+}();
+ftd.breakpoint_width = function () {
+  let record = fastn.recordInstance({
+  });
+  record.set("mobile", 768);
+  return record;
+}();
+ftd.device = fastn.mutable(fastn_dom.DeviceData.Mobile);
+let inherited = function () {
+  let record = fastn.recordInstance({
+  });
+  record.set("colors", ftd.default_colors.getClone().setAndReturn("is_root", true));
+  record.set("types", ftd.default_types.getClone().setAndReturn("is_root", true));
+  return record;
+}();
 
--- component page: 
-children wrapper:
-optional body body:
-
--- ds.page:
-title: $page.title
-body: $page.body
-wrapper: $page.wrapper
-colors: $my-cs.main
-
--- end: page
-</code></pre><comment data-id="405"></comment><div data-id="406" class="ft_column __pos-923 __p-924 __bbrr-925 __b-926 __r-927 __z-928"><div data-id="407" class="__rl-929 __c-930">my-ds.ftd</div></div></div><div data-id="408" class="__rl-931 markdown __c-932"><p>After creating my-ds.page component, use this in rest of the module of your
-package instead of ds.page. </p>
-<p>Once you have imported the colour scheme package and created a new component
-my-ds.page, you can use it throughout your website instead of the ds.page
-component. </p>
-With just a few lines of code, you can dramatically change the look and feel of
-your website using the ftd colour scheme.</div></div></div><div data-id="409" class="ft_column __w-933 __mt-934"><div data-id="410" class="ft_row __w-935 __bbw-936 __bc-937"><div data-id="411" class="ft_row __jc-938 __ali-939 __g-940"><div data-id="412" class="__rl-941 __c-942 __fwt-943">Standalone colors</div><div data-id="413" class="ft_row"><div data-id="414" class="ft_row __p-944 __jc-945 __ali-946 __g-947"><comment data-id="415"></comment><comment data-id="416"></comment><img data-id="417" src="-/fastn-community.github.io/color-doc/static/light-icon.svg" class="__cur-948 __w-949 __h-950 __p-951 __br-952"></img></div></div></div></div><div data-id="418" class="ft_row __w-959 __fw-960 __g-961"><comment data-id="419"></comment><comment data-id="420"></comment><div data-id="421" class="ft_row __w-962 __mt-963" style="position:relative"><div data-id="422" class="ft_column __pos-966 __t-967 __r-968 __z-969"><comment data-id="423"></comment><img data-id="424" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-970 __w-971"></img><div data-id="425" class="ft_row __jc-972 __ali-973 __jc-974"><comment data-id="426"></comment><comment data-id="427"></comment></div></div><div data-id="428" class="ft_column __w-975 __pl-976 __pr-977 __pt-978 __pb-979 __bw-980 __br-981 __bc-982"><div data-id="429" class="ft_row __g-983"><div data-id="430" class="ft_column __w-984 __h-985"><comment data-id="431"></comment><div data-id="432" class="ft_column __w-986 __h-987 __mt-988 __bw-989 __br-990 __bc-991 __bgc-992" style="position:relative"><div data-id="433" class="ft_column __pos-993 __w-994 __pl-995 __pr-996 __pt-997 __pb-998 __bblr-999 __bbrr-1000 __b-1001 __bgc-1002"><div data-id="434" class="__rl-1003 __c-1004 __tt-1005 __fwt-1006">#3fb488</div></div></div><comment data-id="435"></comment></div><div data-id="436" class="ft_column __w-1007 __g-1008"><div data-id="437" class="__rl-1009 __c-1010">$inherited.colors.border</div><div data-id="438" class="__rl-1011 __w-1012 __c-1013">We use this color for border color.</div></div></div></div></div><comment data-id="439"></comment><div data-id="440" class="ft_row __w-1014 __mt-1015" style="position:relative"><div data-id="441" class="ft_column __pos-1018 __t-1019 __r-1020 __z-1021"><comment data-id="442"></comment><img data-id="443" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-1022 __w-1023"></img><div data-id="444" class="ft_row __jc-1024 __ali-1025 __jc-1026"><comment data-id="445"></comment><comment data-id="446"></comment></div></div><div data-id="447" class="ft_column __w-1027 __pl-1028 __pr-1029 __pt-1030 __pb-1031 __bw-1032 __br-1033 __bc-1034"><div data-id="448" class="ft_row __g-1035"><div data-id="449" class="ft_column __w-1036 __h-1037"><comment data-id="450"></comment><div data-id="451" class="ft_column __w-1038 __h-1039 __mt-1040 __bw-1041 __br-1042 __bc-1043 __bgc-1044" style="position:relative"><div data-id="452" class="ft_column __pos-1045 __w-1046 __pl-1047 __pr-1048 __pt-1049 __pb-1050 __bblr-1051 __bbrr-1052 __b-1053 __bgc-1054"><div data-id="453" class="__rl-1055 __c-1056 __tt-1057 __fwt-1058">#3e0306</div></div></div><comment data-id="454"></comment></div><div data-id="455" class="ft_column __w-1059 __g-1060"><div data-id="456" class="__rl-1061 __c-1062">$inherited.colors.border-strong</div><div data-id="457" class="__rl-1063 __w-1064 __c-1065">We use this color for strong border color.</div></div></div></div></div><comment data-id="458"></comment><div data-id="459" class="ft_row __w-1066 __mt-1067" style="position:relative"><div data-id="460" class="ft_column __pos-1070 __t-1071 __r-1072 __z-1073"><comment data-id="461"></comment><img data-id="462" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-1074 __w-1075"></img><div data-id="463" class="ft_row __jc-1076 __ali-1077 __jc-1078"><comment data-id="464"></comment><comment data-id="465"></comment></div></div><div data-id="466" class="ft_column __w-1079 __pl-1080 __pr-1081 __pt-1082 __pb-1083 __bw-1084 __br-1085 __bc-1086"><div data-id="467" class="ft_row __g-1087"><div data-id="468" class="ft_column __w-1088 __h-1089"><comment data-id="469"></comment><div data-id="470" class="ft_column __w-1090 __h-1091 __mt-1092 __bw-1093 __br-1094 __bc-1095 __bgc-1096" style="position:relative"><div data-id="471" class="ft_column __pos-1097 __w-1098 __pl-1099 __pr-1100 __pt-1101 __pb-1102 __bblr-1103 __bbrr-1104 __b-1105 __bgc-1106"><div data-id="472" class="__rl-1107 __c-1108 __tt-1109 __fwt-1110">#7d8180</div></div></div><comment data-id="473"></comment></div><div data-id="474" class="ft_column __w-1111 __g-1112"><div data-id="475" class="__rl-1113 __c-1114">$inherited.colors.text</div><div data-id="476" class="__rl-1115 __w-1116 __c-1117">We use this color for text.</div></div></div></div></div><comment data-id="477"></comment><div data-id="478" class="ft_row __w-1118 __mt-1119" style="position:relative"><div data-id="479" class="ft_column __pos-1122 __t-1123 __r-1124 __z-1125"><comment data-id="480"></comment><img data-id="481" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-1126 __w-1127"></img><div data-id="482" class="ft_row __jc-1128 __ali-1129 __jc-1130"><comment data-id="483"></comment><comment data-id="484"></comment></div></div><div data-id="485" class="ft_column __w-1131 __pl-1132 __pr-1133 __pt-1134 __pb-1135 __bw-1136 __br-1137 __bc-1138"><div data-id="486" class="ft_row __g-1139"><div data-id="487" class="ft_column __w-1140 __h-1141"><comment data-id="488"></comment><div data-id="489" class="ft_column __w-1142 __h-1143 __mt-1144 __bw-1145 __br-1146 __bc-1147 __bgc-1148" style="position:relative"><div data-id="490" class="ft_column __pos-1149 __w-1150 __pl-1151 __pr-1152 __pt-1153 __pb-1154 __bblr-1155 __bbrr-1156 __b-1157 __bgc-1158"><div data-id="491" class="__rl-1159 __c-1160 __tt-1161 __fwt-1162">#7d8180</div></div></div><comment data-id="492"></comment></div><div data-id="493" class="ft_column __w-1163 __g-1164"><div data-id="494" class="__rl-1165 __c-1166">$inherited.colors.text-strong</div><div data-id="495" class="__rl-1167 __w-1168 __c-1169">We use this color for strong text.</div></div></div></div></div><comment data-id="496"></comment><div data-id="497" class="ft_row __w-1170 __mt-1171" style="position:relative"><div data-id="498" class="ft_column __pos-1174 __t-1175 __r-1176 __z-1177"><comment data-id="499"></comment><img data-id="500" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-1178 __w-1179"></img><div data-id="501" class="ft_row __jc-1180 __ali-1181 __jc-1182"><comment data-id="502"></comment><comment data-id="503"></comment></div></div><div data-id="504" class="ft_column __w-1183 __pl-1184 __pr-1185 __pt-1186 __pb-1187 __bw-1188 __br-1189 __bc-1190"><div data-id="505" class="ft_row __g-1191"><div data-id="506" class="ft_column __w-1192 __h-1193"><comment data-id="507"></comment><div data-id="508" class="ft_column __w-1194 __h-1195 __mt-1196 __bw-1197 __br-1198 __bc-1199 __bgc-1200" style="position:relative"><div data-id="509" class="ft_column __pos-1201 __w-1202 __pl-1203 __pr-1204 __pt-1205 __pb-1206 __bblr-1207 __bbrr-1208 __b-1209 __bgc-1210"><div data-id="510" class="__rl-1211 __c-1212 __tt-1213 __fwt-1214">#6f0100</div></div></div><comment data-id="511"></comment></div><div data-id="512" class="ft_column __w-1215 __g-1216"><div data-id="513" class="__rl-1217 __c-1218">$inherited.colors.shadow</div><div data-id="514" class="__rl-1219 __w-1220 __c-1221">We use this color for shadow.</div></div></div></div></div><comment data-id="515"></comment><div data-id="516" class="ft_row __w-1222 __mt-1223" style="position:relative"><div data-id="517" class="ft_column __pos-1226 __t-1227 __r-1228 __z-1229"><comment data-id="518"></comment><img data-id="519" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-1230 __w-1231"></img><div data-id="520" class="ft_row __jc-1232 __ali-1233 __jc-1234"><comment data-id="521"></comment><comment data-id="522"></comment></div></div><div data-id="523" class="ft_column __w-1235 __pl-1236 __pr-1237 __pt-1238 __pb-1239 __bw-1240 __br-1241 __bc-1242"><div data-id="524" class="ft_row __g-1243"><div data-id="525" class="ft_column __w-1244 __h-1245"><comment data-id="526"></comment><div data-id="527" class="ft_column __w-1246 __h-1247 __mt-1248 __bw-1249 __br-1250 __bc-1251 __bgc-1252" style="position:relative"><div data-id="528" class="ft_column __pos-1253 __w-1254 __pl-1255 __pr-1256 __pt-1257 __pb-1258 __bblr-1259 __bbrr-1260 __b-1261 __bgc-1262"><div data-id="529" class="__rl-1263 __c-1264 __tt-1265 __fwt-1266">#393939</div></div></div><comment data-id="530"></comment></div><div data-id="531" class="ft_column __w-1267 __g-1268"><div data-id="532" class="__rl-1269 __c-1270">$inherited.colors.scrim</div><div data-id="533" class="__rl-1271 __w-1272 __c-1273">We use this color for scrim.</div></div></div></div></div><comment data-id="534"></comment><comment data-id="535"></comment><comment data-id="536"></comment><comment data-id="537"></comment><comment data-id="538"></comment><comment data-id="539"></comment><comment data-id="540"></comment></div></div><div data-id="541" class="ft_column __w-1274 __mt-1275"><div data-id="542" class="ft_row __w-1276 __bbw-1277 __bc-1278"><div data-id="543" class="ft_row __jc-1279 __ali-1280 __g-1281"><div data-id="544" class="__rl-1282 __c-1283 __fwt-1284">Background Colors</div><div data-id="545" class="ft_row"><div data-id="546" class="ft_row __p-1285 __jc-1286 __ali-1287 __g-1288"><comment data-id="547"></comment><comment data-id="548"></comment><img data-id="549" src="-/fastn-community.github.io/color-doc/static/light-icon.svg" class="__cur-1289 __w-1290 __h-1291 __p-1292 __br-1293"></img></div></div></div></div><div data-id="550" class="ft_row __w-1300 __fw-1301 __g-1302"><comment data-id="551"></comment><comment data-id="552"></comment><div data-id="553" class="ft_row __w-1303 __mt-1304" style="position:relative"><div data-id="554" class="ft_column __pos-1307 __t-1308 __r-1309 __z-1310"><comment data-id="555"></comment><img data-id="556" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-1311 __w-1312"></img><div data-id="557" class="ft_row __jc-1313 __ali-1314 __jc-1315"><comment data-id="558"></comment><comment data-id="559"></comment></div></div><div data-id="560" class="ft_column __w-1316 __pl-1317 __pr-1318 __pt-1319 __pb-1320 __bw-1321 __br-1322 __bc-1323"><div data-id="561" class="ft_row __g-1324"><div data-id="562" class="ft_column __w-1325 __h-1326"><comment data-id="563"></comment><div data-id="564" class="ft_column __w-1327 __h-1328 __mt-1329 __bw-1330 __br-1331 __bc-1332 __bgc-1333" style="position:relative"><div data-id="565" class="ft_column __pos-1334 __w-1335 __pl-1336 __pr-1337 __pt-1338 __pb-1339 __bblr-1340 __bbrr-1341 __b-1342 __bgc-1343"><div data-id="566" class="__rl-1344 __c-1345 __tt-1346 __fwt-1347">#faf8f4</div></div></div><comment data-id="567"></comment></div><div data-id="568" class="ft_column __w-1348 __g-1349"><div data-id="569" class="__rl-1350 __c-1351">$inherited.colors.background.base</div><div data-id="570" class="__rl-1352 __w-1353 __c-1354">We use this color for base background.</div></div></div></div></div><comment data-id="571"></comment><div data-id="572" class="ft_row __w-1355 __mt-1356" style="position:relative"><div data-id="573" class="ft_column __pos-1359 __t-1360 __r-1361 __z-1362"><comment data-id="574"></comment><img data-id="575" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-1363 __w-1364"></img><div data-id="576" class="ft_row __jc-1365 __ali-1366 __jc-1367"><comment data-id="577"></comment><comment data-id="578"></comment></div></div><div data-id="579" class="ft_column __w-1368 __pl-1369 __pr-1370 __pt-1371 __pb-1372 __bw-1373 __br-1374 __bc-1375"><div data-id="580" class="ft_row __g-1376"><div data-id="581" class="ft_column __w-1377 __h-1378"><comment data-id="582"></comment><div data-id="583" class="ft_column __w-1379 __h-1380 __mt-1381 __bw-1382 __br-1383 __bc-1384 __bgc-1385" style="position:relative"><div data-id="584" class="ft_column __pos-1386 __w-1387 __pl-1388 __pr-1389 __pt-1390 __pb-1391 __bblr-1392 __bbrr-1393 __b-1394 __bgc-1395"><div data-id="585" class="__rl-1396 __c-1397 __tt-1398 __fwt-1399">#FFFFFF</div></div></div><comment data-id="586"></comment></div><div data-id="587" class="ft_column __w-1400 __g-1401"><div data-id="588" class="__rl-1402 __c-1403">$inherited.colors.background.step-1</div><div data-id="589" class="__rl-1404 __w-1405 __c-1406">We use this color for background step-1 such as sidebar etc.</div></div></div></div></div><comment data-id="590"></comment><div data-id="591" class="ft_row __w-1407 __mt-1408" style="position:relative"><div data-id="592" class="ft_column __pos-1411 __t-1412 __r-1413 __z-1414"><comment data-id="593"></comment><img data-id="594" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-1415 __w-1416"></img><div data-id="595" class="ft_row __jc-1417 __ali-1418 __jc-1419"><comment data-id="596"></comment><comment data-id="597"></comment></div></div><div data-id="598" class="ft_column __w-1420 __pl-1421 __pr-1422 __pt-1423 __pb-1424 __bw-1425 __br-1426 __bc-1427"><div data-id="599" class="ft_row __g-1428"><div data-id="600" class="ft_column __w-1429 __h-1430"><comment data-id="601"></comment><div data-id="602" class="ft_column __w-1431 __h-1432 __mt-1433 __bw-1434 __br-1435 __bc-1436 __bgc-1437" style="position:relative"><div data-id="603" class="ft_column __pos-1438 __w-1439 __pl-1440 __pr-1441 __pt-1442 __pb-1443 __bblr-1444 __bbrr-1445 __b-1446 __bgc-1447"><div data-id="604" class="__rl-1448 __c-1449 __tt-1450 __fwt-1451">#f4f4f4</div></div></div><comment data-id="605"></comment></div><div data-id="606" class="ft_column __w-1452 __g-1453"><div data-id="607" class="__rl-1454 __c-1455">$inherited.colors.background.step-2</div><div data-id="608" class="__rl-1456 __w-1457 __c-1458">We use this color as background step-2 such as for background card etc.</div></div></div></div></div><comment data-id="609"></comment><div data-id="610" class="ft_row __w-1459 __mt-1460" style="position:relative"><div data-id="611" class="ft_column __pos-1463 __t-1464 __r-1465 __z-1466"><comment data-id="612"></comment><img data-id="613" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-1467 __w-1468"></img><div data-id="614" class="ft_row __jc-1469 __ali-1470 __jc-1471"><comment data-id="615"></comment><comment data-id="616"></comment></div></div><div data-id="617" class="ft_column __w-1472 __pl-1473 __pr-1474 __pt-1475 __pb-1476 __bw-1477 __br-1478 __bc-1479"><div data-id="618" class="ft_row __g-1480"><div data-id="619" class="ft_column __w-1481 __h-1482"><comment data-id="620"></comment><div data-id="621" class="ft_column __w-1483 __h-1484 __mt-1485 __bw-1486 __br-1487 __bc-1488 __bgc-1489" style="position:relative"><div data-id="622" class="ft_column __pos-1490 __w-1491 __pl-1492 __pr-1493 __pt-1494 __pb-1495 __bblr-1496 __bbrr-1497 __b-1498 __bgc-1499"><div data-id="623" class="__rl-1500 __c-1501 __tt-1502 __fwt-1503">#2B303B</div></div></div><comment data-id="624"></comment></div><div data-id="625" class="ft_column __w-1504 __g-1505"><div data-id="626" class="__rl-1506 __c-1507">$inherited.colors.background.code</div><div data-id="627" class="__rl-1508 __w-1509 __c-1510">We use this color for background code.</div></div></div></div></div><comment data-id="628"></comment><div data-id="629" class="ft_row __w-1511 __mt-1512" style="position:relative"><div data-id="630" class="ft_column __pos-1515 __t-1516 __r-1517 __z-1518"><comment data-id="631"></comment><img data-id="632" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-1519 __w-1520"></img><div data-id="633" class="ft_row __jc-1521 __ali-1522 __jc-1523"><comment data-id="634"></comment><comment data-id="635"></comment></div></div><div data-id="636" class="ft_column __w-1524 __pl-1525 __pr-1526 __pt-1527 __pb-1528 __bw-1529 __br-1530 __bc-1531"><div data-id="637" class="ft_row __g-1532"><div data-id="638" class="ft_column __w-1533 __h-1534"><comment data-id="639"></comment><div data-id="640" class="ft_column __w-1535 __h-1536 __mt-1537 __bw-1538 __br-1539 __bc-1540 __bgc-1541" style="position:relative"><div data-id="641" class="ft_column __pos-1542 __w-1543 __pl-1544 __pr-1545 __pt-1546 __pb-1547 __bblr-1548 __bbrr-1549 __b-1550 __bgc-1551"><div data-id="642" class="__rl-1552 __c-1553 __tt-1554 __fwt-1555">rgba(0, 0, 0, 0.3)</div></div></div><comment data-id="643"></comment></div><div data-id="644" class="ft_column __w-1556 __g-1557"><div data-id="645" class="__rl-1558 __c-1559">$inherited.colors.background.overlay</div><div data-id="646" class="__rl-1560 __w-1561 __c-1562">We use this color for background overlay.</div></div></div></div></div><comment data-id="647"></comment><comment data-id="648"></comment><comment data-id="649"></comment><comment data-id="650"></comment><comment data-id="651"></comment><comment data-id="652"></comment></div></div><div data-id="653" class="ft_column __w-1563 __mt-1564"><div data-id="654" class="ft_row __w-1565 __bbw-1566 __bc-1567"><div data-id="655" class="ft_row __jc-1568 __ali-1569 __g-1570"><div data-id="656" class="__rl-1571 __c-1572 __fwt-1573">CTA Primary Colors</div><div data-id="657" class="ft_row"><div data-id="658" class="ft_row __p-1574 __jc-1575 __ali-1576 __g-1577"><comment data-id="659"></comment><comment data-id="660"></comment><img data-id="661" src="-/fastn-community.github.io/color-doc/static/light-icon.svg" class="__cur-1578 __w-1579 __h-1580 __p-1581 __br-1582"></img></div></div></div></div><div data-id="662" class="ft_row __w-1589 __fw-1590 __g-1591"><comment data-id="663"></comment><comment data-id="664"></comment><div data-id="665" class="ft_row __w-1592 __mt-1593" style="position:relative"><div data-id="666" class="ft_column __pos-1596 __t-1597 __r-1598 __z-1599"><comment data-id="667"></comment><img data-id="668" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-1600 __w-1601"></img><div data-id="669" class="ft_row __jc-1602 __ali-1603 __jc-1604"><comment data-id="670"></comment><comment data-id="671"></comment></div></div><div data-id="672" class="ft_column __w-1605 __pl-1606 __pr-1607 __pt-1608 __pb-1609 __bw-1610 __br-1611 __bc-1612"><div data-id="673" class="ft_row __g-1613"><div data-id="674" class="ft_column __w-1614 __h-1615"><comment data-id="675"></comment><div data-id="676" class="ft_column __w-1616 __h-1617 __mt-1618 __bw-1619 __br-1620 __bc-1621 __bgc-1622" style="position:relative"><div data-id="677" class="ft_column __pos-1623 __w-1624 __pl-1625 __pr-1626 __pt-1627 __pb-1628 __bblr-1629 __bbrr-1630 __b-1631 __bgc-1632"><div data-id="678" class="__rl-1633 __c-1634 __tt-1635 __fwt-1636">#3fb488</div></div></div><comment data-id="679"></comment></div><div data-id="680" class="ft_column __w-1637 __g-1638"><div data-id="681" class="__rl-1639 __c-1640">$inherited.colors.cta-primary.base</div><div data-id="682" class="__rl-1641 __w-1642 __c-1643">We use this color as primary main button background color.</div></div></div></div></div><comment data-id="683"></comment><div data-id="684" class="ft_row __w-1644 __mt-1645" style="position:relative"><div data-id="685" class="ft_column __pos-1648 __t-1649 __r-1650 __z-1651"><comment data-id="686"></comment><img data-id="687" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-1652 __w-1653"></img><div data-id="688" class="ft_row __jc-1654 __ali-1655 __jc-1656"><comment data-id="689"></comment><comment data-id="690"></comment></div></div><div data-id="691" class="ft_column __w-1657 __pl-1658 __pr-1659 __pt-1660 __pb-1661 __bw-1662 __br-1663 __bc-1664"><div data-id="692" class="ft_row __g-1665"><div data-id="693" class="ft_column __w-1666 __h-1667"><comment data-id="694"></comment><div data-id="695" class="ft_column __w-1668 __h-1669 __mt-1670 __bw-1671 __br-1672 __bc-1673 __bgc-1674" style="position:relative"><div data-id="696" class="ft_column __pos-1675 __w-1676 __pl-1677 __pr-1678 __pt-1679 __pb-1680 __bblr-1681 __bbrr-1682 __b-1683 __bgc-1684"><div data-id="697" class="__rl-1685 __c-1686 __tt-1687 __fwt-1688">#8c2702</div></div></div><comment data-id="698"></comment></div><div data-id="699" class="ft_column __w-1689 __g-1690"><div data-id="700" class="__rl-1691 __c-1692">$inherited.colors.cta-primary.hover</div><div data-id="701" class="__rl-1693 __w-1694 __c-1695">We use this color as primary main button hover background color.</div></div></div></div></div><comment data-id="702"></comment><div data-id="703" class="ft_row __w-1696 __mt-1697" style="position:relative"><div data-id="704" class="ft_column __pos-1700 __t-1701 __r-1702 __z-1703"><comment data-id="705"></comment><img data-id="706" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-1704 __w-1705"></img><div data-id="707" class="ft_row __jc-1706 __ali-1707 __jc-1708"><comment data-id="708"></comment><comment data-id="709"></comment></div></div><div data-id="710" class="ft_column __w-1709 __pl-1710 __pr-1711 __pt-1712 __pb-1713 __bw-1714 __br-1715 __bc-1716"><div data-id="711" class="ft_row __g-1717"><div data-id="712" class="ft_column __w-1718 __h-1719"><comment data-id="713"></comment><div data-id="714" class="ft_column __w-1720 __h-1721 __mt-1722 __bw-1723 __br-1724 __bc-1725 __bgc-1726" style="position:relative"><div data-id="715" class="ft_column __pos-1727 __w-1728 __pl-1729 __pr-1730 __pt-1731 __pb-1732 __bblr-1733 __bbrr-1734 __b-1735 __bgc-1736"><div data-id="716" class="__rl-1737 __c-1738 __tt-1739 __fwt-1740">#faad7b</div></div></div><comment data-id="717"></comment></div><div data-id="718" class="ft_column __w-1741 __g-1742"><div data-id="719" class="__rl-1743 __c-1744">$inherited.colors.cta-primary.disabled</div><div data-id="720" class="__rl-1745 __w-1746 __c-1747">We use this color as primary main button disabled background color.</div></div></div></div></div><comment data-id="721"></comment><div data-id="722" class="ft_row __w-1748 __mt-1749" style="position:relative"><div data-id="723" class="ft_column __pos-1752 __t-1753 __r-1754 __z-1755"><comment data-id="724"></comment><img data-id="725" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-1756 __w-1757"></img><div data-id="726" class="ft_row __jc-1758 __ali-1759 __jc-1760"><comment data-id="727"></comment><comment data-id="728"></comment></div></div><div data-id="729" class="ft_column __w-1761 __pl-1762 __pr-1763 __pt-1764 __pb-1765 __bw-1766 __br-1767 __bc-1768"><div data-id="730" class="ft_row __g-1769"><div data-id="731" class="ft_column __w-1770 __h-1771"><comment data-id="732"></comment><div data-id="733" class="ft_column __w-1772 __h-1773 __mt-1774 __bw-1775 __br-1776 __bc-1777 __bgc-1778" style="position:relative"><div data-id="734" class="ft_column __pos-1779 __w-1780 __pl-1781 __pr-1782 __pt-1783 __pb-1784 __bblr-1785 __bbrr-1786 __b-1787 __bgc-1788"><div data-id="735" class="__rl-1789 __c-1790 __tt-1791 __fwt-1792">#611c03</div></div></div><comment data-id="736"></comment></div><div data-id="737" class="ft_column __w-1793 __g-1794"><div data-id="738" class="__rl-1795 __c-1796">$inherited.colors.cta-primary.pressed</div><div data-id="739" class="__rl-1797 __w-1798 __c-1799">We use this color as primary main button pressed background color.</div></div></div></div></div><comment data-id="740"></comment><div data-id="741" class="ft_row __w-1800 __mt-1801" style="position:relative"><div data-id="742" class="ft_column __pos-1804 __t-1805 __r-1806 __z-1807"><comment data-id="743"></comment><img data-id="744" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-1808 __w-1809"></img><div data-id="745" class="ft_row __jc-1810 __ali-1811 __jc-1812"><comment data-id="746"></comment><comment data-id="747"></comment></div></div><div data-id="748" class="ft_column __w-1813 __pl-1814 __pr-1815 __pt-1816 __pb-1817 __bw-1818 __br-1819 __bc-1820"><div data-id="749" class="ft_row __g-1821"><div data-id="750" class="ft_column __w-1822 __h-1823"><comment data-id="751"></comment><div data-id="752" class="ft_column __w-1824 __h-1825 __mt-1826 __bw-1827 __br-1828 __bc-1829 __bgc-1830" style="position:relative"><div data-id="753" class="ft_column __pos-1831 __w-1832 __pl-1833 __pr-1834 __pt-1835 __pb-1836 __bblr-1837 __bbrr-1838 __b-1839 __bgc-1840"><div data-id="754" class="__rl-1841 __c-1842 __tt-1843 __fwt-1844">#611c03</div></div></div><comment data-id="755"></comment></div><div data-id="756" class="ft_column __w-1845 __g-1846"><div data-id="757" class="__rl-1847 __c-1848">$inherited.colors.cta-primary.focused</div><div data-id="758" class="__rl-1849 __w-1850 __c-1851">We use this color as primary main button focus background color.</div></div></div></div></div><comment data-id="759"></comment><div data-id="760" class="ft_row __w-1852 __mt-1853" style="position:relative"><div data-id="761" class="ft_column __pos-1856 __t-1857 __r-1858 __z-1859"><comment data-id="762"></comment><img data-id="763" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-1860 __w-1861"></img><div data-id="764" class="ft_row __jc-1862 __ali-1863 __jc-1864"><comment data-id="765"></comment><comment data-id="766"></comment></div></div><div data-id="767" class="ft_column __w-1865 __pl-1866 __pr-1867 __pt-1868 __pb-1869 __bw-1870 __br-1871 __bc-1872"><div data-id="768" class="ft_row __g-1873"><div data-id="769" class="ft_column __w-1874 __h-1875"><comment data-id="770"></comment><div data-id="771" class="ft_column __w-1876 __h-1877 __mt-1878 __bw-1879 __br-1880 __bc-1881 __bgc-1882" style="position:relative"><div data-id="772" class="ft_column __pos-1883 __w-1884 __pl-1885 __pr-1886 __pt-1887 __pb-1888 __bblr-1889 __bbrr-1890 __b-1891 __bgc-1892"><div data-id="773" class="__rl-1893 __c-1894 __tt-1895 __fwt-1896">#a53006</div></div></div><comment data-id="774"></comment></div><div data-id="775" class="ft_column __w-1897 __g-1898"><div data-id="776" class="__rl-1899 __c-1900">$inherited.colors.cta-primary.border</div><div data-id="777" class="__rl-1901 __w-1902 __c-1903">We use this color as primary main button border color.</div></div></div></div></div><comment data-id="778"></comment><div data-id="779" class="ft_row __w-1904 __mt-1905" style="position:relative"><div data-id="780" class="ft_column __pos-1908 __t-1909 __r-1910 __z-1911"><comment data-id="781"></comment><img data-id="782" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-1912 __w-1913"></img><div data-id="783" class="ft_row __jc-1914 __ali-1915 __jc-1916"><comment data-id="784"></comment><comment data-id="785"></comment></div></div><div data-id="786" class="ft_column __w-1917 __pl-1918 __pr-1919 __pt-1920 __pb-1921 __bw-1922 __br-1923 __bc-1924"><div data-id="787" class="ft_row __g-1925"><div data-id="788" class="ft_column __w-1926 __h-1927"><comment data-id="789"></comment><div data-id="790" class="ft_column __w-1928 __h-1929 __mt-1930 __bw-1931 __br-1932 __bc-1933 __bgc-1934" style="position:relative"><div data-id="791" class="ft_column __pos-1935 __w-1936 __pl-1937 __pr-1938 __pt-1939 __pb-1940 __bblr-1941 __bbrr-1942 __b-1943 __bgc-1944"><div data-id="792" class="__rl-1945 __c-1946 __tt-1947 __fwt-1948">#FFFFFF</div></div></div><comment data-id="793"></comment></div><div data-id="794" class="ft_column __w-1949 __g-1950"><div data-id="795" class="__rl-1951 __c-1952">$inherited.colors.cta-primary.text</div><div data-id="796" class="__rl-1953 __w-1954 __c-1955">We use this color as primary main button text color.</div></div></div></div></div><comment data-id="797"></comment><comment data-id="798"></comment><comment data-id="799"></comment><comment data-id="800"></comment><comment data-id="801"></comment><comment data-id="802"></comment><comment data-id="803"></comment><comment data-id="804"></comment></div></div><div data-id="805" class="ft_column __w-1956 __mt-1957"><div data-id="806" class="ft_row __w-1958 __bbw-1959 __bc-1960"><div data-id="807" class="ft_row __jc-1961 __ali-1962 __g-1963"><div data-id="808" class="__rl-1964 __c-1965 __fwt-1966">CTA Secondary Colors</div><div data-id="809" class="ft_row"><div data-id="810" class="ft_row __p-1967 __jc-1968 __ali-1969 __g-1970"><comment data-id="811"></comment><comment data-id="812"></comment><img data-id="813" src="-/fastn-community.github.io/color-doc/static/light-icon.svg" class="__cur-1971 __w-1972 __h-1973 __p-1974 __br-1975"></img></div></div></div></div><div data-id="814" class="ft_row __w-1982 __fw-1983 __g-1984"><comment data-id="815"></comment><comment data-id="816"></comment><div data-id="817" class="ft_row __w-1985 __mt-1986" style="position:relative"><div data-id="818" class="ft_column __pos-1989 __t-1990 __r-1991 __z-1992"><comment data-id="819"></comment><img data-id="820" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-1993 __w-1994"></img><div data-id="821" class="ft_row __jc-1995 __ali-1996 __jc-1997"><comment data-id="822"></comment><comment data-id="823"></comment></div></div><div data-id="824" class="ft_column __w-1998 __pl-1999 __pr-2000 __pt-2001 __pb-2002 __bw-2003 __br-2004 __bc-2005"><div data-id="825" class="ft_row __g-2006"><div data-id="826" class="ft_column __w-2007 __h-2008"><comment data-id="827"></comment><div data-id="828" class="ft_column __w-2009 __h-2010 __mt-2011 __bw-2012 __br-2013 __bc-2014 __bgc-2015" style="position:relative"><div data-id="829" class="ft_column __pos-2016 __w-2017 __pl-2018 __pr-2019 __pt-2020 __pb-2021 __bblr-2022 __bbrr-2023 __b-2024 __bgc-2025"><div data-id="830" class="__rl-2026 __c-2027 __tt-2028 __fwt-2029">#EF8435</div></div></div><comment data-id="831"></comment></div><div data-id="832" class="ft_column __w-2030 __g-2031"><div data-id="833" class="__rl-2032 __c-2033">$inherited.colors.cta-secondary.base</div><div data-id="834" class="__rl-2034 __w-2035 __c-2036">We use this color as secondary main button background color.</div></div></div></div></div><comment data-id="835"></comment><div data-id="836" class="ft_row __w-2037 __mt-2038" style="position:relative"><div data-id="837" class="ft_column __pos-2041 __t-2042 __r-2043 __z-2044"><comment data-id="838"></comment><img data-id="839" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-2045 __w-2046"></img><div data-id="840" class="ft_row __jc-2047 __ali-2048 __jc-2049"><comment data-id="841"></comment><comment data-id="842"></comment></div></div><div data-id="843" class="ft_column __w-2050 __pl-2051 __pr-2052 __pt-2053 __pb-2054 __bw-2055 __br-2056 __bc-2057"><div data-id="844" class="ft_row __g-2058"><div data-id="845" class="ft_column __w-2059 __h-2060"><comment data-id="846"></comment><div data-id="847" class="ft_column __w-2061 __h-2062 __mt-2063 __bw-2064 __br-2065 __bc-2066 __bgc-2067" style="position:relative"><div data-id="848" class="ft_column __pos-2068 __w-2069 __pl-2070 __pr-2071 __pt-2072 __pb-2073 __bblr-2074 __bbrr-2075 __b-2076 __bgc-2077"><div data-id="849" class="__rl-2078 __c-2079 __tt-2080 __fwt-2081">#D77730</div></div></div><comment data-id="850"></comment></div><div data-id="851" class="ft_column __w-2082 __g-2083"><div data-id="852" class="__rl-2084 __c-2085">$inherited.colors.cta-secondary.hover</div><div data-id="853" class="__rl-2086 __w-2087 __c-2088">We use this color as secondary main button hover background color.</div></div></div></div></div><comment data-id="854"></comment><div data-id="855" class="ft_row __w-2089 __mt-2090" style="position:relative"><div data-id="856" class="ft_column __pos-2093 __t-2094 __r-2095 __z-2096"><comment data-id="857"></comment><img data-id="858" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-2097 __w-2098"></img><div data-id="859" class="ft_row __jc-2099 __ali-2100 __jc-2101"><comment data-id="860"></comment><comment data-id="861"></comment></div></div><div data-id="862" class="ft_column __w-2102 __pl-2103 __pr-2104 __pt-2105 __pb-2106 __bw-2107 __br-2108 __bc-2109"><div data-id="863" class="ft_row __g-2110"><div data-id="864" class="ft_column __w-2111 __h-2112"><comment data-id="865"></comment><div data-id="866" class="ft_column __w-2113 __h-2114 __mt-2115 __bw-2116 __br-2117 __bc-2118 __bgc-2119" style="position:relative"><div data-id="867" class="ft_column __pos-2120 __w-2121 __pl-2122 __pr-2123 __pt-2124 __pb-2125 __bblr-2126 __bbrr-2127 __b-2128 __bgc-2129"><div data-id="868" class="__rl-2130 __c-2131 __tt-2132 __fwt-2133">#777777</div></div></div><comment data-id="869"></comment></div><div data-id="870" class="ft_column __w-2134 __g-2135"><div data-id="871" class="__rl-2136 __c-2137">$inherited.colors.cta-secondary.disabled</div><div data-id="872" class="__rl-2138 __w-2139 __c-2140">We use this color as secondary main button disabled background color.</div></div></div></div></div><comment data-id="873"></comment><div data-id="874" class="ft_row __w-2141 __mt-2142" style="position:relative"><div data-id="875" class="ft_column __pos-2145 __t-2146 __r-2147 __z-2148"><comment data-id="876"></comment><img data-id="877" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-2149 __w-2150"></img><div data-id="878" class="ft_row __jc-2151 __ali-2152 __jc-2153"><comment data-id="879"></comment><comment data-id="880"></comment></div></div><div data-id="881" class="ft_column __w-2154 __pl-2155 __pr-2156 __pt-2157 __pb-2158 __bw-2159 __br-2160 __bc-2161"><div data-id="882" class="ft_row __g-2162"><div data-id="883" class="ft_column __w-2163 __h-2164"><comment data-id="884"></comment><div data-id="885" class="ft_column __w-2165 __h-2166 __mt-2167 __bw-2168 __br-2169 __bc-2170 __bgc-2171" style="position:relative"><div data-id="886" class="ft_column __pos-2172 __w-2173 __pl-2174 __pr-2175 __pt-2176 __pb-2177 __bblr-2178 __bbrr-2179 __b-2180 __bgc-2181"><div data-id="887" class="__rl-2182 __c-2183 __tt-2184 __fwt-2185">#BF6A2A</div></div></div><comment data-id="888"></comment></div><div data-id="889" class="ft_column __w-2186 __g-2187"><div data-id="890" class="__rl-2188 __c-2189">$inherited.colors.cta-secondary.pressed</div><div data-id="891" class="__rl-2190 __w-2191 __c-2192">We use this color as secondary main button pressed background color.</div></div></div></div></div><comment data-id="892"></comment><div data-id="893" class="ft_row __w-2193 __mt-2194" style="position:relative"><div data-id="894" class="ft_column __pos-2197 __t-2198 __r-2199 __z-2200"><comment data-id="895"></comment><img data-id="896" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-2201 __w-2202"></img><div data-id="897" class="ft_row __jc-2203 __ali-2204 __jc-2205"><comment data-id="898"></comment><comment data-id="899"></comment></div></div><div data-id="900" class="ft_column __w-2206 __pl-2207 __pr-2208 __pt-2209 __pb-2210 __bw-2211 __br-2212 __bc-2213"><div data-id="901" class="ft_row __g-2214"><div data-id="902" class="ft_column __w-2215 __h-2216"><comment data-id="903"></comment><div data-id="904" class="ft_column __w-2217 __h-2218 __mt-2219 __bw-2220 __br-2221 __bc-2222 __bgc-2223" style="position:relative"><div data-id="905" class="ft_column __pos-2224 __w-2225 __pl-2226 __pr-2227 __pt-2228 __pb-2229 __bblr-2230 __bbrr-2231 __b-2232 __bgc-2233"><div data-id="906" class="__rl-2234 __c-2235 __tt-2236 __fwt-2237">#B36328</div></div></div><comment data-id="907"></comment></div><div data-id="908" class="ft_column __w-2238 __g-2239"><div data-id="909" class="__rl-2240 __c-2241">$inherited.colors.cta-secondary.focused</div><div data-id="910" class="__rl-2242 __w-2243 __c-2244">We use this color as secondary main button focus background color.</div></div></div></div></div><comment data-id="911"></comment><div data-id="912" class="ft_row __w-2245 __mt-2246" style="position:relative"><div data-id="913" class="ft_column __pos-2249 __t-2250 __r-2251 __z-2252"><comment data-id="914"></comment><img data-id="915" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-2253 __w-2254"></img><div data-id="916" class="ft_row __jc-2255 __ali-2256 __jc-2257"><comment data-id="917"></comment><comment data-id="918"></comment></div></div><div data-id="919" class="ft_column __w-2258 __pl-2259 __pr-2260 __pt-2261 __pb-2262 __bw-2263 __br-2264 __bc-2265"><div data-id="920" class="ft_row __g-2266"><div data-id="921" class="ft_column __w-2267 __h-2268"><comment data-id="922"></comment><div data-id="923" class="ft_column __w-2269 __h-2270 __mt-2271 __bw-2272 __br-2273 __bc-2274 __bgc-2275" style="position:relative"><div data-id="924" class="ft_column __pos-2276 __w-2277 __pl-2278 __pr-2279 __pt-2280 __pb-2281 __bblr-2282 __bbrr-2283 __b-2284 __bgc-2285"><div data-id="925" class="__rl-2286 __c-2287 __tt-2288 __fwt-2289">#F3A063</div></div></div><comment data-id="926"></comment></div><div data-id="927" class="ft_column __w-2290 __g-2291"><div data-id="928" class="__rl-2292 __c-2293">$inherited.colors.cta-secondary.border</div><div data-id="929" class="__rl-2294 __w-2295 __c-2296">We use this color as secondary main button border color.</div></div></div></div></div><comment data-id="930"></comment><div data-id="931" class="ft_row __w-2297 __mt-2298" style="position:relative"><div data-id="932" class="ft_column __pos-2301 __t-2302 __r-2303 __z-2304"><comment data-id="933"></comment><img data-id="934" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-2305 __w-2306"></img><div data-id="935" class="ft_row __jc-2307 __ali-2308 __jc-2309"><comment data-id="936"></comment><comment data-id="937"></comment></div></div><div data-id="938" class="ft_column __w-2310 __pl-2311 __pr-2312 __pt-2313 __pb-2314 __bw-2315 __br-2316 __bc-2317"><div data-id="939" class="ft_row __g-2318"><div data-id="940" class="ft_column __w-2319 __h-2320"><comment data-id="941"></comment><div data-id="942" class="ft_column __w-2321 __h-2322 __mt-2323 __bw-2324 __br-2325 __bc-2326 __bgc-2327" style="position:relative"><div data-id="943" class="ft_column __pos-2328 __w-2329 __pl-2330 __pr-2331 __pt-2332 __pb-2333 __bblr-2334 __bbrr-2335 __b-2336 __bgc-2337"><div data-id="944" class="__rl-2338 __c-2339 __tt-2340 __fwt-2341">#FFFFFF</div></div></div><comment data-id="945"></comment></div><div data-id="946" class="ft_column __w-2342 __g-2343"><div data-id="947" class="__rl-2344 __c-2345">$inherited.colors.cta-secondary.text</div><div data-id="948" class="__rl-2346 __w-2347 __c-2348">We use this color as secondary main button text color.</div></div></div></div></div><comment data-id="949"></comment><comment data-id="950"></comment><comment data-id="951"></comment><comment data-id="952"></comment><comment data-id="953"></comment><comment data-id="954"></comment><comment data-id="955"></comment><comment data-id="956"></comment></div></div><div data-id="957" class="ft_column __w-2349 __mt-2350"><div data-id="958" class="ft_row __w-2351 __bbw-2352 __bc-2353"><div data-id="959" class="ft_row __jc-2354 __ali-2355 __g-2356"><div data-id="960" class="__rl-2357 __c-2358 __fwt-2359">CTA Tertiary Colors</div><div data-id="961" class="ft_row"><div data-id="962" class="ft_row __p-2360 __jc-2361 __ali-2362 __g-2363"><comment data-id="963"></comment><comment data-id="964"></comment><img data-id="965" src="-/fastn-community.github.io/color-doc/static/light-icon.svg" class="__cur-2364 __w-2365 __h-2366 __p-2367 __br-2368"></img></div></div></div></div><div data-id="966" class="ft_row __w-2375 __fw-2376 __g-2377"><comment data-id="967"></comment><comment data-id="968"></comment><div data-id="969" class="ft_row __w-2378 __mt-2379" style="position:relative"><div data-id="970" class="ft_column __pos-2382 __t-2383 __r-2384 __z-2385"><comment data-id="971"></comment><img data-id="972" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-2386 __w-2387"></img><div data-id="973" class="ft_row __jc-2388 __ali-2389 __jc-2390"><comment data-id="974"></comment><comment data-id="975"></comment></div></div><div data-id="976" class="ft_column __w-2391 __pl-2392 __pr-2393 __pt-2394 __pb-2395 __bw-2396 __br-2397 __bc-2398"><div data-id="977" class="ft_row __g-2399"><div data-id="978" class="ft_column __w-2400 __h-2401"><comment data-id="979"></comment><div data-id="980" class="ft_column __w-2402 __h-2403 __mt-2404 __bw-2405 __br-2406 __bc-2407 __bgc-2408" style="position:relative"><div data-id="981" class="ft_column __pos-2409 __w-2410 __pl-2411 __pr-2412 __pt-2413 __pb-2414 __bblr-2415 __bbrr-2416 __b-2417 __bgc-2418"><div data-id="982" class="__rl-2419 __c-2420 __tt-2421 __fwt-2422">#EBE8E5</div></div></div><comment data-id="983"></comment></div><div data-id="984" class="ft_column __w-2423 __g-2424"><div data-id="985" class="__rl-2425 __c-2426">$inherited.colors.cta-tertiary.base</div><div data-id="986" class="__rl-2427 __w-2428 __c-2429">We use this color as tertiary main button background color.</div></div></div></div></div><comment data-id="987"></comment><div data-id="988" class="ft_row __w-2430 __mt-2431" style="position:relative"><div data-id="989" class="ft_column __pos-2434 __t-2435 __r-2436 __z-2437"><comment data-id="990"></comment><img data-id="991" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-2438 __w-2439"></img><div data-id="992" class="ft_row __jc-2440 __ali-2441 __jc-2442"><comment data-id="993"></comment><comment data-id="994"></comment></div></div><div data-id="995" class="ft_column __w-2443 __pl-2444 __pr-2445 __pt-2446 __pb-2447 __bw-2448 __br-2449 __bc-2450"><div data-id="996" class="ft_row __g-2451"><div data-id="997" class="ft_column __w-2452 __h-2453"><comment data-id="998"></comment><div data-id="999" class="ft_column __w-2454 __h-2455 __mt-2456 __bw-2457 __br-2458 __bc-2459 __bgc-2460" style="position:relative"><div data-id="1000" class="ft_column __pos-2461 __w-2462 __pl-2463 __pr-2464 __pt-2465 __pb-2466 __bblr-2467 __bbrr-2468 __b-2469 __bgc-2470"><div data-id="1001" class="__rl-2471 __c-2472 __tt-2473 __fwt-2474">#D4D1CE</div></div></div><comment data-id="1002"></comment></div><div data-id="1003" class="ft_column __w-2475 __g-2476"><div data-id="1004" class="__rl-2477 __c-2478">$inherited.colors.cta-tertiary.hover</div><div data-id="1005" class="__rl-2479 __w-2480 __c-2481">We use this color as tertiary main button hover background color.</div></div></div></div></div><comment data-id="1006"></comment><div data-id="1007" class="ft_row __w-2482 __mt-2483" style="position:relative"><div data-id="1008" class="ft_column __pos-2486 __t-2487 __r-2488 __z-2489"><comment data-id="1009"></comment><img data-id="1010" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-2490 __w-2491"></img><div data-id="1011" class="ft_row __jc-2492 __ali-2493 __jc-2494"><comment data-id="1012"></comment><comment data-id="1013"></comment></div></div><div data-id="1014" class="ft_column __w-2495 __pl-2496 __pr-2497 __pt-2498 __pb-2499 __bw-2500 __br-2501 __bc-2502"><div data-id="1015" class="ft_row __g-2503"><div data-id="1016" class="ft_column __w-2504 __h-2505"><comment data-id="1017"></comment><div data-id="1018" class="ft_column __w-2506 __h-2507 __mt-2508 __bw-2509 __br-2510 __bc-2511 __bgc-2512" style="position:relative"><div data-id="1019" class="ft_column __pos-2513 __w-2514 __pl-2515 __pr-2516 __pt-2517 __pb-2518 __bblr-2519 __bbrr-2520 __b-2521 __bgc-2522"><div data-id="1020" class="__rl-2523 __c-2524 __tt-2525 __fwt-2526">#F9F8F7</div></div></div><comment data-id="1021"></comment></div><div data-id="1022" class="ft_column __w-2527 __g-2528"><div data-id="1023" class="__rl-2529 __c-2530">$inherited.colors.cta-tertiary.disabled</div><div data-id="1024" class="__rl-2531 __w-2532 __c-2533">We use this color as tertiary main button disabled background color.</div></div></div></div></div><comment data-id="1025"></comment><div data-id="1026" class="ft_row __w-2534 __mt-2535" style="position:relative"><div data-id="1027" class="ft_column __pos-2538 __t-2539 __r-2540 __z-2541"><comment data-id="1028"></comment><img data-id="1029" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-2542 __w-2543"></img><div data-id="1030" class="ft_row __jc-2544 __ali-2545 __jc-2546"><comment data-id="1031"></comment><comment data-id="1032"></comment></div></div><div data-id="1033" class="ft_column __w-2547 __pl-2548 __pr-2549 __pt-2550 __pb-2551 __bw-2552 __br-2553 __bc-2554"><div data-id="1034" class="ft_row __g-2555"><div data-id="1035" class="ft_column __w-2556 __h-2557"><comment data-id="1036"></comment><div data-id="1037" class="ft_column __w-2558 __h-2559 __mt-2560 __bw-2561 __br-2562 __bc-2563 __bgc-2564" style="position:relative"><div data-id="1038" class="ft_column __pos-2565 __w-2566 __pl-2567 __pr-2568 __pt-2569 __pb-2570 __bblr-2571 __bbrr-2572 __b-2573 __bgc-2574"><div data-id="1039" class="__rl-2575 __c-2576 __tt-2577 __fwt-2578">#BCBAB7</div></div></div><comment data-id="1040"></comment></div><div data-id="1041" class="ft_column __w-2579 __g-2580"><div data-id="1042" class="__rl-2581 __c-2582">$inherited.colors.cta-tertiary.pressed</div><div data-id="1043" class="__rl-2583 __w-2584 __c-2585">We use this color as tertiary main button pressed background color.</div></div></div></div></div><comment data-id="1044"></comment><div data-id="1045" class="ft_row __w-2586 __mt-2587" style="position:relative"><div data-id="1046" class="ft_column __pos-2590 __t-2591 __r-2592 __z-2593"><comment data-id="1047"></comment><img data-id="1048" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-2594 __w-2595"></img><div data-id="1049" class="ft_row __jc-2596 __ali-2597 __jc-2598"><comment data-id="1050"></comment><comment data-id="1051"></comment></div></div><div data-id="1052" class="ft_column __w-2599 __pl-2600 __pr-2601 __pt-2602 __pb-2603 __bw-2604 __br-2605 __bc-2606"><div data-id="1053" class="ft_row __g-2607"><div data-id="1054" class="ft_column __w-2608 __h-2609"><comment data-id="1055"></comment><div data-id="1056" class="ft_column __w-2610 __h-2611 __mt-2612 __bw-2613 __br-2614 __bc-2615 __bgc-2616" style="position:relative"><div data-id="1057" class="ft_column __pos-2617 __w-2618 __pl-2619 __pr-2620 __pt-2621 __pb-2622 __bblr-2623 __bbrr-2624 __b-2625 __bgc-2626"><div data-id="1058" class="__rl-2627 __c-2628 __tt-2629 __fwt-2630">#B0AEAC</div></div></div><comment data-id="1059"></comment></div><div data-id="1060" class="ft_column __w-2631 __g-2632"><div data-id="1061" class="__rl-2633 __c-2634">$inherited.colors.cta-tertiary.focused</div><div data-id="1062" class="__rl-2635 __w-2636 __c-2637">We use this color as tertiary main button focus background color.</div></div></div></div></div><comment data-id="1063"></comment><div data-id="1064" class="ft_row __w-2638 __mt-2639" style="position:relative"><div data-id="1065" class="ft_column __pos-2642 __t-2643 __r-2644 __z-2645"><comment data-id="1066"></comment><img data-id="1067" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-2646 __w-2647"></img><div data-id="1068" class="ft_row __jc-2648 __ali-2649 __jc-2650"><comment data-id="1069"></comment><comment data-id="1070"></comment></div></div><div data-id="1071" class="ft_column __w-2651 __pl-2652 __pr-2653 __pt-2654 __pb-2655 __bw-2656 __br-2657 __bc-2658"><div data-id="1072" class="ft_row __g-2659"><div data-id="1073" class="ft_column __w-2660 __h-2661"><comment data-id="1074"></comment><div data-id="1075" class="ft_column __w-2662 __h-2663 __mt-2664 __bw-2665 __br-2666 __bc-2667 __bgc-2668" style="position:relative"><div data-id="1076" class="ft_column __pos-2669 __w-2670 __pl-2671 __pr-2672 __pt-2673 __pb-2674 __bblr-2675 __bbrr-2676 __b-2677 __bgc-2678"><div data-id="1077" class="__rl-2679 __c-2680 __tt-2681 __fwt-2682">#B0AEAC</div></div></div><comment data-id="1078"></comment></div><div data-id="1079" class="ft_column __w-2683 __g-2684"><div data-id="1080" class="__rl-2685 __c-2686">$inherited.colors.cta-tertiary.border</div><div data-id="1081" class="__rl-2687 __w-2688 __c-2689">We use this color as tertiary main button border color.</div></div></div></div></div><comment data-id="1082"></comment><div data-id="1083" class="ft_row __w-2690 __mt-2691" style="position:relative"><div data-id="1084" class="ft_column __pos-2694 __t-2695 __r-2696 __z-2697"><comment data-id="1085"></comment><img data-id="1086" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-2698 __w-2699"></img><div data-id="1087" class="ft_row __jc-2700 __ali-2701 __jc-2702"><comment data-id="1088"></comment><comment data-id="1089"></comment></div></div><div data-id="1090" class="ft_column __w-2703 __pl-2704 __pr-2705 __pt-2706 __pb-2707 __bw-2708 __br-2709 __bc-2710"><div data-id="1091" class="ft_row __g-2711"><div data-id="1092" class="ft_column __w-2712 __h-2713"><comment data-id="1093"></comment><div data-id="1094" class="ft_column __w-2714 __h-2715 __mt-2716 __bw-2717 __br-2718 __bc-2719 __bgc-2720" style="position:relative"><div data-id="1095" class="ft_column __pos-2721 __w-2722 __pl-2723 __pr-2724 __pt-2725 __pb-2726 __bblr-2727 __bbrr-2728 __b-2729 __bgc-2730"><div data-id="1096" class="__rl-2731 __c-2732 __tt-2733 __fwt-2734">#333333</div></div></div><comment data-id="1097"></comment></div><div data-id="1098" class="ft_column __w-2735 __g-2736"><div data-id="1099" class="__rl-2737 __c-2738">$inherited.colors.cta-tertiary.text</div><div data-id="1100" class="__rl-2739 __w-2740 __c-2741">We use this color as tertiary main button text color.</div></div></div></div></div><comment data-id="1101"></comment><comment data-id="1102"></comment><comment data-id="1103"></comment><comment data-id="1104"></comment><comment data-id="1105"></comment><comment data-id="1106"></comment><comment data-id="1107"></comment><comment data-id="1108"></comment></div></div><div data-id="1109" class="ft_column __w-2742 __mt-2743"><div data-id="1110" class="ft_row __w-2744 __bbw-2745 __bc-2746"><div data-id="1111" class="ft_row __jc-2747 __ali-2748 __g-2749"><div data-id="1112" class="__rl-2750 __c-2751 __fwt-2752">CTA Danger Colors</div><div data-id="1113" class="ft_row"><div data-id="1114" class="ft_row __p-2753 __jc-2754 __ali-2755 __g-2756"><comment data-id="1115"></comment><comment data-id="1116"></comment><img data-id="1117" src="-/fastn-community.github.io/color-doc/static/light-icon.svg" class="__cur-2757 __w-2758 __h-2759 __p-2760 __br-2761"></img></div></div></div></div><div data-id="1118" class="ft_row __w-2768 __fw-2769 __g-2770"><comment data-id="1119"></comment><comment data-id="1120"></comment><div data-id="1121" class="ft_row __w-2771 __mt-2772" style="position:relative"><div data-id="1122" class="ft_column __pos-2775 __t-2776 __r-2777 __z-2778"><comment data-id="1123"></comment><img data-id="1124" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-2779 __w-2780"></img><div data-id="1125" class="ft_row __jc-2781 __ali-2782 __jc-2783"><comment data-id="1126"></comment><comment data-id="1127"></comment></div></div><div data-id="1128" class="ft_column __w-2784 __pl-2785 __pr-2786 __pt-2787 __pb-2788 __bw-2789 __br-2790 __bc-2791"><div data-id="1129" class="ft_row __g-2792"><div data-id="1130" class="ft_column __w-2793 __h-2794"><comment data-id="1131"></comment><div data-id="1132" class="ft_column __w-2795 __h-2796 __mt-2797 __bw-2798 __br-2799 __bc-2800 __bgc-2801" style="position:relative"><div data-id="1133" class="ft_column __pos-2802 __w-2803 __pl-2804 __pr-2805 __pt-2806 __pb-2807 __bblr-2808 __bbrr-2809 __b-2810 __bgc-2811"><div data-id="1134" class="__rl-2812 __c-2813 __tt-2814 __fwt-2815">#f9e4e1</div></div></div><comment data-id="1135"></comment></div><div data-id="1136" class="ft_column __w-2816 __g-2817"><div data-id="1137" class="__rl-2818 __c-2819">$inherited.colors.cta-danger.base</div><div data-id="1138" class="__rl-2820 __w-2821 __c-2822">We use this color as warning main button background color.</div></div></div></div></div><comment data-id="1139"></comment><div data-id="1140" class="ft_row __w-2823 __mt-2824" style="position:relative"><div data-id="1141" class="ft_column __pos-2827 __t-2828 __r-2829 __z-2830"><comment data-id="1142"></comment><img data-id="1143" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-2831 __w-2832"></img><div data-id="1144" class="ft_row __jc-2833 __ali-2834 __jc-2835"><comment data-id="1145"></comment><comment data-id="1146"></comment></div></div><div data-id="1147" class="ft_column __w-2836 __pl-2837 __pr-2838 __pt-2839 __pb-2840 __bw-2841 __br-2842 __bc-2843"><div data-id="1148" class="ft_row __g-2844"><div data-id="1149" class="ft_column __w-2845 __h-2846"><comment data-id="1150"></comment><div data-id="1151" class="ft_column __w-2847 __h-2848 __mt-2849 __bw-2850 __br-2851 __bc-2852 __bgc-2853" style="position:relative"><div data-id="1152" class="ft_column __pos-2854 __w-2855 __pl-2856 __pr-2857 __pt-2858 __pb-2859 __bblr-2860 __bbrr-2861 __b-2862 __bgc-2863"><div data-id="1153" class="__rl-2864 __c-2865 __tt-2866 __fwt-2867">#f1bdb6</div></div></div><comment data-id="1154"></comment></div><div data-id="1155" class="ft_column __w-2868 __g-2869"><div data-id="1156" class="__rl-2870 __c-2871">$inherited.colors.cta-danger.hover</div><div data-id="1157" class="__rl-2872 __w-2873 __c-2874">We use this color as warning main button hover background color.</div></div></div></div></div><comment data-id="1158"></comment><div data-id="1159" class="ft_row __w-2875 __mt-2876" style="position:relative"><div data-id="1160" class="ft_column __pos-2879 __t-2880 __r-2881 __z-2882"><comment data-id="1161"></comment><img data-id="1162" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-2883 __w-2884"></img><div data-id="1163" class="ft_row __jc-2885 __ali-2886 __jc-2887"><comment data-id="1164"></comment><comment data-id="1165"></comment></div></div><div data-id="1166" class="ft_column __w-2888 __pl-2889 __pr-2890 __pt-2891 __pb-2892 __bw-2893 __br-2894 __bc-2895"><div data-id="1167" class="ft_row __g-2896"><div data-id="1168" class="ft_column __w-2897 __h-2898"><comment data-id="1169"></comment><div data-id="1170" class="ft_column __w-2899 __h-2900 __mt-2901 __bw-2902 __br-2903 __bc-2904 __bgc-2905" style="position:relative"><div data-id="1171" class="ft_column __pos-2906 __w-2907 __pl-2908 __pr-2909 __pt-2910 __pb-2911 __bblr-2912 __bbrr-2913 __b-2914 __bgc-2915"><div data-id="1172" class="__rl-2916 __c-2917 __tt-2918 __fwt-2919">#faeceb</div></div></div><comment data-id="1173"></comment></div><div data-id="1174" class="ft_column __w-2920 __g-2921"><div data-id="1175" class="__rl-2922 __c-2923">$inherited.colors.cta-danger.disabled</div><div data-id="1176" class="__rl-2924 __w-2925 __c-2926">We use this color as warning main button disabled background color.</div></div></div></div></div><comment data-id="1177"></comment><div data-id="1178" class="ft_row __w-2927 __mt-2928" style="position:relative"><div data-id="1179" class="ft_column __pos-2931 __t-2932 __r-2933 __z-2934"><comment data-id="1180"></comment><img data-id="1181" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-2935 __w-2936"></img><div data-id="1182" class="ft_row __jc-2937 __ali-2938 __jc-2939"><comment data-id="1183"></comment><comment data-id="1184"></comment></div></div><div data-id="1185" class="ft_column __w-2940 __pl-2941 __pr-2942 __pt-2943 __pb-2944 __bw-2945 __br-2946 __bc-2947"><div data-id="1186" class="ft_row __g-2948"><div data-id="1187" class="ft_column __w-2949 __h-2950"><comment data-id="1188"></comment><div data-id="1189" class="ft_column __w-2951 __h-2952 __mt-2953 __bw-2954 __br-2955 __bc-2956 __bgc-2957" style="position:relative"><div data-id="1190" class="ft_column __pos-2958 __w-2959 __pl-2960 __pr-2961 __pt-2962 __pb-2963 __bblr-2964 __bbrr-2965 __b-2966 __bgc-2967"><div data-id="1191" class="__rl-2968 __c-2969 __tt-2970 __fwt-2971">#d46a63</div></div></div><comment data-id="1192"></comment></div><div data-id="1193" class="ft_column __w-2972 __g-2973"><div data-id="1194" class="__rl-2974 __c-2975">$inherited.colors.cta-danger.pressed</div><div data-id="1195" class="__rl-2976 __w-2977 __c-2978">We use this color as warning main button pressed background color.</div></div></div></div></div><comment data-id="1196"></comment><div data-id="1197" class="ft_row __w-2979 __mt-2980" style="position:relative"><div data-id="1198" class="ft_column __pos-2983 __t-2984 __r-2985 __z-2986"><comment data-id="1199"></comment><img data-id="1200" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-2987 __w-2988"></img><div data-id="1201" class="ft_row __jc-2989 __ali-2990 __jc-2991"><comment data-id="1202"></comment><comment data-id="1203"></comment></div></div><div data-id="1204" class="ft_column __w-2992 __pl-2993 __pr-2994 __pt-2995 __pb-2996 __bw-2997 __br-2998 __bc-2999"><div data-id="1205" class="ft_row __g-3000"><div data-id="1206" class="ft_column __w-3001 __h-3002"><comment data-id="1207"></comment><div data-id="1208" class="ft_column __w-3003 __h-3004 __mt-3005 __bw-3006 __br-3007 __bc-3008 __bgc-3009" style="position:relative"><div data-id="1209" class="ft_column __pos-3010 __w-3011 __pl-3012 __pr-3013 __pt-3014 __pb-3015 __bblr-3016 __bbrr-3017 __b-3018 __bgc-3019"><div data-id="1210" class="__rl-3020 __c-3021 __tt-3022 __fwt-3023">#d97973</div></div></div><comment data-id="1211"></comment></div><div data-id="1212" class="ft_column __w-3024 __g-3025"><div data-id="1213" class="__rl-3026 __c-3027">$inherited.colors.cta-danger.focused</div><div data-id="1214" class="__rl-3028 __w-3029 __c-3030">We use this color as warning main button focus background color.</div></div></div></div></div><comment data-id="1215"></comment><div data-id="1216" class="ft_row __w-3031 __mt-3032" style="position:relative"><div data-id="1217" class="ft_column __pos-3035 __t-3036 __r-3037 __z-3038"><comment data-id="1218"></comment><img data-id="1219" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-3039 __w-3040"></img><div data-id="1220" class="ft_row __jc-3041 __ali-3042 __jc-3043"><comment data-id="1221"></comment><comment data-id="1222"></comment></div></div><div data-id="1223" class="ft_column __w-3044 __pl-3045 __pr-3046 __pt-3047 __pb-3048 __bw-3049 __br-3050 __bc-3051"><div data-id="1224" class="ft_row __g-3052"><div data-id="1225" class="ft_column __w-3053 __h-3054"><comment data-id="1226"></comment><div data-id="1227" class="ft_column __w-3055 __h-3056 __mt-3057 __bw-3058 __br-3059 __bc-3060 __bgc-3061" style="position:relative"><div data-id="1228" class="ft_column __pos-3062 __w-3063 __pl-3064 __pr-3065 __pt-3066 __pb-3067 __bblr-3068 __bbrr-3069 __b-3070 __bgc-3071"><div data-id="1229" class="__rl-3072 __c-3073 __tt-3074 __fwt-3075">#E9968C</div></div></div><comment data-id="1230"></comment></div><div data-id="1231" class="ft_column __w-3076 __g-3077"><div data-id="1232" class="__rl-3078 __c-3079">$inherited.colors.cta-danger.border</div><div data-id="1233" class="__rl-3080 __w-3081 __c-3082">We use this color as warning main button border color.</div></div></div></div></div><comment data-id="1234"></comment><div data-id="1235" class="ft_row __w-3083 __mt-3084" style="position:relative"><div data-id="1236" class="ft_column __pos-3087 __t-3088 __r-3089 __z-3090"><comment data-id="1237"></comment><img data-id="1238" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-3091 __w-3092"></img><div data-id="1239" class="ft_row __jc-3093 __ali-3094 __jc-3095"><comment data-id="1240"></comment><comment data-id="1241"></comment></div></div><div data-id="1242" class="ft_column __w-3096 __pl-3097 __pr-3098 __pt-3099 __pb-3100 __bw-3101 __br-3102 __bc-3103"><div data-id="1243" class="ft_row __g-3104"><div data-id="1244" class="ft_column __w-3105 __h-3106"><comment data-id="1245"></comment><div data-id="1246" class="ft_column __w-3107 __h-3108 __mt-3109 __bw-3110 __br-3111 __bc-3112 __bgc-3113" style="position:relative"><div data-id="1247" class="ft_column __pos-3114 __w-3115 __pl-3116 __pr-3117 __pt-3118 __pb-3119 __bblr-3120 __bbrr-3121 __b-3122 __bgc-3123"><div data-id="1248" class="__rl-3124 __c-3125 __tt-3126 __fwt-3127">#1C1B1F</div></div></div><comment data-id="1249"></comment></div><div data-id="1250" class="ft_column __w-3128 __g-3129"><div data-id="1251" class="__rl-3130 __c-3131">$inherited.colors.cta-danger.text</div><div data-id="1252" class="__rl-3132 __w-3133 __c-3134">We use this color as warning main button text color.</div></div></div></div></div><comment data-id="1253"></comment><comment data-id="1254"></comment><comment data-id="1255"></comment><comment data-id="1256"></comment><comment data-id="1257"></comment><comment data-id="1258"></comment><comment data-id="1259"></comment><comment data-id="1260"></comment></div></div><div data-id="1261" class="ft_column __w-3135 __mt-3136"><div data-id="1262" class="ft_row __w-3137 __bbw-3138 __bc-3139"><div data-id="1263" class="ft_row __jc-3140 __ali-3141 __g-3142"><div data-id="1264" class="__rl-3143 __c-3144 __fwt-3145">Error Colors</div><div data-id="1265" class="ft_row"><div data-id="1266" class="ft_row __p-3146 __jc-3147 __ali-3148 __g-3149"><comment data-id="1267"></comment><comment data-id="1268"></comment><img data-id="1269" src="-/fastn-community.github.io/color-doc/static/light-icon.svg" class="__cur-3150 __w-3151 __h-3152 __p-3153 __br-3154"></img></div></div></div></div><div data-id="1270" class="ft_row __w-3161 __fw-3162 __g-3163"><comment data-id="1271"></comment><comment data-id="1272"></comment><div data-id="1273" class="ft_row __w-3164 __mt-3165" style="position:relative"><div data-id="1274" class="ft_column __pos-3168 __t-3169 __r-3170 __z-3171"><comment data-id="1275"></comment><img data-id="1276" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-3172 __w-3173"></img><div data-id="1277" class="ft_row __jc-3174 __ali-3175 __jc-3176"><comment data-id="1278"></comment><comment data-id="1279"></comment></div></div><div data-id="1280" class="ft_column __w-3177 __pl-3178 __pr-3179 __pt-3180 __pb-3181 __bw-3182 __br-3183 __bc-3184"><div data-id="1281" class="ft_row __g-3185"><div data-id="1282" class="ft_column __w-3186 __h-3187"><comment data-id="1283"></comment><div data-id="1284" class="ft_column __w-3188 __h-3189 __mt-3190 __bw-3191 __br-3192 __bc-3193 __bgc-3194" style="position:relative"><div data-id="1285" class="ft_column __pos-3195 __w-3196 __pl-3197 __pr-3198 __pt-3199 __pb-3200 __bblr-3201 __bbrr-3202 __b-3203 __bgc-3204"><div data-id="1286" class="__rl-3205 __c-3206 __tt-3207 __fwt-3208">#F9E4E1</div></div></div><comment data-id="1287"></comment></div><div data-id="1288" class="ft_column __w-3209 __g-3210"><div data-id="1289" class="__rl-3211 __c-3212">$inherited.colors.error.base</div><div data-id="1290" class="__rl-3213 __w-3214 __c-3215">We use this color as base error color.</div></div></div></div></div><comment data-id="1291"></comment><div data-id="1292" class="ft_row __w-3216 __mt-3217" style="position:relative"><div data-id="1293" class="ft_column __pos-3220 __t-3221 __r-3222 __z-3223"><comment data-id="1294"></comment><img data-id="1295" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-3224 __w-3225"></img><div data-id="1296" class="ft_row __jc-3226 __ali-3227 __jc-3228"><comment data-id="1297"></comment><comment data-id="1298"></comment></div></div><div data-id="1299" class="ft_column __w-3229 __pl-3230 __pr-3231 __pt-3232 __pb-3233 __bw-3234 __br-3235 __bc-3236"><div data-id="1300" class="ft_row __g-3237"><div data-id="1301" class="ft_column __w-3238 __h-3239"><comment data-id="1302"></comment><comment data-id="1303"></comment><div data-id="1304" class="ft_column __w-3240 __h-3241 __mt-3242 __bw-3243 __br-3244 __bc-3245 __bgc-3246" style="position:relative"><div data-id="1305" class="ft_column __w-3247 __h-3248 __bgc-3249" style="position:relative"><div data-id="1306" class="ft_column __pos-3250 __w-3251 __pl-3252 __pr-3253 __pt-3254 __pb-3255 __bblr-3256 __bbrr-3257 __b-3258 __bgc-3259"><div data-id="1307" class="__rl-3260 __c-3261 __tt-3262 __fwt-3263">#E9968C</div></div></div><div data-id="1308" class="ft_column __w-3264 __h-3265 __bgc-3266" style="position:relative"><div data-id="1309" class="ft_column __pos-3267 __w-3268 __pl-3269 __pr-3270 __pt-3271 __pb-3272 __bblr-3273 __bbrr-3274 __b-3275 __bgc-3276"><div data-id="1310" class="__rl-3277 __c-3278 __tt-3279 __fwt-3280">#E9968C</div></div></div><div data-id="1311" class="ft_column __pos-3281 __w-3282 __pl-3283 __pr-3284 __pt-3285 __pb-3286 __bblr-3287 __bbrr-3288 __b-3289 __bgc-3290"><div data-id="1312" class="__rl-3291 __c-3292 __tt-3293 __fwt-3294">#F9E4E1</div></div></div></div><div data-id="1313" class="ft_column __w-3295 __g-3296"><div data-id="1314" class="__rl-3297 __c-3298">$inherited.colors.error.btb</div><div data-id="1315" class="__rl-3299 __w-3300 __c-3301">Error button with border, text and background of the color shown from top to
-bottom in this color box.</div></div></div></div></div><comment data-id="1316"></comment><div data-id="1317" class="ft_row __w-3302 __mt-3303" style="position:relative"><div data-id="1318" class="ft_column __pos-3306 __t-3307 __r-3308 __z-3309"><comment data-id="1319"></comment><img data-id="1320" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-3310 __w-3311"></img><div data-id="1321" class="ft_row __jc-3312 __ali-3313 __jc-3314"><comment data-id="1322"></comment><comment data-id="1323"></comment></div></div><div data-id="1324" class="ft_column __w-3315 __pl-3316 __pr-3317 __pt-3318 __pb-3319 __bw-3320 __br-3321 __bc-3322"><div data-id="1325" class="ft_row __g-3323"><div data-id="1326" class="ft_column __w-3324 __h-3325"><comment data-id="1327"></comment><div data-id="1328" class="ft_column __w-3326 __h-3327 __mt-3328 __bw-3329 __br-3330 __bc-3331 __bgc-3332" style="position:relative"><div data-id="1329" class="ft_column __pos-3333 __w-3334 __pl-3335 __pr-3336 __pt-3337 __pb-3338 __bblr-3339 __bbrr-3340 __b-3341 __bgc-3342"><div data-id="1330" class="__rl-3343 __c-3344 __tt-3345 __fwt-3346">#D84836</div></div></div><comment data-id="1331"></comment></div><div data-id="1332" class="ft_column __w-3347 __g-3348"><div data-id="1333" class="__rl-3349 __c-3350">$inherited.colors.error.text</div><div data-id="1334" class="__rl-3351 __w-3352 __c-3353">We use this color as error text color.</div></div></div></div></div><comment data-id="1335"></comment><div data-id="1336" class="ft_row __w-3354 __mt-3355" style="position:relative"><div data-id="1337" class="ft_column __pos-3358 __t-3359 __r-3360 __z-3361"><comment data-id="1338"></comment><img data-id="1339" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-3362 __w-3363"></img><div data-id="1340" class="ft_row __jc-3364 __ali-3365 __jc-3366"><comment data-id="1341"></comment><comment data-id="1342"></comment></div></div><div data-id="1343" class="ft_column __w-3367 __pl-3368 __pr-3369 __pt-3370 __pb-3371 __bw-3372 __br-3373 __bc-3374"><div data-id="1344" class="ft_row __g-3375"><div data-id="1345" class="ft_column __w-3376 __h-3377"><comment data-id="1346"></comment><div data-id="1347" class="ft_column __w-3378 __h-3379 __mt-3380 __bw-3381 __br-3382 __bc-3383 __bgc-3384" style="position:relative"><div data-id="1348" class="ft_column __pos-3385 __w-3386 __pl-3387 __pr-3388 __pt-3389 __pb-3390 __bblr-3391 __bbrr-3392 __b-3393 __bgc-3394"><div data-id="1349" class="__rl-3395 __c-3396 __tt-3397 __fwt-3398">#E9968C</div></div></div><comment data-id="1350"></comment></div><div data-id="1351" class="ft_column __w-3399 __g-3400"><div data-id="1352" class="__rl-3401 __c-3402">$inherited.colors.error.border</div><div data-id="1353" class="__rl-3403 __w-3404 __c-3405">We use this color as error border color.</div></div></div></div></div><comment data-id="1354"></comment><comment data-id="1355"></comment><comment data-id="1356"></comment><comment data-id="1357"></comment><comment data-id="1358"></comment></div></div><div data-id="1359" class="ft_column __w-3406 __mt-3407"><div data-id="1360" class="ft_row __w-3408 __bbw-3409 __bc-3410"><div data-id="1361" class="ft_row __jc-3411 __ali-3412 __g-3413"><div data-id="1362" class="__rl-3414 __c-3415 __fwt-3416">Success Colors</div><div data-id="1363" class="ft_row"><div data-id="1364" class="ft_row __p-3417 __jc-3418 __ali-3419 __g-3420"><comment data-id="1365"></comment><comment data-id="1366"></comment><img data-id="1367" src="-/fastn-community.github.io/color-doc/static/light-icon.svg" class="__cur-3421 __w-3422 __h-3423 __p-3424 __br-3425"></img></div></div></div></div><div data-id="1368" class="ft_row __w-3432 __fw-3433 __g-3434"><comment data-id="1369"></comment><comment data-id="1370"></comment><div data-id="1371" class="ft_row __w-3435 __mt-3436" style="position:relative"><div data-id="1372" class="ft_column __pos-3439 __t-3440 __r-3441 __z-3442"><comment data-id="1373"></comment><img data-id="1374" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-3443 __w-3444"></img><div data-id="1375" class="ft_row __jc-3445 __ali-3446 __jc-3447"><comment data-id="1376"></comment><comment data-id="1377"></comment></div></div><div data-id="1378" class="ft_column __w-3448 __pl-3449 __pr-3450 __pt-3451 __pb-3452 __bw-3453 __br-3454 __bc-3455"><div data-id="1379" class="ft_row __g-3456"><div data-id="1380" class="ft_column __w-3457 __h-3458"><comment data-id="1381"></comment><div data-id="1382" class="ft_column __w-3459 __h-3460 __mt-3461 __bw-3462 __br-3463 __bc-3464 __bgc-3465" style="position:relative"><div data-id="1383" class="ft_column __pos-3466 __w-3467 __pl-3468 __pr-3469 __pt-3470 __pb-3471 __bblr-3472 __bbrr-3473 __b-3474 __bgc-3475"><div data-id="1384" class="__rl-3476 __c-3477 __tt-3478 __fwt-3479">#DCEFE4</div></div></div><comment data-id="1385"></comment></div><div data-id="1386" class="ft_column __w-3480 __g-3481"><div data-id="1387" class="__rl-3482 __c-3483">$inherited.colors.success.base</div><div data-id="1388" class="__rl-3484 __w-3485 __c-3486">We use this color as base success color.</div></div></div></div></div><comment data-id="1389"></comment><div data-id="1390" class="ft_row __w-3487 __mt-3488" style="position:relative"><div data-id="1391" class="ft_column __pos-3491 __t-3492 __r-3493 __z-3494"><comment data-id="1392"></comment><img data-id="1393" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-3495 __w-3496"></img><div data-id="1394" class="ft_row __jc-3497 __ali-3498 __jc-3499"><comment data-id="1395"></comment><comment data-id="1396"></comment></div></div><div data-id="1397" class="ft_column __w-3500 __pl-3501 __pr-3502 __pt-3503 __pb-3504 __bw-3505 __br-3506 __bc-3507"><div data-id="1398" class="ft_row __g-3508"><div data-id="1399" class="ft_column __w-3509 __h-3510"><comment data-id="1400"></comment><comment data-id="1401"></comment><div data-id="1402" class="ft_column __w-3511 __h-3512 __mt-3513 __bw-3514 __br-3515 __bc-3516 __bgc-3517" style="position:relative"><div data-id="1403" class="ft_column __w-3518 __h-3519 __bgc-3520" style="position:relative"><div data-id="1404" class="ft_column __pos-3521 __w-3522 __pl-3523 __pr-3524 __pt-3525 __pb-3526 __bblr-3527 __bbrr-3528 __b-3529 __bgc-3530"><div data-id="1405" class="__rl-3531 __c-3532 __tt-3533 __fwt-3534">#95D0AF</div></div></div><div data-id="1406" class="ft_column __w-3535 __h-3536 __bgc-3537" style="position:relative"><div data-id="1407" class="ft_column __pos-3538 __w-3539 __pl-3540 __pr-3541 __pt-3542 __pb-3543 __bblr-3544 __bbrr-3545 __b-3546 __bgc-3547"><div data-id="1408" class="__rl-3548 __c-3549 __tt-3550 __fwt-3551">#95D0AF</div></div></div><div data-id="1409" class="ft_column __pos-3552 __w-3553 __pl-3554 __pr-3555 __pt-3556 __pb-3557 __bblr-3558 __bbrr-3559 __b-3560 __bgc-3561"><div data-id="1410" class="__rl-3562 __c-3563 __tt-3564 __fwt-3565">#DCEFE4</div></div></div></div><div data-id="1411" class="ft_column __w-3566 __g-3567"><div data-id="1412" class="__rl-3568 __c-3569">$inherited.colors.success.btb</div><div data-id="1413" class="__rl-3570 __w-3571 __c-3572">Success button with border, text and background of the color shown from top to
-bottom in this color box.</div></div></div></div></div><comment data-id="1414"></comment><div data-id="1415" class="ft_row __w-3573 __mt-3574" style="position:relative"><div data-id="1416" class="ft_column __pos-3577 __t-3578 __r-3579 __z-3580"><comment data-id="1417"></comment><img data-id="1418" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-3581 __w-3582"></img><div data-id="1419" class="ft_row __jc-3583 __ali-3584 __jc-3585"><comment data-id="1420"></comment><comment data-id="1421"></comment></div></div><div data-id="1422" class="ft_column __w-3586 __pl-3587 __pr-3588 __pt-3589 __pb-3590 __bw-3591 __br-3592 __bc-3593"><div data-id="1423" class="ft_row __g-3594"><div data-id="1424" class="ft_column __w-3595 __h-3596"><comment data-id="1425"></comment><div data-id="1426" class="ft_column __w-3597 __h-3598 __mt-3599 __bw-3600 __br-3601 __bc-3602 __bgc-3603" style="position:relative"><div data-id="1427" class="ft_column __pos-3604 __w-3605 __pl-3606 __pr-3607 __pt-3608 __pb-3609 __bblr-3610 __bbrr-3611 __b-3612 __bgc-3613"><div data-id="1428" class="__rl-3614 __c-3615 __tt-3616 __fwt-3617">#3E8D61</div></div></div><comment data-id="1429"></comment></div><div data-id="1430" class="ft_column __w-3618 __g-3619"><div data-id="1431" class="__rl-3620 __c-3621">$inherited.colors.success.text</div><div data-id="1432" class="__rl-3622 __w-3623 __c-3624">We use this color as success text color.</div></div></div></div></div><comment data-id="1433"></comment><div data-id="1434" class="ft_row __w-3625 __mt-3626" style="position:relative"><div data-id="1435" class="ft_column __pos-3629 __t-3630 __r-3631 __z-3632"><comment data-id="1436"></comment><img data-id="1437" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-3633 __w-3634"></img><div data-id="1438" class="ft_row __jc-3635 __ali-3636 __jc-3637"><comment data-id="1439"></comment><comment data-id="1440"></comment></div></div><div data-id="1441" class="ft_column __w-3638 __pl-3639 __pr-3640 __pt-3641 __pb-3642 __bw-3643 __br-3644 __bc-3645"><div data-id="1442" class="ft_row __g-3646"><div data-id="1443" class="ft_column __w-3647 __h-3648"><comment data-id="1444"></comment><div data-id="1445" class="ft_column __w-3649 __h-3650 __mt-3651 __bw-3652 __br-3653 __bc-3654 __bgc-3655" style="position:relative"><div data-id="1446" class="ft_column __pos-3656 __w-3657 __pl-3658 __pr-3659 __pt-3660 __pb-3661 __bblr-3662 __bbrr-3663 __b-3664 __bgc-3665"><div data-id="1447" class="__rl-3666 __c-3667 __tt-3668 __fwt-3669">#95D0AF</div></div></div><comment data-id="1448"></comment></div><div data-id="1449" class="ft_column __w-3670 __g-3671"><div data-id="1450" class="__rl-3672 __c-3673">$inherited.colors.success.border</div><div data-id="1451" class="__rl-3674 __w-3675 __c-3676">We use this color as success border color.</div></div></div></div></div><comment data-id="1452"></comment><comment data-id="1453"></comment><comment data-id="1454"></comment><comment data-id="1455"></comment><comment data-id="1456"></comment></div></div><div data-id="1457" class="ft_column __w-3677 __mt-3678"><div data-id="1458" class="ft_row __w-3679 __bbw-3680 __bc-3681"><div data-id="1459" class="ft_row __jc-3682 __ali-3683 __g-3684"><div data-id="1460" class="__rl-3685 __c-3686 __fwt-3687">Warning Colors</div><div data-id="1461" class="ft_row"><div data-id="1462" class="ft_row __p-3688 __jc-3689 __ali-3690 __g-3691"><comment data-id="1463"></comment><comment data-id="1464"></comment><img data-id="1465" src="-/fastn-community.github.io/color-doc/static/light-icon.svg" class="__cur-3692 __w-3693 __h-3694 __p-3695 __br-3696"></img></div></div></div></div><div data-id="1466" class="ft_row __w-3703 __fw-3704 __g-3705"><comment data-id="1467"></comment><comment data-id="1468"></comment><div data-id="1469" class="ft_row __w-3706 __mt-3707" style="position:relative"><div data-id="1470" class="ft_column __pos-3710 __t-3711 __r-3712 __z-3713"><comment data-id="1471"></comment><img data-id="1472" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-3714 __w-3715"></img><div data-id="1473" class="ft_row __jc-3716 __ali-3717 __jc-3718"><comment data-id="1474"></comment><comment data-id="1475"></comment></div></div><div data-id="1476" class="ft_column __w-3719 __pl-3720 __pr-3721 __pt-3722 __pb-3723 __bw-3724 __br-3725 __bc-3726"><div data-id="1477" class="ft_row __g-3727"><div data-id="1478" class="ft_column __w-3728 __h-3729"><comment data-id="1479"></comment><div data-id="1480" class="ft_column __w-3730 __h-3731 __mt-3732 __bw-3733 __br-3734 __bc-3735 __bgc-3736" style="position:relative"><div data-id="1481" class="ft_column __pos-3737 __w-3738 __pl-3739 __pr-3740 __pt-3741 __pb-3742 __bblr-3743 __bbrr-3744 __b-3745 __bgc-3746"><div data-id="1482" class="__rl-3747 __c-3748 __tt-3749 __fwt-3750">#FDF7F1</div></div></div><comment data-id="1483"></comment></div><div data-id="1484" class="ft_column __w-3751 __g-3752"><div data-id="1485" class="__rl-3753 __c-3754">$inherited.colors.warning.base</div><div data-id="1486" class="__rl-3755 __w-3756 __c-3757">We use this color as base warning color.</div></div></div></div></div><comment data-id="1487"></comment><div data-id="1488" class="ft_row __w-3758 __mt-3759" style="position:relative"><div data-id="1489" class="ft_column __pos-3762 __t-3763 __r-3764 __z-3765"><comment data-id="1490"></comment><img data-id="1491" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-3766 __w-3767"></img><div data-id="1492" class="ft_row __jc-3768 __ali-3769 __jc-3770"><comment data-id="1493"></comment><comment data-id="1494"></comment></div></div><div data-id="1495" class="ft_column __w-3771 __pl-3772 __pr-3773 __pt-3774 __pb-3775 __bw-3776 __br-3777 __bc-3778"><div data-id="1496" class="ft_row __g-3779"><div data-id="1497" class="ft_column __w-3780 __h-3781"><comment data-id="1498"></comment><comment data-id="1499"></comment><div data-id="1500" class="ft_column __w-3782 __h-3783 __mt-3784 __bw-3785 __br-3786 __bc-3787 __bgc-3788" style="position:relative"><div data-id="1501" class="ft_column __w-3789 __h-3790 __bgc-3791" style="position:relative"><div data-id="1502" class="ft_column __pos-3792 __w-3793 __pl-3794 __pr-3795 __pt-3796 __pb-3797 __bblr-3798 __bbrr-3799 __b-3800 __bgc-3801"><div data-id="1503" class="__rl-3802 __c-3803 __tt-3804 __fwt-3805">#F2C097</div></div></div><div data-id="1504" class="ft_column __w-3806 __h-3807 __bgc-3808" style="position:relative"><div data-id="1505" class="ft_column __pos-3809 __w-3810 __pl-3811 __pr-3812 __pt-3813 __pb-3814 __bblr-3815 __bbrr-3816 __b-3817 __bgc-3818"><div data-id="1506" class="__rl-3819 __c-3820 __tt-3821 __fwt-3822">#F2C097</div></div></div><div data-id="1507" class="ft_column __pos-3823 __w-3824 __pl-3825 __pr-3826 __pt-3827 __pb-3828 __bblr-3829 __bbrr-3830 __b-3831 __bgc-3832"><div data-id="1508" class="__rl-3833 __c-3834 __tt-3835 __fwt-3836">#FDF7F1</div></div></div></div><div data-id="1509" class="ft_column __w-3837 __g-3838"><div data-id="1510" class="__rl-3839 __c-3840">$inherited.colors.warning.btb</div><div data-id="1511" class="__rl-3841 __w-3842 __c-3843">Warning button with border, text and background of the color shown from top to
-bottom in this color box.</div></div></div></div></div><comment data-id="1512"></comment><div data-id="1513" class="ft_row __w-3844 __mt-3845" style="position:relative"><div data-id="1514" class="ft_column __pos-3848 __t-3849 __r-3850 __z-3851"><comment data-id="1515"></comment><img data-id="1516" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-3852 __w-3853"></img><div data-id="1517" class="ft_row __jc-3854 __ali-3855 __jc-3856"><comment data-id="1518"></comment><comment data-id="1519"></comment></div></div><div data-id="1520" class="ft_column __w-3857 __pl-3858 __pr-3859 __pt-3860 __pb-3861 __bw-3862 __br-3863 __bc-3864"><div data-id="1521" class="ft_row __g-3865"><div data-id="1522" class="ft_column __w-3866 __h-3867"><comment data-id="1523"></comment><div data-id="1524" class="ft_column __w-3868 __h-3869 __mt-3870 __bw-3871 __br-3872 __bc-3873 __bgc-3874" style="position:relative"><div data-id="1525" class="ft_column __pos-3875 __w-3876 __pl-3877 __pr-3878 __pt-3879 __pb-3880 __bblr-3881 __bbrr-3882 __b-3883 __bgc-3884"><div data-id="1526" class="__rl-3885 __c-3886 __tt-3887 __fwt-3888">#E78B3E</div></div></div><comment data-id="1527"></comment></div><div data-id="1528" class="ft_column __w-3889 __g-3890"><div data-id="1529" class="__rl-3891 __c-3892">$inherited.colors.warning.text</div><div data-id="1530" class="__rl-3893 __w-3894 __c-3895">We use this color as warning text color.</div></div></div></div></div><comment data-id="1531"></comment><div data-id="1532" class="ft_row __w-3896 __mt-3897" style="position:relative"><div data-id="1533" class="ft_column __pos-3900 __t-3901 __r-3902 __z-3903"><comment data-id="1534"></comment><img data-id="1535" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-3904 __w-3905"></img><div data-id="1536" class="ft_row __jc-3906 __ali-3907 __jc-3908"><comment data-id="1537"></comment><comment data-id="1538"></comment></div></div><div data-id="1539" class="ft_column __w-3909 __pl-3910 __pr-3911 __pt-3912 __pb-3913 __bw-3914 __br-3915 __bc-3916"><div data-id="1540" class="ft_row __g-3917"><div data-id="1541" class="ft_column __w-3918 __h-3919"><comment data-id="1542"></comment><div data-id="1543" class="ft_column __w-3920 __h-3921 __mt-3922 __bw-3923 __br-3924 __bc-3925 __bgc-3926" style="position:relative"><div data-id="1544" class="ft_column __pos-3927 __w-3928 __pl-3929 __pr-3930 __pt-3931 __pb-3932 __bblr-3933 __bbrr-3934 __b-3935 __bgc-3936"><div data-id="1545" class="__rl-3937 __c-3938 __tt-3939 __fwt-3940">#F2C097</div></div></div><comment data-id="1546"></comment></div><div data-id="1547" class="ft_column __w-3941 __g-3942"><div data-id="1548" class="__rl-3943 __c-3944">$inherited.colors.warning.border</div><div data-id="1549" class="__rl-3945 __w-3946 __c-3947">We use this color as warning border color.</div></div></div></div></div><comment data-id="1550"></comment><comment data-id="1551"></comment><comment data-id="1552"></comment><comment data-id="1553"></comment><comment data-id="1554"></comment></div></div><div data-id="1555" class="ft_column __w-3948 __mt-3949"><div data-id="1556" class="ft_row __w-3950 __bbw-3951 __bc-3952"><div data-id="1557" class="ft_row __jc-3953 __ali-3954 __g-3955"><div data-id="1558" class="__rl-3956 __c-3957 __fwt-3958">Info Colors</div><div data-id="1559" class="ft_row"><div data-id="1560" class="ft_row __p-3959 __jc-3960 __ali-3961 __g-3962"><comment data-id="1561"></comment><comment data-id="1562"></comment><img data-id="1563" src="-/fastn-community.github.io/color-doc/static/light-icon.svg" class="__cur-3963 __w-3964 __h-3965 __p-3966 __br-3967"></img></div></div></div></div><div data-id="1564" class="ft_row __w-3974 __fw-3975 __g-3976"><comment data-id="1565"></comment><comment data-id="1566"></comment><div data-id="1567" class="ft_row __w-3977 __mt-3978" style="position:relative"><div data-id="1568" class="ft_column __pos-3981 __t-3982 __r-3983 __z-3984"><comment data-id="1569"></comment><img data-id="1570" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-3985 __w-3986"></img><div data-id="1571" class="ft_row __jc-3987 __ali-3988 __jc-3989"><comment data-id="1572"></comment><comment data-id="1573"></comment></div></div><div data-id="1574" class="ft_column __w-3990 __pl-3991 __pr-3992 __pt-3993 __pb-3994 __bw-3995 __br-3996 __bc-3997"><div data-id="1575" class="ft_row __g-3998"><div data-id="1576" class="ft_column __w-3999 __h-4000"><comment data-id="1577"></comment><div data-id="1578" class="ft_column __w-4001 __h-4002 __mt-4003 __bw-4004 __br-4005 __bc-4006 __bgc-4007" style="position:relative"><div data-id="1579" class="ft_column __pos-4008 __w-4009 __pl-4010 __pr-4011 __pt-4012 __pb-4013 __bblr-4014 __bbrr-4015 __b-4016 __bgc-4017"><div data-id="1580" class="__rl-4018 __c-4019 __tt-4020 __fwt-4021">#DAE7FB</div></div></div><comment data-id="1581"></comment></div><div data-id="1582" class="ft_column __w-4022 __g-4023"><div data-id="1583" class="__rl-4024 __c-4025">$inherited.colors.info.base</div><div data-id="1584" class="__rl-4026 __w-4027 __c-4028">We use this color as base info color.</div></div></div></div></div><comment data-id="1585"></comment><div data-id="1586" class="ft_row __w-4029 __mt-4030" style="position:relative"><div data-id="1587" class="ft_column __pos-4033 __t-4034 __r-4035 __z-4036"><comment data-id="1588"></comment><img data-id="1589" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-4037 __w-4038"></img><div data-id="1590" class="ft_row __jc-4039 __ali-4040 __jc-4041"><comment data-id="1591"></comment><comment data-id="1592"></comment></div></div><div data-id="1593" class="ft_column __w-4042 __pl-4043 __pr-4044 __pt-4045 __pb-4046 __bw-4047 __br-4048 __bc-4049"><div data-id="1594" class="ft_row __g-4050"><div data-id="1595" class="ft_column __w-4051 __h-4052"><comment data-id="1596"></comment><comment data-id="1597"></comment><div data-id="1598" class="ft_column __w-4053 __h-4054 __mt-4055 __bw-4056 __br-4057 __bc-4058 __bgc-4059" style="position:relative"><div data-id="1599" class="ft_column __w-4060 __h-4061 __bgc-4062" style="position:relative"><div data-id="1600" class="ft_column __pos-4063 __w-4064 __pl-4065 __pr-4066 __pt-4067 __pb-4068 __bblr-4069 __bbrr-4070 __b-4071 __bgc-4072"><div data-id="1601" class="__rl-4073 __c-4074 __tt-4075 __fwt-4076">#DAE7FB</div></div></div><div data-id="1602" class="ft_column __w-4077 __h-4078 __bgc-4079" style="position:relative"><div data-id="1603" class="ft_column __pos-4080 __w-4081 __pl-4082 __pr-4083 __pt-4084 __pb-4085 __bblr-4086 __bbrr-4087 __b-4088 __bgc-4089"><div data-id="1604" class="__rl-4090 __c-4091 __tt-4092 __fwt-4093">#DAE7FB</div></div></div><div data-id="1605" class="ft_column __pos-4094 __w-4095 __pl-4096 __pr-4097 __pt-4098 __pb-4099 __bblr-4100 __bbrr-4101 __b-4102 __bgc-4103"><div data-id="1606" class="__rl-4104 __c-4105 __tt-4106 __fwt-4107">#DAE7FB</div></div></div></div><div data-id="1607" class="ft_column __w-4108 __g-4109"><div data-id="1608" class="__rl-4110 __c-4111">$inherited.colors.info.btb</div><div data-id="1609" class="__rl-4112 __w-4113 __c-4114">Info button with border, text and background of the color shown from top to
-bottom in this color box.</div></div></div></div></div><comment data-id="1610"></comment><div data-id="1611" class="ft_row __w-4115 __mt-4116" style="position:relative"><div data-id="1612" class="ft_column __pos-4119 __t-4120 __r-4121 __z-4122"><comment data-id="1613"></comment><img data-id="1614" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-4123 __w-4124"></img><div data-id="1615" class="ft_row __jc-4125 __ali-4126 __jc-4127"><comment data-id="1616"></comment><comment data-id="1617"></comment></div></div><div data-id="1618" class="ft_column __w-4128 __pl-4129 __pr-4130 __pt-4131 __pb-4132 __bw-4133 __br-4134 __bc-4135"><div data-id="1619" class="ft_row __g-4136"><div data-id="1620" class="ft_column __w-4137 __h-4138"><comment data-id="1621"></comment><div data-id="1622" class="ft_column __w-4139 __h-4140 __mt-4141 __bw-4142 __br-4143 __bc-4144 __bgc-4145" style="position:relative"><div data-id="1623" class="ft_column __pos-4146 __w-4147 __pl-4148 __pr-4149 __pt-4150 __pb-4151 __bblr-4152 __bbrr-4153 __b-4154 __bgc-4155"><div data-id="1624" class="__rl-4156 __c-4157 __tt-4158 __fwt-4159">#DAE7FB</div></div></div><comment data-id="1625"></comment></div><div data-id="1626" class="ft_column __w-4160 __g-4161"><div data-id="1627" class="__rl-4162 __c-4163">$inherited.colors.info.text</div><div data-id="1628" class="__rl-4164 __w-4165 __c-4166">We use this color as info text color.</div></div></div></div></div><comment data-id="1629"></comment><div data-id="1630" class="ft_row __w-4167 __mt-4168" style="position:relative"><div data-id="1631" class="ft_column __pos-4171 __t-4172 __r-4173 __z-4174"><comment data-id="1632"></comment><img data-id="1633" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-4175 __w-4176"></img><div data-id="1634" class="ft_row __jc-4177 __ali-4178 __jc-4179"><comment data-id="1635"></comment><comment data-id="1636"></comment></div></div><div data-id="1637" class="ft_column __w-4180 __pl-4181 __pr-4182 __pt-4183 __pb-4184 __bw-4185 __br-4186 __bc-4187"><div data-id="1638" class="ft_row __g-4188"><div data-id="1639" class="ft_column __w-4189 __h-4190"><comment data-id="1640"></comment><div data-id="1641" class="ft_column __w-4191 __h-4192 __mt-4193 __bw-4194 __br-4195 __bc-4196 __bgc-4197" style="position:relative"><div data-id="1642" class="ft_column __pos-4198 __w-4199 __pl-4200 __pr-4201 __pt-4202 __pb-4203 __bblr-4204 __bbrr-4205 __b-4206 __bgc-4207"><div data-id="1643" class="__rl-4208 __c-4209 __tt-4210 __fwt-4211">#DAE7FB</div></div></div><comment data-id="1644"></comment></div><div data-id="1645" class="ft_column __w-4212 __g-4213"><div data-id="1646" class="__rl-4214 __c-4215">$inherited.colors.info.border</div><div data-id="1647" class="__rl-4216 __w-4217 __c-4218">We use this color as info border color.</div></div></div></div></div><comment data-id="1648"></comment><comment data-id="1649"></comment><comment data-id="1650"></comment><comment data-id="1651"></comment><comment data-id="1652"></comment></div></div><div data-id="1653" class="ft_column __w-4219 __mt-4220"><div data-id="1654" class="ft_row __w-4221 __bbw-4222 __bc-4223"><div data-id="1655" class="ft_row __jc-4224 __ali-4225 __g-4226"><div data-id="1656" class="__rl-4227 __c-4228 __fwt-4229">Accent Colors</div><div data-id="1657" class="ft_row"><div data-id="1658" class="ft_row __p-4230 __jc-4231 __ali-4232 __g-4233"><comment data-id="1659"></comment><comment data-id="1660"></comment><img data-id="1661" src="-/fastn-community.github.io/color-doc/static/light-icon.svg" class="__cur-4234 __w-4235 __h-4236 __p-4237 __br-4238"></img></div></div></div></div><div data-id="1662" class="ft_row __w-4245 __fw-4246 __g-4247"><comment data-id="1663"></comment><comment data-id="1664"></comment><div data-id="1665" class="ft_row __w-4248 __mt-4249" style="position:relative"><div data-id="1666" class="ft_column __pos-4252 __t-4253 __r-4254 __z-4255"><comment data-id="1667"></comment><img data-id="1668" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-4256 __w-4257"></img><div data-id="1669" class="ft_row __jc-4258 __ali-4259 __jc-4260"><comment data-id="1670"></comment><comment data-id="1671"></comment></div></div><div data-id="1672" class="ft_column __w-4261 __pl-4262 __pr-4263 __pt-4264 __pb-4265 __bw-4266 __br-4267 __bc-4268"><div data-id="1673" class="ft_row __g-4269"><div data-id="1674" class="ft_column __w-4270 __h-4271"><comment data-id="1675"></comment><div data-id="1676" class="ft_column __w-4272 __h-4273 __mt-4274 __bw-4275 __br-4276 __bc-4277 __bgc-4278" style="position:relative"><div data-id="1677" class="ft_column __pos-4279 __w-4280 __pl-4281 __pr-4282 __pt-4283 __pb-4284 __bblr-4285 __bbrr-4286 __b-4287 __bgc-4288"><div data-id="1678" class="__rl-4289 __c-4290 __tt-4291 __fwt-4292">#a53006</div></div></div><comment data-id="1679"></comment></div><div data-id="1680" class="ft_column __w-4293 __g-4294"><div data-id="1681" class="__rl-4295 __c-4296">$inherited.colors.accent.primary</div><div data-id="1682" class="__rl-4297 __w-4298 __c-4299">We use this color as primary accent color.</div></div></div></div></div><comment data-id="1683"></comment><div data-id="1684" class="ft_row __w-4300 __mt-4301" style="position:relative"><div data-id="1685" class="ft_column __pos-4304 __t-4305 __r-4306 __z-4307"><comment data-id="1686"></comment><img data-id="1687" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-4308 __w-4309"></img><div data-id="1688" class="ft_row __jc-4310 __ali-4311 __jc-4312"><comment data-id="1689"></comment><comment data-id="1690"></comment></div></div><div data-id="1691" class="ft_column __w-4313 __pl-4314 __pr-4315 __pt-4316 __pb-4317 __bw-4318 __br-4319 __bc-4320"><div data-id="1692" class="ft_row __g-4321"><div data-id="1693" class="ft_column __w-4322 __h-4323"><comment data-id="1694"></comment><div data-id="1695" class="ft_column __w-4324 __h-4325 __mt-4326 __bw-4327 __br-4328 __bc-4329 __bgc-4330" style="position:relative"><div data-id="1696" class="ft_column __pos-4331 __w-4332 __pl-4333 __pr-4334 __pt-4335 __pb-4336 __bblr-4337 __bbrr-4338 __b-4339 __bgc-4340"><div data-id="1697" class="__rl-4341 __c-4342 __tt-4343 __fwt-4344">#EF8435</div></div></div><comment data-id="1698"></comment></div><div data-id="1699" class="ft_column __w-4345 __g-4346"><div data-id="1700" class="__rl-4347 __c-4348">$inherited.colors.accent.secondary</div><div data-id="1701" class="__rl-4349 __w-4350 __c-4351">We use this color as secondary accent color.</div></div></div></div></div><comment data-id="1702"></comment><div data-id="1703" class="ft_row __w-4352 __mt-4353" style="position:relative"><div data-id="1704" class="ft_column __pos-4356 __t-4357 __r-4358 __z-4359"><comment data-id="1705"></comment><img data-id="1706" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-4360 __w-4361"></img><div data-id="1707" class="ft_row __jc-4362 __ali-4363 __jc-4364"><comment data-id="1708"></comment><comment data-id="1709"></comment></div></div><div data-id="1710" class="ft_column __w-4365 __pl-4366 __pr-4367 __pt-4368 __pb-4369 __bw-4370 __br-4371 __bc-4372"><div data-id="1711" class="ft_row __g-4373"><div data-id="1712" class="ft_column __w-4374 __h-4375"><comment data-id="1713"></comment><div data-id="1714" class="ft_column __w-4376 __h-4377 __mt-4378 __bw-4379 __br-4380 __bc-4381 __bgc-4382" style="position:relative"><div data-id="1715" class="ft_column __pos-4383 __w-4384 __pl-4385 __pr-4386 __pt-4387 __pb-4388 __bblr-4389 __bbrr-4390 __b-4391 __bgc-4392"><div data-id="1716" class="__rl-4393 __c-4394 __tt-4395 __fwt-4396">#ffc136</div></div></div><comment data-id="1717"></comment></div><div data-id="1718" class="ft_column __w-4397 __g-4398"><div data-id="1719" class="__rl-4399 __c-4400">$inherited.colors.accent.tertiary</div><div data-id="1720" class="__rl-4401 __w-4402 __c-4403">We use this color as tertiary accent color.</div></div></div></div></div><comment data-id="1721"></comment><comment data-id="1722"></comment><comment data-id="1723"></comment><comment data-id="1724"></comment></div></div><div data-id="1725" class="ft_column __w-4404 __mt-4405"><div data-id="1726" class="ft_row __w-4406 __bbw-4407 __bc-4408"><div data-id="1727" class="ft_row __jc-4409 __ali-4410 __g-4411"><div data-id="1728" class="__rl-4412 __c-4413 __fwt-4414">Custom Colors</div><div data-id="1729" class="ft_row"><div data-id="1730" class="ft_row __p-4415 __jc-4416 __ali-4417 __g-4418"><comment data-id="1731"></comment><comment data-id="1732"></comment><img data-id="1733" src="-/fastn-community.github.io/color-doc/static/light-icon.svg" class="__cur-4419 __w-4420 __h-4421 __p-4422 __br-4423"></img></div></div></div></div><div data-id="1734" class="ft_row __w-4430 __fw-4431 __g-4432"><comment data-id="1735"></comment><comment data-id="1736"></comment><div data-id="1737" class="ft_row __w-4433 __mt-4434" style="position:relative"><div data-id="1738" class="ft_column __pos-4437 __t-4438 __r-4439 __z-4440"><comment data-id="1739"></comment><img data-id="1740" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-4441 __w-4442"></img><div data-id="1741" class="ft_row __jc-4443 __ali-4444 __jc-4445"><comment data-id="1742"></comment><comment data-id="1743"></comment></div></div><div data-id="1744" class="ft_column __w-4446 __pl-4447 __pr-4448 __pt-4449 __pb-4450 __bw-4451 __br-4452 __bc-4453"><div data-id="1745" class="ft_row __g-4454"><div data-id="1746" class="ft_column __w-4455 __h-4456"><comment data-id="1747"></comment><div data-id="1748" class="ft_column __w-4457 __h-4458 __mt-4459 __bw-4460 __br-4461 __bc-4462 __bgc-4463" style="position:relative"><div data-id="1749" class="ft_column __pos-4464 __w-4465 __pl-4466 __pr-4467 __pt-4468 __pb-4469 __bblr-4470 __bbrr-4471 __b-4472 __bgc-4473"><div data-id="1750" class="__rl-4474 __c-4475 __tt-4476 __fwt-4477">#000000</div></div></div><comment data-id="1751"></comment></div><div data-id="1752" class="ft_column __w-4478 __g-4479"><div data-id="1753" class="__rl-4480 __c-4481">$inherited.colors.custom.one</div><div data-id="1754" class="__rl-4482 __w-4483 __c-4484">We use this color for custom one.</div></div></div></div></div><comment data-id="1755"></comment><div data-id="1756" class="ft_row __w-4485 __mt-4486" style="position:relative"><div data-id="1757" class="ft_column __pos-4489 __t-4490 __r-4491 __z-4492"><comment data-id="1758"></comment><img data-id="1759" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-4493 __w-4494"></img><div data-id="1760" class="ft_row __jc-4495 __ali-4496 __jc-4497"><comment data-id="1761"></comment><comment data-id="1762"></comment></div></div><div data-id="1763" class="ft_column __w-4498 __pl-4499 __pr-4500 __pt-4501 __pb-4502 __bw-4503 __br-4504 __bc-4505"><div data-id="1764" class="ft_row __g-4506"><div data-id="1765" class="ft_column __w-4507 __h-4508"><comment data-id="1766"></comment><div data-id="1767" class="ft_column __w-4509 __h-4510 __mt-4511 __bw-4512 __br-4513 __bc-4514 __bgc-4515" style="position:relative"><div data-id="1768" class="ft_column __pos-4516 __w-4517 __pl-4518 __pr-4519 __pt-4520 __pb-4521 __bblr-4522 __bbrr-4523 __b-4524 __bgc-4525"><div data-id="1769" class="__rl-4526 __c-4527 __tt-4528 __fwt-4529">#c8c8c8</div></div></div><comment data-id="1770"></comment></div><div data-id="1771" class="ft_column __w-4530 __g-4531"><div data-id="1772" class="__rl-4532 __c-4533">$inherited.colors.custom.two</div><div data-id="1773" class="__rl-4534 __w-4535 __c-4536">We use this color for custom two.</div></div></div></div></div><comment data-id="1774"></comment><div data-id="1775" class="ft_row __w-4537 __mt-4538" style="position:relative"><div data-id="1776" class="ft_column __pos-4541 __t-4542 __r-4543 __z-4544"><comment data-id="1777"></comment><img data-id="1778" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-4545 __w-4546"></img><div data-id="1779" class="ft_row __jc-4547 __ali-4548 __jc-4549"><comment data-id="1780"></comment><comment data-id="1781"></comment></div></div><div data-id="1782" class="ft_column __w-4550 __pl-4551 __pr-4552 __pt-4553 __pb-4554 __bw-4555 __br-4556 __bc-4557"><div data-id="1783" class="ft_row __g-4558"><div data-id="1784" class="ft_column __w-4559 __h-4560"><comment data-id="1785"></comment><div data-id="1786" class="ft_column __w-4561 __h-4562 __mt-4563 __bw-4564 __br-4565 __bc-4566 __bgc-4567" style="position:relative"><div data-id="1787" class="ft_column __pos-4568 __w-4569 __pl-4570 __pr-4571 __pt-4572 __pb-4573 __bblr-4574 __bbrr-4575 __b-4576 __bgc-4577"><div data-id="1788" class="__rl-4578 __c-4579 __tt-4580 __fwt-4581">#c9efde</div></div></div><comment data-id="1789"></comment></div><div data-id="1790" class="ft_column __w-4582 __g-4583"><div data-id="1791" class="__rl-4584 __c-4585">$inherited.colors.custom.three</div><div data-id="1792" class="__rl-4586 __w-4587 __c-4588">We use this color for custom three.</div></div></div></div></div><comment data-id="1793"></comment><div data-id="1794" class="ft_row __w-4589 __mt-4590" style="position:relative"><div data-id="1795" class="ft_column __pos-4593 __t-4594 __r-4595 __z-4596"><comment data-id="1796"></comment><img data-id="1797" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-4597 __w-4598"></img><div data-id="1798" class="ft_row __jc-4599 __ali-4600 __jc-4601"><comment data-id="1799"></comment><comment data-id="1800"></comment></div></div><div data-id="1801" class="ft_column __w-4602 __pl-4603 __pr-4604 __pt-4605 __pb-4606 __bw-4607 __br-4608 __bc-4609"><div data-id="1802" class="ft_row __g-4610"><div data-id="1803" class="ft_column __w-4611 __h-4612"><comment data-id="1804"></comment><div data-id="1805" class="ft_column __w-4613 __h-4614 __mt-4615 __bw-4616 __br-4617 __bc-4618 __bgc-4619" style="position:relative"><div data-id="1806" class="ft_column __pos-4620 __w-4621 __pl-4622 __pr-4623 __pt-4624 __pb-4625 __bblr-4626 __bbrr-4627 __b-4628 __bgc-4629"><div data-id="1807" class="__rl-4630 __c-4631 __tt-4632 __fwt-4633">#3fb488</div></div></div><comment data-id="1808"></comment></div><div data-id="1809" class="ft_column __w-4634 __g-4635"><div data-id="1810" class="__rl-4636 __c-4637">$inherited.colors.custom.four</div><div data-id="1811" class="__rl-4638 __w-4639 __c-4640">We use this color for custom four.</div></div></div></div></div><comment data-id="1812"></comment><div data-id="1813" class="ft_row __w-4641 __mt-4642" style="position:relative"><div data-id="1814" class="ft_column __pos-4645 __t-4646 __r-4647 __z-4648"><comment data-id="1815"></comment><img data-id="1816" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-4649 __w-4650"></img><div data-id="1817" class="ft_row __jc-4651 __ali-4652 __jc-4653"><comment data-id="1818"></comment><comment data-id="1819"></comment></div></div><div data-id="1820" class="ft_column __w-4654 __pl-4655 __pr-4656 __pt-4657 __pb-4658 __bw-4659 __br-4660 __bc-4661"><div data-id="1821" class="ft_row __g-4662"><div data-id="1822" class="ft_column __w-4663 __h-4664"><comment data-id="1823"></comment><div data-id="1824" class="ft_column __w-4665 __h-4666 __mt-4667 __bw-4668 __br-4669 __bc-4670 __bgc-4671" style="position:relative"><div data-id="1825" class="ft_column __pos-4672 __w-4673 __pl-4674 __pr-4675 __pt-4676 __pb-4677 __bblr-4678 __bbrr-4679 __b-4680 __bgc-4681"><div data-id="1826" class="__rl-4682 __c-4683 __tt-4684 __fwt-4685">#eb57be</div></div></div><comment data-id="1827"></comment></div><div data-id="1828" class="ft_column __w-4686 __g-4687"><div data-id="1829" class="__rl-4688 __c-4689">$inherited.colors.custom.five</div><div data-id="1830" class="__rl-4690 __w-4691 __c-4692">We use this color for custom five.</div></div></div></div></div><comment data-id="1831"></comment><div data-id="1832" class="ft_row __w-4693 __mt-4694" style="position:relative"><div data-id="1833" class="ft_column __pos-4697 __t-4698 __r-4699 __z-4700"><comment data-id="1834"></comment><img data-id="1835" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-4701 __w-4702"></img><div data-id="1836" class="ft_row __jc-4703 __ali-4704 __jc-4705"><comment data-id="1837"></comment><comment data-id="1838"></comment></div></div><div data-id="1839" class="ft_column __w-4706 __pl-4707 __pr-4708 __pt-4709 __pb-4710 __bw-4711 __br-4712 __bc-4713"><div data-id="1840" class="ft_row __g-4714"><div data-id="1841" class="ft_column __w-4715 __h-4716"><comment data-id="1842"></comment><div data-id="1843" class="ft_column __w-4717 __h-4718 __mt-4719 __bw-4720 __br-4721 __bc-4722 __bgc-4723" style="position:relative"><div data-id="1844" class="ft_column __pos-4724 __w-4725 __pl-4726 __pr-4727 __pt-4728 __pb-4729 __bblr-4730 __bbrr-4731 __b-4732 __bgc-4733"><div data-id="1845" class="__rl-4734 __c-4735 __tt-4736 __fwt-4737">#ef8dd6</div></div></div><comment data-id="1846"></comment></div><div data-id="1847" class="ft_column __w-4738 __g-4739"><div data-id="1848" class="__rl-4740 __c-4741">$inherited.colors.custom.six</div><div data-id="1849" class="__rl-4742 __w-4743 __c-4744">We use this color for custom six.</div></div></div></div></div><comment data-id="1850"></comment><div data-id="1851" class="ft_row __w-4745 __mt-4746" style="position:relative"><div data-id="1852" class="ft_column __pos-4749 __t-4750 __r-4751 __z-4752"><comment data-id="1853"></comment><img data-id="1854" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-4753 __w-4754"></img><div data-id="1855" class="ft_row __jc-4755 __ali-4756 __jc-4757"><comment data-id="1856"></comment><comment data-id="1857"></comment></div></div><div data-id="1858" class="ft_column __w-4758 __pl-4759 __pr-4760 __pt-4761 __pb-4762 __bw-4763 __br-4764 __bc-4765"><div data-id="1859" class="ft_row __g-4766"><div data-id="1860" class="ft_column __w-4767 __h-4768"><comment data-id="1861"></comment><div data-id="1862" class="ft_column __w-4769 __h-4770 __mt-4771 __bw-4772 __br-4773 __bc-4774 __bgc-4775" style="position:relative"><div data-id="1863" class="ft_column __pos-4776 __w-4777 __pl-4778 __pr-4779 __pt-4780 __pb-4781 __bblr-4782 __bbrr-4783 __b-4784 __bgc-4785"><div data-id="1864" class="__rl-4786 __c-4787 __tt-4788 __fwt-4789">#7564be</div></div></div><comment data-id="1865"></comment></div><div data-id="1866" class="ft_column __w-4790 __g-4791"><div data-id="1867" class="__rl-4792 __c-4793">$inherited.colors.custom.seven</div><div data-id="1868" class="__rl-4794 __w-4795 __c-4796">We use this color for custom seven.</div></div></div></div></div><comment data-id="1869"></comment><div data-id="1870" class="ft_row __w-4797 __mt-4798" style="position:relative"><div data-id="1871" class="ft_column __pos-4801 __t-4802 __r-4803 __z-4804"><comment data-id="1872"></comment><img data-id="1873" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-4805 __w-4806"></img><div data-id="1874" class="ft_row __jc-4807 __ali-4808 __jc-4809"><comment data-id="1875"></comment><comment data-id="1876"></comment></div></div><div data-id="1877" class="ft_column __w-4810 __pl-4811 __pr-4812 __pt-4813 __pb-4814 __bw-4815 __br-4816 __bc-4817"><div data-id="1878" class="ft_row __g-4818"><div data-id="1879" class="ft_column __w-4819 __h-4820"><comment data-id="1880"></comment><div data-id="1881" class="ft_column __w-4821 __h-4822 __mt-4823 __bw-4824 __br-4825 __bc-4826 __bgc-4827" style="position:relative"><div data-id="1882" class="ft_column __pos-4828 __w-4829 __pl-4830 __pr-4831 __pt-4832 __pb-4833 __bblr-4834 __bbrr-4835 __b-4836 __bgc-4837"><div data-id="1883" class="__rl-4838 __c-4839 __tt-4840 __fwt-4841">#d554b3</div></div></div><comment data-id="1884"></comment></div><div data-id="1885" class="ft_column __w-4842 __g-4843"><div data-id="1886" class="__rl-4844 __c-4845">$inherited.colors.custom.eight</div><div data-id="1887" class="__rl-4846 __w-4847 __c-4848">We use this color for custom eight.</div></div></div></div></div><comment data-id="1888"></comment><div data-id="1889" class="ft_row __w-4849 __mt-4850" style="position:relative"><div data-id="1890" class="ft_column __pos-4853 __t-4854 __r-4855 __z-4856"><comment data-id="1891"></comment><img data-id="1892" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-4857 __w-4858"></img><div data-id="1893" class="ft_row __jc-4859 __ali-4860 __jc-4861"><comment data-id="1894"></comment><comment data-id="1895"></comment></div></div><div data-id="1896" class="ft_column __w-4862 __pl-4863 __pr-4864 __pt-4865 __pb-4866 __bw-4867 __br-4868 __bc-4869"><div data-id="1897" class="ft_row __g-4870"><div data-id="1898" class="ft_column __w-4871 __h-4872"><comment data-id="1899"></comment><div data-id="1900" class="ft_column __w-4873 __h-4874 __mt-4875 __bw-4876 __br-4877 __bc-4878 __bgc-4879" style="position:relative"><div data-id="1901" class="ft_column __pos-4880 __w-4881 __pl-4882 __pr-4883 __pt-4884 __pb-4885 __bblr-4886 __bbrr-4887 __b-4888 __bgc-4889"><div data-id="1902" class="__rl-4890 __c-4891 __tt-4892 __fwt-4893">#54595f</div></div></div><comment data-id="1903"></comment></div><div data-id="1904" class="ft_column __w-4894 __g-4895"><div data-id="1905" class="__rl-4896 __c-4897">$inherited.colors.custom.nine</div><div data-id="1906" class="__rl-4898 __w-4899 __c-4900">We use this color for custom nine.</div></div></div></div></div><comment data-id="1907"></comment><div data-id="1908" class="ft_row __w-4901 __mt-4902" style="position:relative"><div data-id="1909" class="ft_column __pos-4905 __t-4906 __r-4907 __z-4908"><comment data-id="1910"></comment><img data-id="1911" src="-/fastn-community.github.io/color-doc/static/copy.svg" class="__cur-4909 __w-4910"></img><div data-id="1912" class="ft_row __jc-4911 __ali-4912 __jc-4913"><comment data-id="1913"></comment><comment data-id="1914"></comment></div></div><div data-id="1915" class="ft_column __w-4914 __pl-4915 __pr-4916 __pt-4917 __pb-4918 __bw-4919 __br-4920 __bc-4921"><div data-id="1916" class="ft_row __g-4922"><div data-id="1917" class="ft_column __w-4923 __h-4924"><comment data-id="1918"></comment><div data-id="1919" class="ft_column __w-4925 __h-4926 __mt-4927 __bw-4928 __br-4929 __bc-4930 __bgc-4931" style="position:relative"><div data-id="1920" class="ft_column __pos-4932 __w-4933 __pl-4934 __pr-4935 __pt-4936 __pb-4937 __bblr-4938 __bbrr-4939 __b-4940 __bgc-4941"><div data-id="1921" class="__rl-4942 __c-4943 __tt-4944 __fwt-4945">#0a0a0a</div></div></div><comment data-id="1922"></comment></div><div data-id="1923" class="ft_column __w-4946 __g-4947"><div data-id="1924" class="__rl-4948 __c-4949">$inherited.colors.custom.ten</div><div data-id="1925" class="__rl-4950 __w-4951 __c-4952">We use this color for custom ten.</div></div></div></div></div><comment data-id="1926"></comment><comment data-id="1927"></comment><comment data-id="1928"></comment><comment data-id="1929"></comment><comment data-id="1930"></comment><comment data-id="1931"></comment><comment data-id="1932"></comment><comment data-id="1933"></comment><comment data-id="1934"></comment><comment data-id="1935"></comment><comment data-id="1936"></comment></div></div><div data-id="1937" class="ft_column __w-4953 __mt-4954 __mb-4955 __g-4956"><div data-id="1938" class="__rl-4957 __c-4958 __fwt-4959">Get in touch!</div><div data-id="1939" class="__rl-4960 __c-4961">We are trying to create the language for human beings and we do not believe it
-would be possible without your support. We would love to hear from you.</div><div data-id="1940" class="ft_row __w-4962 __c-4963 __rl-4964 __g-4965"><div data-id="1941">GitHub:</div><a data-id="1942" href="https://github.com/fastn-stack/fastn">github.com/fastn-stack/fastn</a></div><div data-id="1943" class="ft_row __w-4966 __c-4967 __rl-4968 __g-4969"><div data-id="1944">Discord:</div><a data-id="1945" href="https://discord.gg/bucrdvptYd">discord.gg/bucrdvptYd</a></div><div data-id="1946" class="ft_row __w-4970 __c-4971 __rl-4972 __g-4973"><div data-id="1947">Tutorials:</div><a data-id="1948" href="https://fastn.com/expander/hello-world/-/build/">fastn.com/expander/hello-world/-/build/</a></div></div></div></div><div data-id="1949" class="ft_column __as-4974 __w-4975 __bgc-4976 __jc-4977 __ali-4978"><div data-id="1950" class="ft_row __w-4979 __pl-4980 __pr-4981 __pt-4982 __pb-4983 __btw-4984 __bc-4985 __jc-4986 __ali-4987"><div data-id="1951" class="ft_row __w-4988"><comment data-id="1952"></comment><div data-id="1953" class="__rl-4989 __c-4990 __white-space-4991 __ta-4992">Copyright © 2023 - <a href="https://www.fifthtry.com/">FifthTry</a></div></div><div data-id="1954" class="ft_row __as-4993"><comment data-id="1955"></comment><a data-id="1956" href="https://fastn.io/" class="ft_column"><div data-id="1957" class="__rl-4994 __c-4995">Powered by</div><img data-id="1958" src="https://fastn.com/-/fastn.io/images/fastn-dark.svg" class="__h-4996 __ml-4997 __mxw-4998"></img></a></div></div></div></div></div></div></body><style id="styles">
-    .__w-1 { width: 100%; }
-	.__h-2 { height: 100%; }
-	.__w-3 { width: 100%; }
-	.__w-4 { width: 100%; }
-	.__pt-5 { padding-top: 18px; }
-	.__pb-6 { padding-bottom: 18px; }
-	.__bgc-7 { background-color: rgba(250,235,215,1); }
-	.__w-8 { width: 100%; }
-	.__pl-9 { padding-left: 18px; }
-	.__pr-10 { padding-right: 18px; }
-	.__mxw-11 { max-width: 1440px; }
-	.__w-12 { width: 100%; }
-	.__jc-13 { justify-content: center; }
-	.__ali-14 { align-items: center; }
-	.__w-15 { width: 100%; }
-	.__w-16 { width: 76px; }
-	.__h-17 { height: 76px; }
-	.__g-18 { gap: 15px; }
-	.__rl-19 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 24px; font-weight: 700; line-height: 31px; }
-	body.mobile .__rl-19 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 22px; font-weight: 700; line-height: 29px; }
-	.__c-20 { color: #212738 !important; }
-	.__fwt-21 { font-weight: 700; }
-	.__rl-22 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 700; line-height: 24px; }
-	body.mobile .__rl-22 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 700; line-height: 24px; }
-	.__c-23 { color: #212738 !important; }
-	.__white-space-24 { white-space: nowrap; }
-	.__tt-25 { text-transform: uppercase; }
-	.__fwt-26 { font-weight: 700; }
-	.__w-27 { width: 100%; }
-	.__pl-28 { padding-left: 18px; }
-	.__pr-29 { padding-right: 18px; }
-	.__pt-30 { padding-top: 18px; }
-	.__pb-31 { padding-bottom: 18px; }
-	.__bgc-32 { background-color: #FFFFFF; }
-	.__mxw-33 { max-width: 1440px; }
-	.__jc-34 { justify-content: center; }
-	.__ali-35 { align-items: center; }
-	.__g-36 { gap: 24px; }
-	.__rl-37 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 24px; font-weight: 700; line-height: 31px; }
-	body.mobile .__rl-37 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 22px; font-weight: 700; line-height: 29px; }
-	.__c-38 { color: #212738 !important; }
-	.__jc-39 { justify-content: center; }
-	.__ali-40 { align-items: center; }
-	.__g-41 { gap: 4px; }
-	.__cur-42 { cursor: pointer; }
-	.__w-43 { width: 28px; }
-	.__h-44 { height: 28px; }
-	.__p-45 { padding: 2px; }
-	.__br-46 { border-radius: 100px; }
-	.__rl-53 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-53 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-54 { color: #212738 !important; }
-	.__w-55 { width: 100%; }
-	.__w-56 { width: 100%; }
-	.__ox-57 { overflow-x: auto; }
-	.__w-59 { width: 100%; }
-	.__w-60 { width: 100%; }
-	.__w-61 { width: 100%; }
-	.__p-62 { padding: 24px; }
-	.__br-63 { border-radius: 16px; }
-	.__bgc-64 { background-color: #faf8f4; }
-	.__g-65 { gap: 24px; }
-	.__w-66 { width: 100%; }
-	.__jc-67 { justify-content: center; }
-	.__ali-68 { align-items: center; }
-	.__jc-69 { justify-content: space-between; }
-	.__br-70 { border-radius: 400px; }
-	.__bgc-71 { background-color: #3fb488; }
-	.__mnh-72 { min-height: 32px; }
-	.__mnw-73 { min-width: 32px; }
-	.__jc-74 { justify-content: center; }
-	.__ali-75 { align-items: center; }
-	.__w-76 { width: 16px; }
-	.__h-77 { height: 16px; }
-	.__br-78 { border-radius: 6px; }
-	.__bgc-79 { background-color: #a53006; }
-	.__mnh-80 { min-height: 48px; }
-	.__mnw-81 { min-width: 48px; }
-	.__jc-82 { justify-content: center; }
-	.__ali-83 { align-items: center; }
-	.__w-84 { width: 16px; }
-	.__h-85 { height: 16px; }
-	.__p-86 { padding: 16px; }
-	.__br-87 { border-radius: 4px; }
-	.__bgc-88 { background-color: #3fb488; }
-	.__mnh-89 { min-height: 56px; }
-	.__jc-90 { justify-content: center; }
-	.__ali-91 { align-items: center; }
-	.__g-92 { gap: 12px; }
-	.__rl-93 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 500; line-height: 19px; }
-	body.mobile .__rl-93 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 19px; }
-	.__c-94 { color: #FFFFFF !important; }
-	.__w-95 { width: 100%; }
-	.__jc-96 { justify-content: center; }
-	.__ali-97 { align-items: center; }
-	.__g-98 { gap: 40px; }
-	.__w-99 { width: 100%; }
-	.__h-100 { height: 44px; }
-	.__pl-101 { padding-left: 20px; }
-	.__pr-102 { padding-right: 20px; }
-	.__pt-103 { padding-top: 10px; }
-	.__pb-104 { padding-bottom: 10px; }
-	.__br-105 { border-radius: 4px; }
-	.__bgc-106 { background-color: #3fb488; }
-	.__jc-107 { justify-content: center; }
-	.__ali-108 { align-items: center; }
-	.__rl-109 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 700; line-height: 21px; }
-	body.mobile .__rl-109 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 700; line-height: 21px; }
-	.__c-110 { color: #FFFFFF !important; }
-	.__fwt-111 { font-weight: 700; }
-	.__w-112 { width: 100%; }
-	.__h-113 { height: 44px; }
-	.__pl-114 { padding-left: 20px; }
-	.__pr-115 { padding-right: 20px; }
-	.__pt-116 { padding-top: 10px; }
-	.__pb-117 { padding-bottom: 10px; }
-	.__bw-118 { border-width: 1px; }
-	.__br-119 { border-radius: 4px; }
-	.__bc-120 { border-color: #a53006; }
-	.__bgc-121 { background-color: #faad7b; }
-	.__jc-122 { justify-content: center; }
-	.__ali-123 { align-items: center; }
-	.__rl-124 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 700; line-height: 21px; }
-	body.mobile .__rl-124 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 700; line-height: 21px; }
-	.__c-125 { color: #FFFFFF !important; }
-	.__fwt-126 { font-weight: 700; }
-	.__w-127 { width: 100%; }
-	.__h-128 { height: 48px; }
-	.__p-129 { padding: 16px; }
-	.__br-130 { border-radius: 4px; }
-	.__bgc-131 { background-color: #a53006; }
-	.__jc-132 { justify-content: space-between; }
-	.__as-133 { align-self: start; }
-	.__jc-134 { justify-content: center; }
-	.__ali-135 { align-items: center; }
-	.__g-136 { gap: 15px; }
-	.__w-137 { width: auto; }
-	.__rl-138 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 500; line-height: 19px; }
-	body.mobile .__rl-138 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 19px; }
-	.__c-139 { color: #7d8180 !important; }
-	.__white-space-140 { white-space: nowrap; }
-	.__jc-141 { justify-content: center; }
-	.__ali-142 { align-items: center; }
-	.__g-143 { gap: 30px; }
-	.__w-144 { width: auto; }
-	.__w-145 { width: auto; }
-	.__w-146 { width: auto; }
-	.__w-147 { width: 100%; }
-	.__h-148 { height: 33px; }
-	.__mb-149 { margin-bottom: 12px; }
-	.__jc-150 { justify-content: center; }
-	.__ali-151 { align-items: center; }
-	.__jc-152 { justify-content: space-between; }
-	.__w-153 { width: auto; }
-	.__h-154 { height: 33px; }
-	.__br-155 { border-radius: 4px; }
-	.__bgc-156 { background-color: #a53006; }
-	.__mnw-157 { min-width: 33px; }
-	.__jc-158 { justify-content: center; }
-	.__ali-159 { align-items: center; }
-	.__rl-160 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 500; line-height: 19px; }
-	body.mobile .__rl-160 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 19px; }
-	.__c-161 { color: #7d8180 !important; }
-	.__fwt-162 { font-weight: 700; }
-	.__h-163 { height: 33px; }
-	.__bw-164 { border-width: 2px; }
-	.__br-165 { border-radius: 4px; }
-	.__bc-166 { border-color: #D9D9D9; }
-	body.dark .__bc-166 { border-color: #3e0306; }
-	.__mnw-167 { min-width: 33px; }
-	.__jc-168 { justify-content: center; }
-	.__ali-169 { align-items: center; }
-	.__rl-170 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 500; line-height: 19px; }
-	body.mobile .__rl-170 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 19px; }
-	.__c-171 { color: #7d8180 !important; }
-	.__fwt-172 { font-weight: 700; }
-	.__h-173 { height: 33px; }
-	.__bw-174 { border-width: 2px; }
-	.__br-175 { border-radius: 4px; }
-	.__bc-176 { border-color: #D9D9D9; }
-	body.dark .__bc-176 { border-color: #3e0306; }
-	.__mnw-177 { min-width: 33px; }
-	.__jc-178 { justify-content: center; }
-	.__ali-179 { align-items: center; }
-	.__rl-180 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 500; line-height: 19px; }
-	body.mobile .__rl-180 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 19px; }
-	.__c-181 { color: #7d8180 !important; }
-	.__fwt-182 { font-weight: 700; }
-	.__w-183 { width: auto; }
-	.__h-184 { height: 33px; }
-	.__bw-185 { border-width: 2px; }
-	.__br-186 { border-radius: 4px; }
-	.__bc-187 { border-color: #D9D9D9; }
-	body.dark .__bc-187 { border-color: #3e0306; }
-	.__mnw-188 { min-width: 33px; }
-	.__jc-189 { justify-content: center; }
-	.__ali-190 { align-items: center; }
-	.__rl-191 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 500; line-height: 19px; }
-	body.mobile .__rl-191 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 19px; }
-	.__c-192 { color: #7d8180 !important; }
-	.__fwt-193 { font-weight: 700; }
-	.__w-194 { width: auto; }
-	.__w-195 { width: 100%; }
-	.__p-196 { padding: 18px; }
-	.__mb-197 { margin-bottom: 8px; }
-	.__bw-198 { border-width: 1px; }
-	.__br-199 { border-radius: 4px; }
-	.__bc-200 { border-color: #a53006; }
-	.__mnh-201 { min-height: 56px; }
-	.__jc-202 { justify-content: start; }
-	.__ali-203 { align-items: center; }
-	.__g-204 { gap: 6px; }
-	.__pos-205 { position: absolute; }
-	.__h-206 { height: 16px; }
-	.__pl-207 { padding-left: 4px; }
-	.__pr-208 { padding-right: 4px; }
-	.__t-209 { top: -9px; }
-	.__l-210 { left: 9px; }
-	.__bgc-211 { background-color: #faf8f4; }
-	.__jc-212 { justify-content: center; }
-	.__ali-213 { align-items: center; }
-	.__rl-214 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-214 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-215 { color: #7d8180 !important; }
-	.__w-216 { width: auto; }
-	.__w-217 { width: 100%; }
-	.__bgc-218 { background-color: #faf8f4; }
-	.__w-219 { width: 100%; }
-	.__pl-220 { padding-left: 18px; }
-	.__pr-221 { padding-right: 18px; }
-	.__bw-222 { border-width: 1px; }
-	.__br-223 { border-radius: 4px; }
-	.__bc-224 { border-color: #a53006; }
-	.__mnh-225 { min-height: 56px; }
-	.__jc-226 { justify-content: start; }
-	.__ali-227 { align-items: center; }
-	.__jc-228 { justify-content: space-between; }
-	.__pos-229 { position: absolute; }
-	.__h-230 { height: 16px; }
-	.__pl-231 { padding-left: 4px; }
-	.__pr-232 { padding-right: 4px; }
-	.__t-233 { top: -9px; }
-	.__l-234 { left: 9px; }
-	.__bgc-235 { background-color: #faf8f4; }
-	.__jc-236 { justify-content: center; }
-	.__ali-237 { align-items: center; }
-	.__rl-238 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-238 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-239 { color: #7d8180 !important; }
-	.__w-240 { width: 100%; }
-	.__bgc-241 { background-color: #faf8f4; }
-	.__w-242 { width: auto; }
-	.__w-243 { width: 100%; }
-	.__h-244 { height: 35px; }
-	.__pl-245 { padding-left: 10px; }
-	.__pr-246 { padding-right: 10px; }
-	.__pt-247 { padding-top: 8px; }
-	.__pb-248 { padding-bottom: 8px; }
-	.__br-249 { border-radius: 30px; }
-	.__bgc-250 { background-color: #FDF7F1; }
-	.__jc-251 { justify-content: center; }
-	.__ali-252 { align-items: center; }
-	.__rl-253 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 500; line-height: 19px; }
-	body.mobile .__rl-253 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 19px; }
-	.__c-254 { color: #E78B3E !important; }
-	.__fwt-255 { font-weight: 500; }
-	.__w-256 { width: 100%; }
-	.__jc-257 { justify-content: center; }
-	.__ali-258 { align-items: center; }
-	.__g-259 { gap: 26px; }
-	.__w-260 { width: 100%; }
-	.__h-261 { height: 36px; }
-	.__br-262 { border-radius: 4px; }
-	.__bgc-263 { background-color: #DCEFE4; }
-	.__jc-264 { justify-content: center; }
-	.__ali-265 { align-items: center; }
-	.__pl-266 { padding-left: 10px; }
-	.__pr-267 { padding-right: 10px; }
-	.__pt-268 { padding-top: 8px; }
-	.__pb-269 { padding-bottom: 8px; }
-	.__jc-270 { justify-content: center; }
-	.__ali-271 { align-items: center; }
-	.__g-272 { gap: 5px; }
-	.__rl-273 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 500; line-height: 19px; }
-	body.mobile .__rl-273 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 19px; }
-	.__c-274 { color: #3E8D61 !important; }
-	.__fwt-275 { font-weight: 500; }
-	.__w-276 { width: 100%; }
-	.__h-277 { height: 36px; }
-	.__pl-278 { padding-left: 10px; }
-	.__pr-279 { padding-right: 10px; }
-	.__pt-280 { padding-top: 8px; }
-	.__pb-281 { padding-bottom: 8px; }
-	.__br-282 { border-radius: 4px; }
-	.__bgc-283 { background-color: #DAE7FB; }
-	.__jc-284 { justify-content: center; }
-	.__ali-285 { align-items: center; }
-	.__rl-286 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 500; line-height: 19px; }
-	body.mobile .__rl-286 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 19px; }
-	.__c-287 { color: #DAE7FB !important; }
-	.__fwt-288 { font-weight: 500; }
-	.__as-289 { align-self: center; }
-	.__w-290 { width: 100%; }
-	.__br-291 { border-radius: 10px; }
-	.__bgc-292 { background-color: #FFFFFF; }
-	.__g-293 { gap: 16px; }
-	.__w-294 { width: 100%; }
-	.__pl-295 { padding-left: 17px; }
-	.__pr-296 { padding-right: 17px; }
-	.__pb-297 { padding-bottom: 16px; }
-	.__g-298 { gap: 6px; }
-	.__jc-299 { justify-content: center; }
-	.__ali-300 { align-items: center; }
-	.__g-301 { gap: 12px; }
-	.__jc-302 { justify-content: center; }
-	.__ali-303 { align-items: center; }
-	.__g-304 { gap: 6px; }
-	.__rl-305 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-305 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-306 { color: #7d8180 !important; }
-	.__jc-307 { justify-content: center; }
-	.__ali-308 { align-items: center; }
-	.__g-309 { gap: 6px; }
-	.__rl-310 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-310 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-311 { color: #7d8180 !important; }
-	.__rl-312 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-312 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__w-313 { width: 100%; }
-	.__c-314 { color: #7d8180 !important; }
-	.__pt-315 { padding-top: 21px; }
-	.__jc-316 { justify-content: center; }
-	.__ali-317 { align-items: center; }
-	.__g-318 { gap: 16px; }
-	.__rl-319 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-319 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__c-320 { color: #7d8180 !important; }
-	.__rl-321 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-321 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__c-322 { color: #7d8180 !important; }
-	.__w-323 { width: 100%; }
-	.__w-324 { width: 100%; }
-	.__g-325 { gap: 46px; }
-	.__w-326 { width: 100%; }
-	.__br-327 { border-radius: 10px; }
-	.__bgc-328 { background-color: #faf8f4; }
-	.__w-329 { width: 100%; }
-	.__p-330 { padding: 12px; }
-	.__btlr-331 { border-top-left-radius: 10px; }
-	.__btrr-332 { border-top-right-radius: 10px; }
-	.__bgc-333 { background-color: #FFFFFF; }
-	.__as-334 { align-self: start; }
-	.__w-335 { width: 100%; }
-	.__pt-336 { padding-top: 4px; }
-	.__g-337 { gap: 18px; }
-	.__rl-338 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-338 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__as-339 { align-self: center; }
-	.__c-340 { color: #7d8180 !important; }
-	.__fwt-341 { font-weight: 700; }
-	.__as-342 { align-self: center; }
-	.__g-343 { gap: 12px; }
-	.__as-344 { align-self: end; }
-	.__jc-345 { justify-content: center; }
-	.__ali-346 { align-items: center; }
-	.__g-347 { gap: 10px; }
-	.__w-348 { width: 100%; }
-	.__h-349 { height: 24px; }
-	.__pl-350 { padding-left: 20px; }
-	.__pr-351 { padding-right: 20px; }
-	.__pt-352 { padding-top: 10px; }
-	.__pb-353 { padding-bottom: 10px; }
-	.__bw-354 { border-width: 1px; }
-	.__br-355 { border-radius: 4px; }
-	.__bc-356 { border-color: #3fb488; }
-	.__jc-357 { justify-content: center; }
-	.__ali-358 { align-items: center; }
-	.__rl-359 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-359 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-360 { color: #7d8180 !important; }
-	.__fwt-361 { font-weight: 700; }
-	.__w-362 { width: 100%; }
-	.__h-363 { height: 24px; }
-	.__pl-364 { padding-left: 20px; }
-	.__pr-365 { padding-right: 20px; }
-	.__pt-366 { padding-top: 10px; }
-	.__pb-367 { padding-bottom: 10px; }
-	.__br-368 { border-radius: 4px; }
-	.__bgc-369 { background-color: #3fb488; }
-	.__jc-370 { justify-content: center; }
-	.__ali-371 { align-items: center; }
-	.__rl-372 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-372 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-373 { color: #FFFFFF !important; }
-	.__fwt-374 { font-weight: 700; }
-	.__w-375 { width: 100%; }
-	.__p-376 { padding: 15px; }
-	.__jc-377 { justify-content: space-between; }
-	.__as-378 { align-self: center; }
-	.__w-379 { width: 28%; }
-	.__rl-380 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 80px; font-weight: 700; line-height: 104px; }
-	body.mobile .__rl-380 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 48px; font-weight: 700; line-height: 64px; }
-	.__c-381 { color: #7d8180 !important; }
-	.__fwt-382 { font-weight: 700; }
-	.__rl-383 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-383 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__mt-384 { margin-top: 8px; }
-	.__mb-385 { margin-bottom: 15px; }
-	.__c-386 { color: #7d8180 !important; }
-	.__h-387 { height: 24px; }
-	.__p-388 { padding: 10px; }
-	.__br-389 { border-radius: 4px; }
-	.__bgc-390 { background-color: #3fb488; }
-	.__jc-391 { justify-content: center; }
-	.__ali-392 { align-items: center; }
-	.__g-393 { gap: 12px; }
-	.__rl-394 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-394 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-395 { color: #FFFFFF !important; }
-	.__fwt-396 { font-weight: 700; }
-	.__w-397 { width: 50%; }
-	.__h-398 { height: 100%; }
-	.__bgc-399 { background-color: #f4f4f4; }
-	.__mnh-400 { min-height: 245px; }
-	.__h-401 { height: 245px; }
-	.__mxw-402 { max-width: 100%; }
-	.__w-403 { width: 100%; }
-	.__w-404 { width: 100%; }
-	.__p-405 { padding: 26px; }
-	.__br-406 { border-radius: 10px; }
-	.__bgc-407 { background-color: #faf8f4; }
-	.__g-408 { gap: 9px; }
-	.__as-409 { align-self: center; }
-	.__w-410 { width: 100%; }
-	.__br-411 { border-radius: 10px; }
-	.__bgc-412 { background-color: #FFFFFF; }
-	.__g-413 { gap: 16px; }
-	.__w-414 { width: 100%; }
-	.__pl-415 { padding-left: 17px; }
-	.__pr-416 { padding-right: 17px; }
-	.__pb-417 { padding-bottom: 16px; }
-	.__g-418 { gap: 6px; }
-	.__jc-419 { justify-content: center; }
-	.__ali-420 { align-items: center; }
-	.__g-421 { gap: 12px; }
-	.__jc-422 { justify-content: center; }
-	.__ali-423 { align-items: center; }
-	.__g-424 { gap: 6px; }
-	.__rl-425 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-425 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-426 { color: #7d8180 !important; }
-	.__jc-427 { justify-content: center; }
-	.__ali-428 { align-items: center; }
-	.__g-429 { gap: 6px; }
-	.__rl-430 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-430 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-431 { color: #7d8180 !important; }
-	.__rl-432 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-432 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__w-433 { width: 100%; }
-	.__c-434 { color: #7d8180 !important; }
-	.__pt-435 { padding-top: 21px; }
-	.__jc-436 { justify-content: center; }
-	.__ali-437 { align-items: center; }
-	.__g-438 { gap: 16px; }
-	.__rl-439 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-439 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__c-440 { color: #7d8180 !important; }
-	.__rl-441 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-441 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__c-442 { color: #7d8180 !important; }
-	.__as-443 { align-self: center; }
-	.__w-444 { width: 100%; }
-	.__br-445 { border-radius: 10px; }
-	.__bgc-446 { background-color: #FFFFFF; }
-	.__g-447 { gap: 16px; }
-	.__w-448 { width: 100%; }
-	.__pl-449 { padding-left: 17px; }
-	.__pr-450 { padding-right: 17px; }
-	.__pb-451 { padding-bottom: 16px; }
-	.__g-452 { gap: 6px; }
-	.__jc-453 { justify-content: center; }
-	.__ali-454 { align-items: center; }
-	.__g-455 { gap: 12px; }
-	.__jc-456 { justify-content: center; }
-	.__ali-457 { align-items: center; }
-	.__g-458 { gap: 6px; }
-	.__rl-459 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-459 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-460 { color: #7d8180 !important; }
-	.__jc-461 { justify-content: center; }
-	.__ali-462 { align-items: center; }
-	.__g-463 { gap: 6px; }
-	.__rl-464 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-464 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-465 { color: #7d8180 !important; }
-	.__rl-466 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-466 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__w-467 { width: 100%; }
-	.__c-468 { color: #7d8180 !important; }
-	.__pt-469 { padding-top: 21px; }
-	.__jc-470 { justify-content: center; }
-	.__ali-471 { align-items: center; }
-	.__g-472 { gap: 16px; }
-	.__rl-473 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-473 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__c-474 { color: #7d8180 !important; }
-	.__rl-475 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-475 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__c-476 { color: #7d8180 !important; }
-	.__as-477 { align-self: center; }
-	.__w-478 { width: 100%; }
-	.__br-479 { border-radius: 10px; }
-	.__bgc-480 { background-color: #FFFFFF; }
-	.__g-481 { gap: 16px; }
-	.__w-482 { width: 100%; }
-	.__pl-483 { padding-left: 17px; }
-	.__pr-484 { padding-right: 17px; }
-	.__pb-485 { padding-bottom: 16px; }
-	.__g-486 { gap: 6px; }
-	.__jc-487 { justify-content: center; }
-	.__ali-488 { align-items: center; }
-	.__g-489 { gap: 12px; }
-	.__jc-490 { justify-content: center; }
-	.__ali-491 { align-items: center; }
-	.__g-492 { gap: 6px; }
-	.__rl-493 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-493 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-494 { color: #7d8180 !important; }
-	.__jc-495 { justify-content: center; }
-	.__ali-496 { align-items: center; }
-	.__g-497 { gap: 6px; }
-	.__rl-498 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-498 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-499 { color: #7d8180 !important; }
-	.__rl-500 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-500 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__w-501 { width: 100%; }
-	.__c-502 { color: #7d8180 !important; }
-	.__pt-503 { padding-top: 21px; }
-	.__jc-504 { justify-content: center; }
-	.__ali-505 { align-items: center; }
-	.__g-506 { gap: 16px; }
-	.__rl-507 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-507 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__c-508 { color: #7d8180 !important; }
-	.__rl-509 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-509 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__c-510 { color: #7d8180 !important; }
-	.__w-511 { width: 100%; }
-	.__pt-512 { padding-top: 12px; }
-	.__pb-513 { padding-bottom: 12px; }
-	.__br-514 { border-radius: 10px; }
-	.__bgc-515 { background-color: #faf8f4; }
-	.__g-516 { gap: 5px; }
-	.__w-517 { width: 100%; }
-	.__jc-518 { justify-content: center; }
-	.__ali-519 { align-items: center; }
-	.__w-520 { width: 100%; }
-	.__pl-521 { padding-left: 30px; }
-	.__pr-522 { padding-right: 30px; }
-	.__jc-523 { justify-content: center; }
-	.__ali-524 { align-items: center; }
-	.__jc-525 { justify-content: space-between; }
-	.__rl-526 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-526 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__c-527 { color: #7d8180 !important; }
-	.__g-528 { gap: 8px; }
-	.__g-529 { gap: 8px; }
-	.__w-530 { width: 24px; }
-	.__h-531 { height: 24px; }
-	.__w-532 { width: 9px; }
-	.__h-533 { height: 9px; }
-	.__w-534 { width: 9px; }
-	.__h-535 { height: 9px; }
-	.__w-536 { width: 9px; }
-	.__h-537 { height: 9px; }
-	.__w-538 { width: 9px; }
-	.__h-539 { height: 9px; }
-	.__rl-540 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-540 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-541 { color: #7d8180 !important; }
-	.__ta-542 { text-align: center; }
-	.__g-543 { gap: 3px; }
-	.__w-544 { width: 87px; }
-	.__h-545 { height: 17px; }
-	.__pl-546 { padding-left: 5px; }
-	.__pr-547 { padding-right: 5px; }
-	.__bw-548 { border-width: 1px; }
-	.__br-549 { border-radius: 2px; }
-	.__bc-550 { border-color: #a53006; }
-	.__jc-551 { justify-content: start; }
-	.__ali-552 { align-items: center; }
-	.__jc-553 { justify-content: space-between; }
-	.__rl-554 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-554 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-555 { color: #7d8180 !important; }
-	.__w-556 { width: 6px; }
-	.__h-557 { height: 6px; }
-	.__h-558 { height: 18px; }
-	.__pl-559 { padding-left: 10px; }
-	.__pr-560 { padding-right: 10px; }
-	.__pt-561 { padding-top: 2px; }
-	.__pb-562 { padding-bottom: 2px; }
-	.__br-563 { border-radius: 4px; }
-	.__bgc-564 { background-color: #3fb488; }
-	.__jc-565 { justify-content: center; }
-	.__ali-566 { align-items: center; }
-	.__g-567 { gap: 4px; }
-	.__rl-568 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-568 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-569 { color: #FFFFFF !important; }
-	.__fwt-570 { font-weight: 700; }
-	.__w-571 { width: 100%; }
-	.__w-572 { width: 100%; }
-	.__g-574 { gap: 24px; }
-	.__w-575 { width: 100%; }
-	.__h-576 { height: 943px; }
-	.__pl-577 { padding-left: 21px; }
-	.__pr-578 { padding-right: 21px; }
-	.__pt-579 { padding-top: 41px; }
-	.__pb-580 { padding-bottom: 41px; }
-	.__pr-581 { padding-right: 41px; }
-	.__bw-582 { border-width: 1px; }
-	.__br-583 { border-radius: 16px; }
-	.__bc-584 { border-color: #3fb488; }
-	.__bgc-585 { background-color: #faf8f4; }
-	.__g-586 { gap: 37px; }
-	.__w-587 { width: 100%; }
-	.__rl-588 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 20px; font-weight: 700; line-height: 26px; }
-	body.mobile .__rl-588 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 700; line-height: 24px; }
-	.__c-589 { color: #7d8180 !important; }
-	.__fwt-590 { font-weight: 700; }
-	.__w-591 { width: 100%; }
-	.__pl-592 { padding-left: 12px; }
-	.__w-593 { width: 100%; }
-	.__w-594 { width: 100%; }
-	.__g-595 { gap: 16px; }
-	.__rl-596 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-596 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-597 { color: #7d8180 !important; }
-	.__cur-598 { cursor: pointer; }
-	.__mt-599 { margin-top: 4px; }
-	.__w-600 { width: 100%; }
-	.__pl-601 { padding-left: 12px; }
-	.__w-602 { width: 100%; }
-	.__w-603 { width: 100%; }
-	.__g-604 { gap: 16px; }
-	.__rl-605 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-605 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-606 { color: #7d8180 !important; }
-	.__cur-607 { cursor: pointer; }
-	.__mt-608 { margin-top: 4px; }
-	.__w-609 { width: 100%; }
-	.__pl-610 { padding-left: 12px; }
-	.__w-611 { width: 100%; }
-	.__w-612 { width: 100%; }
-	.__g-613 { gap: 16px; }
-	.__rl-614 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-614 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-615 { color: #7d8180 !important; }
-	.__as-616 { align-self: end; }
-	.__g-617 { gap: 6px; }
-	.__w-618 { width: 37px; }
-	.__h-619 { height: 20px; }
-	.__br-620 { border-radius: 4px; }
-	.__bgc-621 { background-color: #EF8435; }
-	.__jc-622 { justify-content: center; }
-	.__ali-623 { align-items: center; }
-	.__rl-624 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-624 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-625 { color: #7d8180 !important; }
-	.__w-626 { width: 19px; }
-	.__h-627 { height: 19px; }
-	.__br-628 { border-radius: 4px; }
-	.__bgc-629 { background-color: #0a0a0a; }
-	.__jc-630 { justify-content: center; }
-	.__ali-631 { align-items: center; }
-	.__rl-632 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-632 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-633 { color: #FFFFFF !important; }
-	.__cur-634 { cursor: pointer; }
-	.__mt-635 { margin-top: 4px; }
-	.__w-636 { width: 100%; }
-	.__pl-637 { padding-left: 12px; }
-	.__w-638 { width: 100%; }
-	.__w-639 { width: 100%; }
-	.__g-640 { gap: 16px; }
-	.__rl-641 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-641 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-642 { color: #7d8180 !important; }
-	.__cur-643 { cursor: pointer; }
-	.__mt-644 { margin-top: 4px; }
-	.__w-645 { width: 100%; }
-	.__w-646 { width: 100%; }
-	.__pl-647 { padding-left: 45px; }
-	.__mt-648 { margin-top: 24px; }
-	.__rl-649 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-649 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-650 { color: #7d8180 !important; }
-	.__w-651 { width: 100%; }
-	.__w-652 { width: 100%; }
-	.__pl-653 { padding-left: 45px; }
-	.__mt-654 { margin-top: 24px; }
-	.__rl-655 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-655 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-656 { color: #7d8180 !important; }
-	.__w-657 { width: 100%; }
-	.__w-658 { width: 100%; }
-	.__pl-659 { padding-left: 45px; }
-	.__mt-660 { margin-top: 24px; }
-	.__rl-661 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-661 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-662 { color: #7d8180 !important; }
-	.__w-663 { width: 100%; }
-	.__w-664 { width: 100%; }
-	.__pl-665 { padding-left: 45px; }
-	.__mt-666 { margin-top: 24px; }
-	.__rl-667 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-667 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-668 { width: 100%; }
-	.__c-669 { color: #7d8180 !important; }
-	.__rl-670 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-670 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__as-671 { align-self: end; }
-	.__pl-672 { padding-left: 5px; }
-	.__pr-673 { padding-right: 5px; }
-	.__pt-674 { padding-top: 2px; }
-	.__pb-675 { padding-bottom: 2px; }
-	.__br-676 { border-radius: 4px; }
-	.__c-677 { color: #FFFFFF !important; }
-	.__bgc-678 { background-color: #0a0a0a; }
-	.__w-679 { width: 100%; }
-	.__pl-680 { padding-left: 12px; }
-	.__w-681 { width: 100%; }
-	.__w-682 { width: 100%; }
-	.__g-683 { gap: 16px; }
-	.__rl-684 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-684 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-685 { color: #7d8180 !important; }
-	.__cur-686 { cursor: pointer; }
-	.__mt-687 { margin-top: 4px; }
-	.__w-688 { width: 100%; }
-	.__pt-689 { padding-top: 60px; }
-	.__jc-690 { justify-content: center; }
-	.__ali-691 { align-items: center; }
-	.__w-692 { width: 100%; }
-	.__g-693 { gap: 34px; }
-	.__w-694 { width: 100%; }
-	.__g-695 { gap: 24px; }
-	.__rl-696 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 20px; font-weight: 700; line-height: 26px; }
-	body.mobile .__rl-696 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 700; line-height: 24px; }
-	.__c-697 { color: #212738 !important; }
-	.__fwt-698 { font-weight: 700; }
-	.__rl-699 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-699 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__c-700 { color: #212738 !important; }
-	.__w-701 { width: 100%; }
-	.__w-702 { width: 100%; }
-	.__pt-703 { padding-top: 12px; }
-	.__pb-704 { padding-bottom: 12px; }
-	.__oy-705 { overflow-y: auto; }
-	.__cur-706 { cursor: default; }
-	.__w-707 { width: 100%; }
-	.__pl-708 { padding-left: 20px; }
-	.__pr-709 { padding-right: 20px; }
-	.__pt-710 { padding-top: 10px; }
-	.__pb-711 { padding-bottom: 10px; }
-	.__btlr-712 { border-top-left-radius: 4px; }
-	.__btrr-713 { border-top-right-radius: 4px; }
-	.__bgc-714 { background-color: #FFFFFF; }
-	.__rl-716 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-716 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__as-717 { align-self: start; }
-	.__w-718 { width: 100%; }
-	.__c-719 { color: #7d8180 !important; }
-	.__as-720 { align-self: end; }
-	.__pos-721 { position: absolute; }
-	.__t-722 { top: 12px; }
-	.__r-723 { right: 20px; }
-	.__jc-724 { justify-content: right; }
-	.__ali-725 { align-items: center; }
-	.__g-726 { gap: 10px; }
-	.__w-727 { width: 100%; }
-	.__ox-732 { overflow-x: auto; }
-	.__oy-733 { overflow-y: auto; }
-	.__c-734 { color: #7d8180 !important; }
-	.__bgc-735 { background-color: #eaeaea; }
-	body.dark .__bgc-735 { background-color: #2B303B; }
-	.__mxh-736 { max-height: 300px; }
-	.__rl-738 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-738 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__w-739 { width: 100%; }
-	.__g-740 { gap: 28px; }
-	.__w-741 { width: 100%; }
-	.__g-742 { gap: 6px; }
-	.__rl-743 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	body.mobile .__rl-743 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	.__c-744 { color: #212738 !important; }
-	.__fwt-745 { font-weight: 700; }
-	.__c-746 { color: #DAE7FB !important; }
-	.__jc-747 { justify-content: center; }
-	.__ali-748 { align-items: center; }
-	.__g-749 { gap: 9px; }
-	.__rl-750 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	body.mobile .__rl-750 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	.__c-751 { color: #006EB3 !important; }
-	.__fwt-752 { font-weight: 700; }
-	.__w-753 { width: 100%; }
-	.__g-754 { gap: 6px; }
-	.__rl-755 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	body.mobile .__rl-755 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	.__c-756 { color: #212738 !important; }
-	.__fwt-757 { font-weight: 700; }
-	.__c-758 { color: #DAE7FB !important; }
-	.__jc-759 { justify-content: center; }
-	.__ali-760 { align-items: center; }
-	.__g-761 { gap: 9px; }
-	.__rl-762 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	body.mobile .__rl-762 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	.__c-763 { color: #006EB3 !important; }
-	.__fwt-764 { font-weight: 700; }
-	.__w-765 { width: 100%; }
-	.__g-766 { gap: 6px; }
-	.__rl-767 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	body.mobile .__rl-767 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	.__c-768 { color: #212738 !important; }
-	.__fwt-769 { font-weight: 700; }
-	.__c-770 { color: #DAE7FB !important; }
-	.__jc-771 { justify-content: center; }
-	.__ali-772 { align-items: center; }
-	.__g-773 { gap: 9px; }
-	.__rl-774 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	body.mobile .__rl-774 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	.__c-775 { color: #006EB3 !important; }
-	.__fwt-776 { font-weight: 700; }
-	.__w-777 { width: 100%; }
-	.__g-778 { gap: 6px; }
-	.__rl-779 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	body.mobile .__rl-779 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	.__c-780 { color: #212738 !important; }
-	.__fwt-781 { font-weight: 700; }
-	.__c-782 { color: #DAE7FB !important; }
-	.__jc-783 { justify-content: center; }
-	.__ali-784 { align-items: center; }
-	.__g-785 { gap: 9px; }
-	.__rl-786 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	body.mobile .__rl-786 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	.__c-787 { color: #006EB3 !important; }
-	.__fwt-788 { font-weight: 700; }
-	.__w-789 { width: 100%; }
-	.__g-790 { gap: 6px; }
-	.__rl-791 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	body.mobile .__rl-791 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	.__c-792 { color: #212738 !important; }
-	.__fwt-793 { font-weight: 700; }
-	.__c-794 { color: #DAE7FB !important; }
-	.__jc-795 { justify-content: center; }
-	.__ali-796 { align-items: center; }
-	.__g-797 { gap: 9px; }
-	.__rl-798 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	body.mobile .__rl-798 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	.__c-799 { color: #006EB3 !important; }
-	.__fwt-800 { font-weight: 700; }
-	.__w-801 { width: 100%; }
-	.__g-802 { gap: 6px; }
-	.__rl-803 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	body.mobile .__rl-803 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	.__c-804 { color: #212738 !important; }
-	.__fwt-805 { font-weight: 700; }
-	.__c-806 { color: #DAE7FB !important; }
-	.__jc-807 { justify-content: center; }
-	.__ali-808 { align-items: center; }
-	.__g-809 { gap: 9px; }
-	.__rl-810 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	body.mobile .__rl-810 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	.__c-811 { color: #006EB3 !important; }
-	.__fwt-812 { font-weight: 700; }
-	.__w-813 { width: 100%; }
-	.__g-814 { gap: 6px; }
-	.__rl-815 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	body.mobile .__rl-815 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	.__c-816 { color: #212738 !important; }
-	.__fwt-817 { font-weight: 700; }
-	.__c-818 { color: #DAE7FB !important; }
-	.__jc-819 { justify-content: center; }
-	.__ali-820 { align-items: center; }
-	.__g-821 { gap: 9px; }
-	.__rl-822 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	body.mobile .__rl-822 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	.__c-823 { color: #006EB3 !important; }
-	.__fwt-824 { font-weight: 700; }
-	.__w-825 { width: 100%; }
-	.__g-826 { gap: 6px; }
-	.__rl-827 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	body.mobile .__rl-827 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	.__c-828 { color: #212738 !important; }
-	.__fwt-829 { font-weight: 700; }
-	.__c-830 { color: #DAE7FB !important; }
-	.__jc-831 { justify-content: center; }
-	.__ali-832 { align-items: center; }
-	.__g-833 { gap: 9px; }
-	.__rl-834 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	body.mobile .__rl-834 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 700; line-height: 19px; }
-	.__c-835 { color: #006EB3 !important; }
-	.__fwt-836 { font-weight: 700; }
-	.__w-837 { width: 100%; }
-	.__mt-838 { margin-top: 60px; }
-	.__w-839 { width: 100%; }
-	.__g-840 { gap: 10px; }
-	.__rl-841 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 20px; font-weight: 700; line-height: 26px; }
-	body.mobile .__rl-841 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 700; line-height: 24px; }
-	.__mb-842 { margin-bottom: 24px; }
-	.__c-843 { color: #212738 !important; }
-	.__fwt-844 { font-weight: 700; }
-	.__rl-845 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-845 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__mb-846 { margin-bottom: 20px; }
-	.__c-847 { color: #212738 !important; }
-	.__w-848 { width: 100%; }
-	.__w-849 { width: 100%; }
-	.__pt-850 { padding-top: 12px; }
-	.__pb-851 { padding-bottom: 12px; }
-	.__oy-852 { overflow-y: auto; }
-	.__cur-853 { cursor: default; }
-	.__w-854 { width: 100%; }
-	.__pl-855 { padding-left: 20px; }
-	.__pr-856 { padding-right: 20px; }
-	.__pt-857 { padding-top: 10px; }
-	.__pb-858 { padding-bottom: 10px; }
-	.__btlr-859 { border-top-left-radius: 4px; }
-	.__btrr-860 { border-top-right-radius: 4px; }
-	.__bgc-861 { background-color: #FFFFFF; }
-	.__rl-863 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-863 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__as-864 { align-self: start; }
-	.__w-865 { width: 100%; }
-	.__c-866 { color: #7d8180 !important; }
-	.__as-867 { align-self: end; }
-	.__pos-868 { position: absolute; }
-	.__t-869 { top: 12px; }
-	.__r-870 { right: 20px; }
-	.__jc-871 { justify-content: right; }
-	.__ali-872 { align-items: center; }
-	.__g-873 { gap: 10px; }
-	.__w-874 { width: 100%; }
-	.__ox-879 { overflow-x: auto; }
-	.__oy-880 { overflow-y: auto; }
-	.__c-881 { color: #7d8180 !important; }
-	.__bgc-882 { background-color: #eaeaea; }
-	body.dark .__bgc-882 { background-color: #2B303B; }
-	.__rl-885 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-885 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__w-886 { width: 100%; }
-	.__pt-887 { padding-top: 12px; }
-	.__pb-888 { padding-bottom: 12px; }
-	.__oy-889 { overflow-y: auto; }
-	.__cur-890 { cursor: default; }
-	.__w-891 { width: 100%; }
-	.__pl-892 { padding-left: 20px; }
-	.__pr-893 { padding-right: 20px; }
-	.__pt-894 { padding-top: 10px; }
-	.__pb-895 { padding-bottom: 10px; }
-	.__btlr-896 { border-top-left-radius: 4px; }
-	.__btrr-897 { border-top-right-radius: 4px; }
-	.__bgc-898 { background-color: #FFFFFF; }
-	.__rl-900 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-900 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__as-901 { align-self: start; }
-	.__w-902 { width: 100%; }
-	.__c-903 { color: #7d8180 !important; }
-	.__as-904 { align-self: end; }
-	.__pos-905 { position: absolute; }
-	.__t-906 { top: 12px; }
-	.__r-907 { right: 56px; }
-	.__jc-908 { justify-content: right; }
-	.__ali-909 { align-items: center; }
-	.__g-910 { gap: 10px; }
-	.__w-911 { width: 100%; }
-	.__ox-916 { overflow-x: auto; }
-	.__oy-917 { overflow-y: auto; }
-	.__c-918 { color: #7d8180 !important; }
-	.__bgc-919 { background-color: #eaeaea; }
-	body.dark .__bgc-919 { background-color: #2B303B; }
-	.__rl-922 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-922 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__pos-923 { position: absolute; }
-	.__p-924 { padding: 6px; }
-	.__bbrr-925 { border-bottom-right-radius: 4px; }
-	.__b-926 { bottom: 12px; }
-	.__r-927 { right: 0px; }
-	.__z-928 { z-index: 999; }
-	.__rl-929 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-929 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-930 { color: #7d8180 !important; }
-	.__rl-931 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-931 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__c-932 { color: #212738 !important; }
-	.__w-933 { width: 100%; }
-	.__mt-934 { margin-top: 60px; }
-	.__w-935 { width: 100%; }
-	.__bbw-936 { border-bottom-width: 1px; }
-	.__bc-937 { border-color: #212738; }
-	.__jc-938 { justify-content: center; }
-	.__ali-939 { align-items: center; }
-	.__g-940 { gap: 24px; }
-	.__rl-941 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 20px; font-weight: 700; line-height: 26px; }
-	body.mobile .__rl-941 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 700; line-height: 24px; }
-	.__c-942 { color: #212738 !important; }
-	.__fwt-943 { font-weight: 700; }
-	.__p-944 { padding: 12px; }
-	.__jc-945 { justify-content: center; }
-	.__ali-946 { align-items: center; }
-	.__g-947 { gap: 4px; }
-	.__cur-948 { cursor: pointer; }
-	.__w-949 { width: 28px; }
-	.__h-950 { height: 28px; }
-	.__p-951 { padding: 2px; }
-	.__br-952 { border-radius: 100px; }
-	.__w-959 { width: 100%; }
-	.__fw-960 { flex-wrap: wrap; }
-	.__g-961 { gap: 40px; }
-	.__w-962 { width: 100%; }
-	.__mt-963 { margin-top: 40px; }
-	.__pos-966 { position: absolute; }
-	.__t-967 { top: 8px; }
-	.__r-968 { right: 8px; }
-	.__z-969 { z-index: 999; }
-	.__cur-970 { cursor: pointer; }
-	.__w-971 { width: 12px; }
-	.__jc-972 { justify-content: center; }
-	.__ali-973 { align-items: center; }
-	.__jc-974 { justify-content: space-between; }
-	.__w-975 { width: 100%; }
-	.__pl-976 { padding-left: 12px; }
-	.__pr-977 { padding-right: 12px; }
-	.__pt-978 { padding-top: 15px; }
-	.__pb-979 { padding-bottom: 15px; }
-	.__bw-980 { border-width: 1px; }
-	.__br-981 { border-radius: 6px; }
-	.__bc-982 { border-color: #EEEEEE; }
-	.__g-983 { gap: 15px; }
-	.__w-984 { width: 100px; }
-	.__h-985 { height: 80px; }
-	.__w-986 { width: 100%; }
-	.__h-987 { height: 100%; }
-	.__mt-988 { margin-top: -44px; }
-	.__bw-989 { border-width: 1px; }
-	.__br-990 { border-radius: 6px; }
-	.__bc-991 { border-color: #A0A0A0; }
-	.__bgc-992 { background-color: #3fb488; }
-	.__pos-993 { position: absolute; }
-	.__w-994 { width: 100%; }
-	.__pl-995 { padding-left: 10px; }
-	.__pr-996 { padding-right: 10px; }
-	.__pt-997 { padding-top: 8px; }
-	.__pb-998 { padding-bottom: 8px; }
-	.__bblr-999 { border-bottom-left-radius: 6px; }
-	.__bbrr-1000 { border-bottom-right-radius: 6px; }
-	.__b-1001 { bottom: 0px; }
-	.__bgc-1002 { background-color: rgba(0,0,0,.1); }
-	.__rl-1003 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-1003 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1004 { color: #FFFFFF !important; }
-	.__tt-1005 { text-transform: uppercase; }
-	.__fwt-1006 { font-weight: 700; }
-	.__w-1007 { width: 100%; }
-	.__g-1008 { gap: 5px; }
-	.__rl-1009 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1009 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1010 { color: #212738 !important; }
-	.__rl-1011 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1011 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-1012 { width: 80%; }
-	.__c-1013 { color: #707070 !important; }
-	.__w-1014 { width: 100%; }
-	.__mt-1015 { margin-top: 40px; }
-	.__pos-1018 { position: absolute; }
-	.__t-1019 { top: 8px; }
-	.__r-1020 { right: 8px; }
-	.__z-1021 { z-index: 999; }
-	.__cur-1022 { cursor: pointer; }
-	.__w-1023 { width: 12px; }
-	.__jc-1024 { justify-content: center; }
-	.__ali-1025 { align-items: center; }
-	.__jc-1026 { justify-content: space-between; }
-	.__w-1027 { width: 100%; }
-	.__pl-1028 { padding-left: 12px; }
-	.__pr-1029 { padding-right: 12px; }
-	.__pt-1030 { padding-top: 15px; }
-	.__pb-1031 { padding-bottom: 15px; }
-	.__bw-1032 { border-width: 1px; }
-	.__br-1033 { border-radius: 6px; }
-	.__bc-1034 { border-color: #EEEEEE; }
-	.__g-1035 { gap: 15px; }
-	.__w-1036 { width: 100px; }
-	.__h-1037 { height: 80px; }
-	.__w-1038 { width: 100%; }
-	.__h-1039 { height: 100%; }
-	.__mt-1040 { margin-top: -44px; }
-	.__bw-1041 { border-width: 1px; }
-	.__br-1042 { border-radius: 6px; }
-	.__bc-1043 { border-color: #A0A0A0; }
-	.__bgc-1044 { background-color: #3e0306; }
-	.__pos-1045 { position: absolute; }
-	.__w-1046 { width: 100%; }
-	.__pl-1047 { padding-left: 10px; }
-	.__pr-1048 { padding-right: 10px; }
-	.__pt-1049 { padding-top: 8px; }
-	.__pb-1050 { padding-bottom: 8px; }
-	.__bblr-1051 { border-bottom-left-radius: 6px; }
-	.__bbrr-1052 { border-bottom-right-radius: 6px; }
-	.__b-1053 { bottom: 0px; }
-	.__bgc-1054 { background-color: rgba(0,0,0,.1); }
-	.__rl-1055 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-1055 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1056 { color: #FFFFFF !important; }
-	.__tt-1057 { text-transform: uppercase; }
-	.__fwt-1058 { font-weight: 700; }
-	.__w-1059 { width: 100%; }
-	.__g-1060 { gap: 5px; }
-	.__rl-1061 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1061 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1062 { color: #212738 !important; }
-	.__rl-1063 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1063 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-1064 { width: 80%; }
-	.__c-1065 { color: #707070 !important; }
-	.__w-1066 { width: 100%; }
-	.__mt-1067 { margin-top: 40px; }
-	.__pos-1070 { position: absolute; }
-	.__t-1071 { top: 8px; }
-	.__r-1072 { right: 8px; }
-	.__z-1073 { z-index: 999; }
-	.__cur-1074 { cursor: pointer; }
-	.__w-1075 { width: 12px; }
-	.__jc-1076 { justify-content: center; }
-	.__ali-1077 { align-items: center; }
-	.__jc-1078 { justify-content: space-between; }
-	.__w-1079 { width: 100%; }
-	.__pl-1080 { padding-left: 12px; }
-	.__pr-1081 { padding-right: 12px; }
-	.__pt-1082 { padding-top: 15px; }
-	.__pb-1083 { padding-bottom: 15px; }
-	.__bw-1084 { border-width: 1px; }
-	.__br-1085 { border-radius: 6px; }
-	.__bc-1086 { border-color: #EEEEEE; }
-	.__g-1087 { gap: 15px; }
-	.__w-1088 { width: 100px; }
-	.__h-1089 { height: 80px; }
-	.__w-1090 { width: 100%; }
-	.__h-1091 { height: 100%; }
-	.__mt-1092 { margin-top: -44px; }
-	.__bw-1093 { border-width: 1px; }
-	.__br-1094 { border-radius: 6px; }
-	.__bc-1095 { border-color: #A0A0A0; }
-	.__bgc-1096 { background-color: #7d8180; }
-	.__pos-1097 { position: absolute; }
-	.__w-1098 { width: 100%; }
-	.__pl-1099 { padding-left: 10px; }
-	.__pr-1100 { padding-right: 10px; }
-	.__pt-1101 { padding-top: 8px; }
-	.__pb-1102 { padding-bottom: 8px; }
-	.__bblr-1103 { border-bottom-left-radius: 6px; }
-	.__bbrr-1104 { border-bottom-right-radius: 6px; }
-	.__b-1105 { bottom: 0px; }
-	.__bgc-1106 { background-color: rgba(0,0,0,.1); }
-	.__rl-1107 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-1107 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1108 { color: #FFFFFF !important; }
-	.__tt-1109 { text-transform: uppercase; }
-	.__fwt-1110 { font-weight: 700; }
-	.__w-1111 { width: 100%; }
-	.__g-1112 { gap: 5px; }
-	.__rl-1113 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1113 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1114 { color: #212738 !important; }
-	.__rl-1115 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1115 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-1116 { width: 80%; }
-	.__c-1117 { color: #707070 !important; }
-	.__w-1118 { width: 100%; }
-	.__mt-1119 { margin-top: 40px; }
-	.__pos-1122 { position: absolute; }
-	.__t-1123 { top: 8px; }
-	.__r-1124 { right: 8px; }
-	.__z-1125 { z-index: 999; }
-	.__cur-1126 { cursor: pointer; }
-	.__w-1127 { width: 12px; }
-	.__jc-1128 { justify-content: center; }
-	.__ali-1129 { align-items: center; }
-	.__jc-1130 { justify-content: space-between; }
-	.__w-1131 { width: 100%; }
-	.__pl-1132 { padding-left: 12px; }
-	.__pr-1133 { padding-right: 12px; }
-	.__pt-1134 { padding-top: 15px; }
-	.__pb-1135 { padding-bottom: 15px; }
-	.__bw-1136 { border-width: 1px; }
-	.__br-1137 { border-radius: 6px; }
-	.__bc-1138 { border-color: #EEEEEE; }
-	.__g-1139 { gap: 15px; }
-	.__w-1140 { width: 100px; }
-	.__h-1141 { height: 80px; }
-	.__w-1142 { width: 100%; }
-	.__h-1143 { height: 100%; }
-	.__mt-1144 { margin-top: -44px; }
-	.__bw-1145 { border-width: 1px; }
-	.__br-1146 { border-radius: 6px; }
-	.__bc-1147 { border-color: #A0A0A0; }
-	.__bgc-1148 { background-color: #7d8180; }
-	.__pos-1149 { position: absolute; }
-	.__w-1150 { width: 100%; }
-	.__pl-1151 { padding-left: 10px; }
-	.__pr-1152 { padding-right: 10px; }
-	.__pt-1153 { padding-top: 8px; }
-	.__pb-1154 { padding-bottom: 8px; }
-	.__bblr-1155 { border-bottom-left-radius: 6px; }
-	.__bbrr-1156 { border-bottom-right-radius: 6px; }
-	.__b-1157 { bottom: 0px; }
-	.__bgc-1158 { background-color: rgba(0,0,0,.1); }
-	.__rl-1159 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-1159 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1160 { color: #FFFFFF !important; }
-	.__tt-1161 { text-transform: uppercase; }
-	.__fwt-1162 { font-weight: 700; }
-	.__w-1163 { width: 100%; }
-	.__g-1164 { gap: 5px; }
-	.__rl-1165 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1165 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1166 { color: #212738 !important; }
-	.__rl-1167 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1167 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-1168 { width: 80%; }
-	.__c-1169 { color: #707070 !important; }
-	.__w-1170 { width: 100%; }
-	.__mt-1171 { margin-top: 40px; }
-	.__pos-1174 { position: absolute; }
-	.__t-1175 { top: 8px; }
-	.__r-1176 { right: 8px; }
-	.__z-1177 { z-index: 999; }
-	.__cur-1178 { cursor: pointer; }
-	.__w-1179 { width: 12px; }
-	.__jc-1180 { justify-content: center; }
-	.__ali-1181 { align-items: center; }
-	.__jc-1182 { justify-content: space-between; }
-	.__w-1183 { width: 100%; }
-	.__pl-1184 { padding-left: 12px; }
-	.__pr-1185 { padding-right: 12px; }
-	.__pt-1186 { padding-top: 15px; }
-	.__pb-1187 { padding-bottom: 15px; }
-	.__bw-1188 { border-width: 1px; }
-	.__br-1189 { border-radius: 6px; }
-	.__bc-1190 { border-color: #EEEEEE; }
-	.__g-1191 { gap: 15px; }
-	.__w-1192 { width: 100px; }
-	.__h-1193 { height: 80px; }
-	.__w-1194 { width: 100%; }
-	.__h-1195 { height: 100%; }
-	.__mt-1196 { margin-top: -44px; }
-	.__bw-1197 { border-width: 1px; }
-	.__br-1198 { border-radius: 6px; }
-	.__bc-1199 { border-color: #A0A0A0; }
-	.__bgc-1200 { background-color: #6f0100; }
-	.__pos-1201 { position: absolute; }
-	.__w-1202 { width: 100%; }
-	.__pl-1203 { padding-left: 10px; }
-	.__pr-1204 { padding-right: 10px; }
-	.__pt-1205 { padding-top: 8px; }
-	.__pb-1206 { padding-bottom: 8px; }
-	.__bblr-1207 { border-bottom-left-radius: 6px; }
-	.__bbrr-1208 { border-bottom-right-radius: 6px; }
-	.__b-1209 { bottom: 0px; }
-	.__bgc-1210 { background-color: rgba(0,0,0,.1); }
-	.__rl-1211 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-1211 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1212 { color: #FFFFFF !important; }
-	.__tt-1213 { text-transform: uppercase; }
-	.__fwt-1214 { font-weight: 700; }
-	.__w-1215 { width: 100%; }
-	.__g-1216 { gap: 5px; }
-	.__rl-1217 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1217 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1218 { color: #212738 !important; }
-	.__rl-1219 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1219 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-1220 { width: 80%; }
-	.__c-1221 { color: #707070 !important; }
-	.__w-1222 { width: 100%; }
-	.__mt-1223 { margin-top: 40px; }
-	.__pos-1226 { position: absolute; }
-	.__t-1227 { top: 8px; }
-	.__r-1228 { right: 8px; }
-	.__z-1229 { z-index: 999; }
-	.__cur-1230 { cursor: pointer; }
-	.__w-1231 { width: 12px; }
-	.__jc-1232 { justify-content: center; }
-	.__ali-1233 { align-items: center; }
-	.__jc-1234 { justify-content: space-between; }
-	.__w-1235 { width: 100%; }
-	.__pl-1236 { padding-left: 12px; }
-	.__pr-1237 { padding-right: 12px; }
-	.__pt-1238 { padding-top: 15px; }
-	.__pb-1239 { padding-bottom: 15px; }
-	.__bw-1240 { border-width: 1px; }
-	.__br-1241 { border-radius: 6px; }
-	.__bc-1242 { border-color: #EEEEEE; }
-	.__g-1243 { gap: 15px; }
-	.__w-1244 { width: 100px; }
-	.__h-1245 { height: 80px; }
-	.__w-1246 { width: 100%; }
-	.__h-1247 { height: 100%; }
-	.__mt-1248 { margin-top: -44px; }
-	.__bw-1249 { border-width: 1px; }
-	.__br-1250 { border-radius: 6px; }
-	.__bc-1251 { border-color: #A0A0A0; }
-	.__bgc-1252 { background-color: #393939; }
-	.__pos-1253 { position: absolute; }
-	.__w-1254 { width: 100%; }
-	.__pl-1255 { padding-left: 10px; }
-	.__pr-1256 { padding-right: 10px; }
-	.__pt-1257 { padding-top: 8px; }
-	.__pb-1258 { padding-bottom: 8px; }
-	.__bblr-1259 { border-bottom-left-radius: 6px; }
-	.__bbrr-1260 { border-bottom-right-radius: 6px; }
-	.__b-1261 { bottom: 0px; }
-	.__bgc-1262 { background-color: rgba(0,0,0,.1); }
-	.__rl-1263 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-1263 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1264 { color: #FFFFFF !important; }
-	.__tt-1265 { text-transform: uppercase; }
-	.__fwt-1266 { font-weight: 700; }
-	.__w-1267 { width: 100%; }
-	.__g-1268 { gap: 5px; }
-	.__rl-1269 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1269 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1270 { color: #212738 !important; }
-	.__rl-1271 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1271 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-1272 { width: 80%; }
-	.__c-1273 { color: #707070 !important; }
-	.__w-1274 { width: 100%; }
-	.__mt-1275 { margin-top: 60px; }
-	.__w-1276 { width: 100%; }
-	.__bbw-1277 { border-bottom-width: 1px; }
-	.__bc-1278 { border-color: #212738; }
-	.__jc-1279 { justify-content: center; }
-	.__ali-1280 { align-items: center; }
-	.__g-1281 { gap: 24px; }
-	.__rl-1282 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 20px; font-weight: 700; line-height: 26px; }
-	body.mobile .__rl-1282 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 700; line-height: 24px; }
-	.__c-1283 { color: #212738 !important; }
-	.__fwt-1284 { font-weight: 700; }
-	.__p-1285 { padding: 12px; }
-	.__jc-1286 { justify-content: center; }
-	.__ali-1287 { align-items: center; }
-	.__g-1288 { gap: 4px; }
-	.__cur-1289 { cursor: pointer; }
-	.__w-1290 { width: 28px; }
-	.__h-1291 { height: 28px; }
-	.__p-1292 { padding: 2px; }
-	.__br-1293 { border-radius: 100px; }
-	.__w-1300 { width: 100%; }
-	.__fw-1301 { flex-wrap: wrap; }
-	.__g-1302 { gap: 40px; }
-	.__w-1303 { width: 100%; }
-	.__mt-1304 { margin-top: 40px; }
-	.__pos-1307 { position: absolute; }
-	.__t-1308 { top: 8px; }
-	.__r-1309 { right: 8px; }
-	.__z-1310 { z-index: 999; }
-	.__cur-1311 { cursor: pointer; }
-	.__w-1312 { width: 12px; }
-	.__jc-1313 { justify-content: center; }
-	.__ali-1314 { align-items: center; }
-	.__jc-1315 { justify-content: space-between; }
-	.__w-1316 { width: 100%; }
-	.__pl-1317 { padding-left: 12px; }
-	.__pr-1318 { padding-right: 12px; }
-	.__pt-1319 { padding-top: 15px; }
-	.__pb-1320 { padding-bottom: 15px; }
-	.__bw-1321 { border-width: 1px; }
-	.__br-1322 { border-radius: 6px; }
-	.__bc-1323 { border-color: #EEEEEE; }
-	.__g-1324 { gap: 15px; }
-	.__w-1325 { width: 100px; }
-	.__h-1326 { height: 80px; }
-	.__w-1327 { width: 100%; }
-	.__h-1328 { height: 100%; }
-	.__mt-1329 { margin-top: -44px; }
-	.__bw-1330 { border-width: 1px; }
-	.__br-1331 { border-radius: 6px; }
-	.__bc-1332 { border-color: #A0A0A0; }
-	.__bgc-1333 { background-color: #faf8f4; }
-	.__pos-1334 { position: absolute; }
-	.__w-1335 { width: 100%; }
-	.__pl-1336 { padding-left: 10px; }
-	.__pr-1337 { padding-right: 10px; }
-	.__pt-1338 { padding-top: 8px; }
-	.__pb-1339 { padding-bottom: 8px; }
-	.__bblr-1340 { border-bottom-left-radius: 6px; }
-	.__bbrr-1341 { border-bottom-right-radius: 6px; }
-	.__b-1342 { bottom: 0px; }
-	.__bgc-1343 { background-color: rgba(0,0,0,.1); }
-	.__rl-1344 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-1344 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1345 { color: #FFFFFF !important; }
-	.__tt-1346 { text-transform: uppercase; }
-	.__fwt-1347 { font-weight: 700; }
-	.__w-1348 { width: 100%; }
-	.__g-1349 { gap: 5px; }
-	.__rl-1350 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1350 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1351 { color: #212738 !important; }
-	.__rl-1352 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1352 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-1353 { width: 80%; }
-	.__c-1354 { color: #707070 !important; }
-	.__w-1355 { width: 100%; }
-	.__mt-1356 { margin-top: 40px; }
-	.__pos-1359 { position: absolute; }
-	.__t-1360 { top: 8px; }
-	.__r-1361 { right: 8px; }
-	.__z-1362 { z-index: 999; }
-	.__cur-1363 { cursor: pointer; }
-	.__w-1364 { width: 12px; }
-	.__jc-1365 { justify-content: center; }
-	.__ali-1366 { align-items: center; }
-	.__jc-1367 { justify-content: space-between; }
-	.__w-1368 { width: 100%; }
-	.__pl-1369 { padding-left: 12px; }
-	.__pr-1370 { padding-right: 12px; }
-	.__pt-1371 { padding-top: 15px; }
-	.__pb-1372 { padding-bottom: 15px; }
-	.__bw-1373 { border-width: 1px; }
-	.__br-1374 { border-radius: 6px; }
-	.__bc-1375 { border-color: #EEEEEE; }
-	.__g-1376 { gap: 15px; }
-	.__w-1377 { width: 100px; }
-	.__h-1378 { height: 80px; }
-	.__w-1379 { width: 100%; }
-	.__h-1380 { height: 100%; }
-	.__mt-1381 { margin-top: -44px; }
-	.__bw-1382 { border-width: 1px; }
-	.__br-1383 { border-radius: 6px; }
-	.__bc-1384 { border-color: #A0A0A0; }
-	.__bgc-1385 { background-color: #FFFFFF; }
-	.__pos-1386 { position: absolute; }
-	.__w-1387 { width: 100%; }
-	.__pl-1388 { padding-left: 10px; }
-	.__pr-1389 { padding-right: 10px; }
-	.__pt-1390 { padding-top: 8px; }
-	.__pb-1391 { padding-bottom: 8px; }
-	.__bblr-1392 { border-bottom-left-radius: 6px; }
-	.__bbrr-1393 { border-bottom-right-radius: 6px; }
-	.__b-1394 { bottom: 0px; }
-	.__bgc-1395 { background-color: rgba(0,0,0,.1); }
-	.__rl-1396 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-1396 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1397 { color: #FFFFFF !important; }
-	.__tt-1398 { text-transform: uppercase; }
-	.__fwt-1399 { font-weight: 700; }
-	.__w-1400 { width: 100%; }
-	.__g-1401 { gap: 5px; }
-	.__rl-1402 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1402 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1403 { color: #212738 !important; }
-	.__rl-1404 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1404 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-1405 { width: 80%; }
-	.__c-1406 { color: #707070 !important; }
-	.__w-1407 { width: 100%; }
-	.__mt-1408 { margin-top: 40px; }
-	.__pos-1411 { position: absolute; }
-	.__t-1412 { top: 8px; }
-	.__r-1413 { right: 8px; }
-	.__z-1414 { z-index: 999; }
-	.__cur-1415 { cursor: pointer; }
-	.__w-1416 { width: 12px; }
-	.__jc-1417 { justify-content: center; }
-	.__ali-1418 { align-items: center; }
-	.__jc-1419 { justify-content: space-between; }
-	.__w-1420 { width: 100%; }
-	.__pl-1421 { padding-left: 12px; }
-	.__pr-1422 { padding-right: 12px; }
-	.__pt-1423 { padding-top: 15px; }
-	.__pb-1424 { padding-bottom: 15px; }
-	.__bw-1425 { border-width: 1px; }
-	.__br-1426 { border-radius: 6px; }
-	.__bc-1427 { border-color: #EEEEEE; }
-	.__g-1428 { gap: 15px; }
-	.__w-1429 { width: 100px; }
-	.__h-1430 { height: 80px; }
-	.__w-1431 { width: 100%; }
-	.__h-1432 { height: 100%; }
-	.__mt-1433 { margin-top: -44px; }
-	.__bw-1434 { border-width: 1px; }
-	.__br-1435 { border-radius: 6px; }
-	.__bc-1436 { border-color: #A0A0A0; }
-	.__bgc-1437 { background-color: #f4f4f4; }
-	.__pos-1438 { position: absolute; }
-	.__w-1439 { width: 100%; }
-	.__pl-1440 { padding-left: 10px; }
-	.__pr-1441 { padding-right: 10px; }
-	.__pt-1442 { padding-top: 8px; }
-	.__pb-1443 { padding-bottom: 8px; }
-	.__bblr-1444 { border-bottom-left-radius: 6px; }
-	.__bbrr-1445 { border-bottom-right-radius: 6px; }
-	.__b-1446 { bottom: 0px; }
-	.__bgc-1447 { background-color: rgba(0,0,0,.1); }
-	.__rl-1448 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-1448 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1449 { color: #FFFFFF !important; }
-	.__tt-1450 { text-transform: uppercase; }
-	.__fwt-1451 { font-weight: 700; }
-	.__w-1452 { width: 100%; }
-	.__g-1453 { gap: 5px; }
-	.__rl-1454 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1454 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1455 { color: #212738 !important; }
-	.__rl-1456 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1456 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-1457 { width: 80%; }
-	.__c-1458 { color: #707070 !important; }
-	.__w-1459 { width: 100%; }
-	.__mt-1460 { margin-top: 40px; }
-	.__pos-1463 { position: absolute; }
-	.__t-1464 { top: 8px; }
-	.__r-1465 { right: 8px; }
-	.__z-1466 { z-index: 999; }
-	.__cur-1467 { cursor: pointer; }
-	.__w-1468 { width: 12px; }
-	.__jc-1469 { justify-content: center; }
-	.__ali-1470 { align-items: center; }
-	.__jc-1471 { justify-content: space-between; }
-	.__w-1472 { width: 100%; }
-	.__pl-1473 { padding-left: 12px; }
-	.__pr-1474 { padding-right: 12px; }
-	.__pt-1475 { padding-top: 15px; }
-	.__pb-1476 { padding-bottom: 15px; }
-	.__bw-1477 { border-width: 1px; }
-	.__br-1478 { border-radius: 6px; }
-	.__bc-1479 { border-color: #EEEEEE; }
-	.__g-1480 { gap: 15px; }
-	.__w-1481 { width: 100px; }
-	.__h-1482 { height: 80px; }
-	.__w-1483 { width: 100%; }
-	.__h-1484 { height: 100%; }
-	.__mt-1485 { margin-top: -44px; }
-	.__bw-1486 { border-width: 1px; }
-	.__br-1487 { border-radius: 6px; }
-	.__bc-1488 { border-color: #A0A0A0; }
-	.__bgc-1489 { background-color: #2B303B; }
-	.__pos-1490 { position: absolute; }
-	.__w-1491 { width: 100%; }
-	.__pl-1492 { padding-left: 10px; }
-	.__pr-1493 { padding-right: 10px; }
-	.__pt-1494 { padding-top: 8px; }
-	.__pb-1495 { padding-bottom: 8px; }
-	.__bblr-1496 { border-bottom-left-radius: 6px; }
-	.__bbrr-1497 { border-bottom-right-radius: 6px; }
-	.__b-1498 { bottom: 0px; }
-	.__bgc-1499 { background-color: rgba(0,0,0,.1); }
-	.__rl-1500 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-1500 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1501 { color: #FFFFFF !important; }
-	.__tt-1502 { text-transform: uppercase; }
-	.__fwt-1503 { font-weight: 700; }
-	.__w-1504 { width: 100%; }
-	.__g-1505 { gap: 5px; }
-	.__rl-1506 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1506 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1507 { color: #212738 !important; }
-	.__rl-1508 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1508 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-1509 { width: 80%; }
-	.__c-1510 { color: #707070 !important; }
-	.__w-1511 { width: 100%; }
-	.__mt-1512 { margin-top: 40px; }
-	.__pos-1515 { position: absolute; }
-	.__t-1516 { top: 8px; }
-	.__r-1517 { right: 8px; }
-	.__z-1518 { z-index: 999; }
-	.__cur-1519 { cursor: pointer; }
-	.__w-1520 { width: 12px; }
-	.__jc-1521 { justify-content: center; }
-	.__ali-1522 { align-items: center; }
-	.__jc-1523 { justify-content: space-between; }
-	.__w-1524 { width: 100%; }
-	.__pl-1525 { padding-left: 12px; }
-	.__pr-1526 { padding-right: 12px; }
-	.__pt-1527 { padding-top: 15px; }
-	.__pb-1528 { padding-bottom: 15px; }
-	.__bw-1529 { border-width: 1px; }
-	.__br-1530 { border-radius: 6px; }
-	.__bc-1531 { border-color: #EEEEEE; }
-	.__g-1532 { gap: 15px; }
-	.__w-1533 { width: 100px; }
-	.__h-1534 { height: 80px; }
-	.__w-1535 { width: 100%; }
-	.__h-1536 { height: 100%; }
-	.__mt-1537 { margin-top: -44px; }
-	.__bw-1538 { border-width: 1px; }
-	.__br-1539 { border-radius: 6px; }
-	.__bc-1540 { border-color: #A0A0A0; }
-	.__bgc-1541 { background-color: rgba(0, 0, 0, 0.3); }
-	.__pos-1542 { position: absolute; }
-	.__w-1543 { width: 100%; }
-	.__pl-1544 { padding-left: 10px; }
-	.__pr-1545 { padding-right: 10px; }
-	.__pt-1546 { padding-top: 8px; }
-	.__pb-1547 { padding-bottom: 8px; }
-	.__bblr-1548 { border-bottom-left-radius: 6px; }
-	.__bbrr-1549 { border-bottom-right-radius: 6px; }
-	.__b-1550 { bottom: 0px; }
-	.__bgc-1551 { background-color: rgba(0,0,0,.1); }
-	.__rl-1552 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-1552 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1553 { color: #FFFFFF !important; }
-	.__tt-1554 { text-transform: uppercase; }
-	.__fwt-1555 { font-weight: 700; }
-	.__w-1556 { width: 100%; }
-	.__g-1557 { gap: 5px; }
-	.__rl-1558 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1558 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1559 { color: #212738 !important; }
-	.__rl-1560 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1560 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-1561 { width: 80%; }
-	.__c-1562 { color: #707070 !important; }
-	.__w-1563 { width: 100%; }
-	.__mt-1564 { margin-top: 60px; }
-	.__w-1565 { width: 100%; }
-	.__bbw-1566 { border-bottom-width: 1px; }
-	.__bc-1567 { border-color: #212738; }
-	.__jc-1568 { justify-content: center; }
-	.__ali-1569 { align-items: center; }
-	.__g-1570 { gap: 24px; }
-	.__rl-1571 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 20px; font-weight: 700; line-height: 26px; }
-	body.mobile .__rl-1571 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 700; line-height: 24px; }
-	.__c-1572 { color: #212738 !important; }
-	.__fwt-1573 { font-weight: 700; }
-	.__p-1574 { padding: 12px; }
-	.__jc-1575 { justify-content: center; }
-	.__ali-1576 { align-items: center; }
-	.__g-1577 { gap: 4px; }
-	.__cur-1578 { cursor: pointer; }
-	.__w-1579 { width: 28px; }
-	.__h-1580 { height: 28px; }
-	.__p-1581 { padding: 2px; }
-	.__br-1582 { border-radius: 100px; }
-	.__w-1589 { width: 100%; }
-	.__fw-1590 { flex-wrap: wrap; }
-	.__g-1591 { gap: 40px; }
-	.__w-1592 { width: 100%; }
-	.__mt-1593 { margin-top: 40px; }
-	.__pos-1596 { position: absolute; }
-	.__t-1597 { top: 8px; }
-	.__r-1598 { right: 8px; }
-	.__z-1599 { z-index: 999; }
-	.__cur-1600 { cursor: pointer; }
-	.__w-1601 { width: 12px; }
-	.__jc-1602 { justify-content: center; }
-	.__ali-1603 { align-items: center; }
-	.__jc-1604 { justify-content: space-between; }
-	.__w-1605 { width: 100%; }
-	.__pl-1606 { padding-left: 12px; }
-	.__pr-1607 { padding-right: 12px; }
-	.__pt-1608 { padding-top: 15px; }
-	.__pb-1609 { padding-bottom: 15px; }
-	.__bw-1610 { border-width: 1px; }
-	.__br-1611 { border-radius: 6px; }
-	.__bc-1612 { border-color: #EEEEEE; }
-	.__g-1613 { gap: 15px; }
-	.__w-1614 { width: 100px; }
-	.__h-1615 { height: 80px; }
-	.__w-1616 { width: 100%; }
-	.__h-1617 { height: 100%; }
-	.__mt-1618 { margin-top: -44px; }
-	.__bw-1619 { border-width: 1px; }
-	.__br-1620 { border-radius: 6px; }
-	.__bc-1621 { border-color: #A0A0A0; }
-	.__bgc-1622 { background-color: #3fb488; }
-	.__pos-1623 { position: absolute; }
-	.__w-1624 { width: 100%; }
-	.__pl-1625 { padding-left: 10px; }
-	.__pr-1626 { padding-right: 10px; }
-	.__pt-1627 { padding-top: 8px; }
-	.__pb-1628 { padding-bottom: 8px; }
-	.__bblr-1629 { border-bottom-left-radius: 6px; }
-	.__bbrr-1630 { border-bottom-right-radius: 6px; }
-	.__b-1631 { bottom: 0px; }
-	.__bgc-1632 { background-color: rgba(0,0,0,.1); }
-	.__rl-1633 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-1633 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1634 { color: #FFFFFF !important; }
-	.__tt-1635 { text-transform: uppercase; }
-	.__fwt-1636 { font-weight: 700; }
-	.__w-1637 { width: 100%; }
-	.__g-1638 { gap: 5px; }
-	.__rl-1639 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1639 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1640 { color: #212738 !important; }
-	.__rl-1641 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1641 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-1642 { width: 80%; }
-	.__c-1643 { color: #707070 !important; }
-	.__w-1644 { width: 100%; }
-	.__mt-1645 { margin-top: 40px; }
-	.__pos-1648 { position: absolute; }
-	.__t-1649 { top: 8px; }
-	.__r-1650 { right: 8px; }
-	.__z-1651 { z-index: 999; }
-	.__cur-1652 { cursor: pointer; }
-	.__w-1653 { width: 12px; }
-	.__jc-1654 { justify-content: center; }
-	.__ali-1655 { align-items: center; }
-	.__jc-1656 { justify-content: space-between; }
-	.__w-1657 { width: 100%; }
-	.__pl-1658 { padding-left: 12px; }
-	.__pr-1659 { padding-right: 12px; }
-	.__pt-1660 { padding-top: 15px; }
-	.__pb-1661 { padding-bottom: 15px; }
-	.__bw-1662 { border-width: 1px; }
-	.__br-1663 { border-radius: 6px; }
-	.__bc-1664 { border-color: #EEEEEE; }
-	.__g-1665 { gap: 15px; }
-	.__w-1666 { width: 100px; }
-	.__h-1667 { height: 80px; }
-	.__w-1668 { width: 100%; }
-	.__h-1669 { height: 100%; }
-	.__mt-1670 { margin-top: -44px; }
-	.__bw-1671 { border-width: 1px; }
-	.__br-1672 { border-radius: 6px; }
-	.__bc-1673 { border-color: #A0A0A0; }
-	.__bgc-1674 { background-color: #8c2702; }
-	.__pos-1675 { position: absolute; }
-	.__w-1676 { width: 100%; }
-	.__pl-1677 { padding-left: 10px; }
-	.__pr-1678 { padding-right: 10px; }
-	.__pt-1679 { padding-top: 8px; }
-	.__pb-1680 { padding-bottom: 8px; }
-	.__bblr-1681 { border-bottom-left-radius: 6px; }
-	.__bbrr-1682 { border-bottom-right-radius: 6px; }
-	.__b-1683 { bottom: 0px; }
-	.__bgc-1684 { background-color: rgba(0,0,0,.1); }
-	.__rl-1685 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-1685 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1686 { color: #FFFFFF !important; }
-	.__tt-1687 { text-transform: uppercase; }
-	.__fwt-1688 { font-weight: 700; }
-	.__w-1689 { width: 100%; }
-	.__g-1690 { gap: 5px; }
-	.__rl-1691 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1691 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1692 { color: #212738 !important; }
-	.__rl-1693 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1693 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-1694 { width: 80%; }
-	.__c-1695 { color: #707070 !important; }
-	.__w-1696 { width: 100%; }
-	.__mt-1697 { margin-top: 40px; }
-	.__pos-1700 { position: absolute; }
-	.__t-1701 { top: 8px; }
-	.__r-1702 { right: 8px; }
-	.__z-1703 { z-index: 999; }
-	.__cur-1704 { cursor: pointer; }
-	.__w-1705 { width: 12px; }
-	.__jc-1706 { justify-content: center; }
-	.__ali-1707 { align-items: center; }
-	.__jc-1708 { justify-content: space-between; }
-	.__w-1709 { width: 100%; }
-	.__pl-1710 { padding-left: 12px; }
-	.__pr-1711 { padding-right: 12px; }
-	.__pt-1712 { padding-top: 15px; }
-	.__pb-1713 { padding-bottom: 15px; }
-	.__bw-1714 { border-width: 1px; }
-	.__br-1715 { border-radius: 6px; }
-	.__bc-1716 { border-color: #EEEEEE; }
-	.__g-1717 { gap: 15px; }
-	.__w-1718 { width: 100px; }
-	.__h-1719 { height: 80px; }
-	.__w-1720 { width: 100%; }
-	.__h-1721 { height: 100%; }
-	.__mt-1722 { margin-top: -44px; }
-	.__bw-1723 { border-width: 1px; }
-	.__br-1724 { border-radius: 6px; }
-	.__bc-1725 { border-color: #A0A0A0; }
-	.__bgc-1726 { background-color: #faad7b; }
-	.__pos-1727 { position: absolute; }
-	.__w-1728 { width: 100%; }
-	.__pl-1729 { padding-left: 10px; }
-	.__pr-1730 { padding-right: 10px; }
-	.__pt-1731 { padding-top: 8px; }
-	.__pb-1732 { padding-bottom: 8px; }
-	.__bblr-1733 { border-bottom-left-radius: 6px; }
-	.__bbrr-1734 { border-bottom-right-radius: 6px; }
-	.__b-1735 { bottom: 0px; }
-	.__bgc-1736 { background-color: rgba(0,0,0,.1); }
-	.__rl-1737 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-1737 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1738 { color: #FFFFFF !important; }
-	.__tt-1739 { text-transform: uppercase; }
-	.__fwt-1740 { font-weight: 700; }
-	.__w-1741 { width: 100%; }
-	.__g-1742 { gap: 5px; }
-	.__rl-1743 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1743 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1744 { color: #212738 !important; }
-	.__rl-1745 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1745 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-1746 { width: 80%; }
-	.__c-1747 { color: #707070 !important; }
-	.__w-1748 { width: 100%; }
-	.__mt-1749 { margin-top: 40px; }
-	.__pos-1752 { position: absolute; }
-	.__t-1753 { top: 8px; }
-	.__r-1754 { right: 8px; }
-	.__z-1755 { z-index: 999; }
-	.__cur-1756 { cursor: pointer; }
-	.__w-1757 { width: 12px; }
-	.__jc-1758 { justify-content: center; }
-	.__ali-1759 { align-items: center; }
-	.__jc-1760 { justify-content: space-between; }
-	.__w-1761 { width: 100%; }
-	.__pl-1762 { padding-left: 12px; }
-	.__pr-1763 { padding-right: 12px; }
-	.__pt-1764 { padding-top: 15px; }
-	.__pb-1765 { padding-bottom: 15px; }
-	.__bw-1766 { border-width: 1px; }
-	.__br-1767 { border-radius: 6px; }
-	.__bc-1768 { border-color: #EEEEEE; }
-	.__g-1769 { gap: 15px; }
-	.__w-1770 { width: 100px; }
-	.__h-1771 { height: 80px; }
-	.__w-1772 { width: 100%; }
-	.__h-1773 { height: 100%; }
-	.__mt-1774 { margin-top: -44px; }
-	.__bw-1775 { border-width: 1px; }
-	.__br-1776 { border-radius: 6px; }
-	.__bc-1777 { border-color: #A0A0A0; }
-	.__bgc-1778 { background-color: #611c03; }
-	.__pos-1779 { position: absolute; }
-	.__w-1780 { width: 100%; }
-	.__pl-1781 { padding-left: 10px; }
-	.__pr-1782 { padding-right: 10px; }
-	.__pt-1783 { padding-top: 8px; }
-	.__pb-1784 { padding-bottom: 8px; }
-	.__bblr-1785 { border-bottom-left-radius: 6px; }
-	.__bbrr-1786 { border-bottom-right-radius: 6px; }
-	.__b-1787 { bottom: 0px; }
-	.__bgc-1788 { background-color: rgba(0,0,0,.1); }
-	.__rl-1789 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-1789 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1790 { color: #FFFFFF !important; }
-	.__tt-1791 { text-transform: uppercase; }
-	.__fwt-1792 { font-weight: 700; }
-	.__w-1793 { width: 100%; }
-	.__g-1794 { gap: 5px; }
-	.__rl-1795 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1795 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1796 { color: #212738 !important; }
-	.__rl-1797 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1797 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-1798 { width: 80%; }
-	.__c-1799 { color: #707070 !important; }
-	.__w-1800 { width: 100%; }
-	.__mt-1801 { margin-top: 40px; }
-	.__pos-1804 { position: absolute; }
-	.__t-1805 { top: 8px; }
-	.__r-1806 { right: 8px; }
-	.__z-1807 { z-index: 999; }
-	.__cur-1808 { cursor: pointer; }
-	.__w-1809 { width: 12px; }
-	.__jc-1810 { justify-content: center; }
-	.__ali-1811 { align-items: center; }
-	.__jc-1812 { justify-content: space-between; }
-	.__w-1813 { width: 100%; }
-	.__pl-1814 { padding-left: 12px; }
-	.__pr-1815 { padding-right: 12px; }
-	.__pt-1816 { padding-top: 15px; }
-	.__pb-1817 { padding-bottom: 15px; }
-	.__bw-1818 { border-width: 1px; }
-	.__br-1819 { border-radius: 6px; }
-	.__bc-1820 { border-color: #EEEEEE; }
-	.__g-1821 { gap: 15px; }
-	.__w-1822 { width: 100px; }
-	.__h-1823 { height: 80px; }
-	.__w-1824 { width: 100%; }
-	.__h-1825 { height: 100%; }
-	.__mt-1826 { margin-top: -44px; }
-	.__bw-1827 { border-width: 1px; }
-	.__br-1828 { border-radius: 6px; }
-	.__bc-1829 { border-color: #A0A0A0; }
-	.__bgc-1830 { background-color: #611c03; }
-	.__pos-1831 { position: absolute; }
-	.__w-1832 { width: 100%; }
-	.__pl-1833 { padding-left: 10px; }
-	.__pr-1834 { padding-right: 10px; }
-	.__pt-1835 { padding-top: 8px; }
-	.__pb-1836 { padding-bottom: 8px; }
-	.__bblr-1837 { border-bottom-left-radius: 6px; }
-	.__bbrr-1838 { border-bottom-right-radius: 6px; }
-	.__b-1839 { bottom: 0px; }
-	.__bgc-1840 { background-color: rgba(0,0,0,.1); }
-	.__rl-1841 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-1841 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1842 { color: #FFFFFF !important; }
-	.__tt-1843 { text-transform: uppercase; }
-	.__fwt-1844 { font-weight: 700; }
-	.__w-1845 { width: 100%; }
-	.__g-1846 { gap: 5px; }
-	.__rl-1847 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1847 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1848 { color: #212738 !important; }
-	.__rl-1849 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1849 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-1850 { width: 80%; }
-	.__c-1851 { color: #707070 !important; }
-	.__w-1852 { width: 100%; }
-	.__mt-1853 { margin-top: 40px; }
-	.__pos-1856 { position: absolute; }
-	.__t-1857 { top: 8px; }
-	.__r-1858 { right: 8px; }
-	.__z-1859 { z-index: 999; }
-	.__cur-1860 { cursor: pointer; }
-	.__w-1861 { width: 12px; }
-	.__jc-1862 { justify-content: center; }
-	.__ali-1863 { align-items: center; }
-	.__jc-1864 { justify-content: space-between; }
-	.__w-1865 { width: 100%; }
-	.__pl-1866 { padding-left: 12px; }
-	.__pr-1867 { padding-right: 12px; }
-	.__pt-1868 { padding-top: 15px; }
-	.__pb-1869 { padding-bottom: 15px; }
-	.__bw-1870 { border-width: 1px; }
-	.__br-1871 { border-radius: 6px; }
-	.__bc-1872 { border-color: #EEEEEE; }
-	.__g-1873 { gap: 15px; }
-	.__w-1874 { width: 100px; }
-	.__h-1875 { height: 80px; }
-	.__w-1876 { width: 100%; }
-	.__h-1877 { height: 100%; }
-	.__mt-1878 { margin-top: -44px; }
-	.__bw-1879 { border-width: 1px; }
-	.__br-1880 { border-radius: 6px; }
-	.__bc-1881 { border-color: #A0A0A0; }
-	.__bgc-1882 { background-color: #a53006; }
-	.__pos-1883 { position: absolute; }
-	.__w-1884 { width: 100%; }
-	.__pl-1885 { padding-left: 10px; }
-	.__pr-1886 { padding-right: 10px; }
-	.__pt-1887 { padding-top: 8px; }
-	.__pb-1888 { padding-bottom: 8px; }
-	.__bblr-1889 { border-bottom-left-radius: 6px; }
-	.__bbrr-1890 { border-bottom-right-radius: 6px; }
-	.__b-1891 { bottom: 0px; }
-	.__bgc-1892 { background-color: rgba(0,0,0,.1); }
-	.__rl-1893 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-1893 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1894 { color: #FFFFFF !important; }
-	.__tt-1895 { text-transform: uppercase; }
-	.__fwt-1896 { font-weight: 700; }
-	.__w-1897 { width: 100%; }
-	.__g-1898 { gap: 5px; }
-	.__rl-1899 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1899 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1900 { color: #212738 !important; }
-	.__rl-1901 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1901 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-1902 { width: 80%; }
-	.__c-1903 { color: #707070 !important; }
-	.__w-1904 { width: 100%; }
-	.__mt-1905 { margin-top: 40px; }
-	.__pos-1908 { position: absolute; }
-	.__t-1909 { top: 8px; }
-	.__r-1910 { right: 8px; }
-	.__z-1911 { z-index: 999; }
-	.__cur-1912 { cursor: pointer; }
-	.__w-1913 { width: 12px; }
-	.__jc-1914 { justify-content: center; }
-	.__ali-1915 { align-items: center; }
-	.__jc-1916 { justify-content: space-between; }
-	.__w-1917 { width: 100%; }
-	.__pl-1918 { padding-left: 12px; }
-	.__pr-1919 { padding-right: 12px; }
-	.__pt-1920 { padding-top: 15px; }
-	.__pb-1921 { padding-bottom: 15px; }
-	.__bw-1922 { border-width: 1px; }
-	.__br-1923 { border-radius: 6px; }
-	.__bc-1924 { border-color: #EEEEEE; }
-	.__g-1925 { gap: 15px; }
-	.__w-1926 { width: 100px; }
-	.__h-1927 { height: 80px; }
-	.__w-1928 { width: 100%; }
-	.__h-1929 { height: 100%; }
-	.__mt-1930 { margin-top: -44px; }
-	.__bw-1931 { border-width: 1px; }
-	.__br-1932 { border-radius: 6px; }
-	.__bc-1933 { border-color: #A0A0A0; }
-	.__bgc-1934 { background-color: #FFFFFF; }
-	.__pos-1935 { position: absolute; }
-	.__w-1936 { width: 100%; }
-	.__pl-1937 { padding-left: 10px; }
-	.__pr-1938 { padding-right: 10px; }
-	.__pt-1939 { padding-top: 8px; }
-	.__pb-1940 { padding-bottom: 8px; }
-	.__bblr-1941 { border-bottom-left-radius: 6px; }
-	.__bbrr-1942 { border-bottom-right-radius: 6px; }
-	.__b-1943 { bottom: 0px; }
-	.__bgc-1944 { background-color: rgba(0,0,0,.1); }
-	.__rl-1945 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-1945 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1946 { color: #FFFFFF !important; }
-	.__tt-1947 { text-transform: uppercase; }
-	.__fwt-1948 { font-weight: 700; }
-	.__w-1949 { width: 100%; }
-	.__g-1950 { gap: 5px; }
-	.__rl-1951 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1951 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-1952 { color: #212738 !important; }
-	.__rl-1953 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-1953 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-1954 { width: 80%; }
-	.__c-1955 { color: #707070 !important; }
-	.__w-1956 { width: 100%; }
-	.__mt-1957 { margin-top: 60px; }
-	.__w-1958 { width: 100%; }
-	.__bbw-1959 { border-bottom-width: 1px; }
-	.__bc-1960 { border-color: #212738; }
-	.__jc-1961 { justify-content: center; }
-	.__ali-1962 { align-items: center; }
-	.__g-1963 { gap: 24px; }
-	.__rl-1964 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 20px; font-weight: 700; line-height: 26px; }
-	body.mobile .__rl-1964 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 700; line-height: 24px; }
-	.__c-1965 { color: #212738 !important; }
-	.__fwt-1966 { font-weight: 700; }
-	.__p-1967 { padding: 12px; }
-	.__jc-1968 { justify-content: center; }
-	.__ali-1969 { align-items: center; }
-	.__g-1970 { gap: 4px; }
-	.__cur-1971 { cursor: pointer; }
-	.__w-1972 { width: 28px; }
-	.__h-1973 { height: 28px; }
-	.__p-1974 { padding: 2px; }
-	.__br-1975 { border-radius: 100px; }
-	.__w-1982 { width: 100%; }
-	.__fw-1983 { flex-wrap: wrap; }
-	.__g-1984 { gap: 40px; }
-	.__w-1985 { width: 100%; }
-	.__mt-1986 { margin-top: 40px; }
-	.__pos-1989 { position: absolute; }
-	.__t-1990 { top: 8px; }
-	.__r-1991 { right: 8px; }
-	.__z-1992 { z-index: 999; }
-	.__cur-1993 { cursor: pointer; }
-	.__w-1994 { width: 12px; }
-	.__jc-1995 { justify-content: center; }
-	.__ali-1996 { align-items: center; }
-	.__jc-1997 { justify-content: space-between; }
-	.__w-1998 { width: 100%; }
-	.__pl-1999 { padding-left: 12px; }
-	.__pr-2000 { padding-right: 12px; }
-	.__pt-2001 { padding-top: 15px; }
-	.__pb-2002 { padding-bottom: 15px; }
-	.__bw-2003 { border-width: 1px; }
-	.__br-2004 { border-radius: 6px; }
-	.__bc-2005 { border-color: #EEEEEE; }
-	.__g-2006 { gap: 15px; }
-	.__w-2007 { width: 100px; }
-	.__h-2008 { height: 80px; }
-	.__w-2009 { width: 100%; }
-	.__h-2010 { height: 100%; }
-	.__mt-2011 { margin-top: -44px; }
-	.__bw-2012 { border-width: 1px; }
-	.__br-2013 { border-radius: 6px; }
-	.__bc-2014 { border-color: #A0A0A0; }
-	.__bgc-2015 { background-color: #EF8435; }
-	.__pos-2016 { position: absolute; }
-	.__w-2017 { width: 100%; }
-	.__pl-2018 { padding-left: 10px; }
-	.__pr-2019 { padding-right: 10px; }
-	.__pt-2020 { padding-top: 8px; }
-	.__pb-2021 { padding-bottom: 8px; }
-	.__bblr-2022 { border-bottom-left-radius: 6px; }
-	.__bbrr-2023 { border-bottom-right-radius: 6px; }
-	.__b-2024 { bottom: 0px; }
-	.__bgc-2025 { background-color: rgba(0,0,0,.1); }
-	.__rl-2026 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-2026 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2027 { color: #FFFFFF !important; }
-	.__tt-2028 { text-transform: uppercase; }
-	.__fwt-2029 { font-weight: 700; }
-	.__w-2030 { width: 100%; }
-	.__g-2031 { gap: 5px; }
-	.__rl-2032 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2032 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2033 { color: #212738 !important; }
-	.__rl-2034 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2034 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-2035 { width: 80%; }
-	.__c-2036 { color: #707070 !important; }
-	.__w-2037 { width: 100%; }
-	.__mt-2038 { margin-top: 40px; }
-	.__pos-2041 { position: absolute; }
-	.__t-2042 { top: 8px; }
-	.__r-2043 { right: 8px; }
-	.__z-2044 { z-index: 999; }
-	.__cur-2045 { cursor: pointer; }
-	.__w-2046 { width: 12px; }
-	.__jc-2047 { justify-content: center; }
-	.__ali-2048 { align-items: center; }
-	.__jc-2049 { justify-content: space-between; }
-	.__w-2050 { width: 100%; }
-	.__pl-2051 { padding-left: 12px; }
-	.__pr-2052 { padding-right: 12px; }
-	.__pt-2053 { padding-top: 15px; }
-	.__pb-2054 { padding-bottom: 15px; }
-	.__bw-2055 { border-width: 1px; }
-	.__br-2056 { border-radius: 6px; }
-	.__bc-2057 { border-color: #EEEEEE; }
-	.__g-2058 { gap: 15px; }
-	.__w-2059 { width: 100px; }
-	.__h-2060 { height: 80px; }
-	.__w-2061 { width: 100%; }
-	.__h-2062 { height: 100%; }
-	.__mt-2063 { margin-top: -44px; }
-	.__bw-2064 { border-width: 1px; }
-	.__br-2065 { border-radius: 6px; }
-	.__bc-2066 { border-color: #A0A0A0; }
-	.__bgc-2067 { background-color: #D77730; }
-	.__pos-2068 { position: absolute; }
-	.__w-2069 { width: 100%; }
-	.__pl-2070 { padding-left: 10px; }
-	.__pr-2071 { padding-right: 10px; }
-	.__pt-2072 { padding-top: 8px; }
-	.__pb-2073 { padding-bottom: 8px; }
-	.__bblr-2074 { border-bottom-left-radius: 6px; }
-	.__bbrr-2075 { border-bottom-right-radius: 6px; }
-	.__b-2076 { bottom: 0px; }
-	.__bgc-2077 { background-color: rgba(0,0,0,.1); }
-	.__rl-2078 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-2078 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2079 { color: #FFFFFF !important; }
-	.__tt-2080 { text-transform: uppercase; }
-	.__fwt-2081 { font-weight: 700; }
-	.__w-2082 { width: 100%; }
-	.__g-2083 { gap: 5px; }
-	.__rl-2084 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2084 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2085 { color: #212738 !important; }
-	.__rl-2086 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2086 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-2087 { width: 80%; }
-	.__c-2088 { color: #707070 !important; }
-	.__w-2089 { width: 100%; }
-	.__mt-2090 { margin-top: 40px; }
-	.__pos-2093 { position: absolute; }
-	.__t-2094 { top: 8px; }
-	.__r-2095 { right: 8px; }
-	.__z-2096 { z-index: 999; }
-	.__cur-2097 { cursor: pointer; }
-	.__w-2098 { width: 12px; }
-	.__jc-2099 { justify-content: center; }
-	.__ali-2100 { align-items: center; }
-	.__jc-2101 { justify-content: space-between; }
-	.__w-2102 { width: 100%; }
-	.__pl-2103 { padding-left: 12px; }
-	.__pr-2104 { padding-right: 12px; }
-	.__pt-2105 { padding-top: 15px; }
-	.__pb-2106 { padding-bottom: 15px; }
-	.__bw-2107 { border-width: 1px; }
-	.__br-2108 { border-radius: 6px; }
-	.__bc-2109 { border-color: #EEEEEE; }
-	.__g-2110 { gap: 15px; }
-	.__w-2111 { width: 100px; }
-	.__h-2112 { height: 80px; }
-	.__w-2113 { width: 100%; }
-	.__h-2114 { height: 100%; }
-	.__mt-2115 { margin-top: -44px; }
-	.__bw-2116 { border-width: 1px; }
-	.__br-2117 { border-radius: 6px; }
-	.__bc-2118 { border-color: #A0A0A0; }
-	.__bgc-2119 { background-color: #777777; }
-	.__pos-2120 { position: absolute; }
-	.__w-2121 { width: 100%; }
-	.__pl-2122 { padding-left: 10px; }
-	.__pr-2123 { padding-right: 10px; }
-	.__pt-2124 { padding-top: 8px; }
-	.__pb-2125 { padding-bottom: 8px; }
-	.__bblr-2126 { border-bottom-left-radius: 6px; }
-	.__bbrr-2127 { border-bottom-right-radius: 6px; }
-	.__b-2128 { bottom: 0px; }
-	.__bgc-2129 { background-color: rgba(0,0,0,.1); }
-	.__rl-2130 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-2130 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2131 { color: #FFFFFF !important; }
-	.__tt-2132 { text-transform: uppercase; }
-	.__fwt-2133 { font-weight: 700; }
-	.__w-2134 { width: 100%; }
-	.__g-2135 { gap: 5px; }
-	.__rl-2136 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2136 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2137 { color: #212738 !important; }
-	.__rl-2138 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2138 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-2139 { width: 80%; }
-	.__c-2140 { color: #707070 !important; }
-	.__w-2141 { width: 100%; }
-	.__mt-2142 { margin-top: 40px; }
-	.__pos-2145 { position: absolute; }
-	.__t-2146 { top: 8px; }
-	.__r-2147 { right: 8px; }
-	.__z-2148 { z-index: 999; }
-	.__cur-2149 { cursor: pointer; }
-	.__w-2150 { width: 12px; }
-	.__jc-2151 { justify-content: center; }
-	.__ali-2152 { align-items: center; }
-	.__jc-2153 { justify-content: space-between; }
-	.__w-2154 { width: 100%; }
-	.__pl-2155 { padding-left: 12px; }
-	.__pr-2156 { padding-right: 12px; }
-	.__pt-2157 { padding-top: 15px; }
-	.__pb-2158 { padding-bottom: 15px; }
-	.__bw-2159 { border-width: 1px; }
-	.__br-2160 { border-radius: 6px; }
-	.__bc-2161 { border-color: #EEEEEE; }
-	.__g-2162 { gap: 15px; }
-	.__w-2163 { width: 100px; }
-	.__h-2164 { height: 80px; }
-	.__w-2165 { width: 100%; }
-	.__h-2166 { height: 100%; }
-	.__mt-2167 { margin-top: -44px; }
-	.__bw-2168 { border-width: 1px; }
-	.__br-2169 { border-radius: 6px; }
-	.__bc-2170 { border-color: #A0A0A0; }
-	.__bgc-2171 { background-color: #BF6A2A; }
-	.__pos-2172 { position: absolute; }
-	.__w-2173 { width: 100%; }
-	.__pl-2174 { padding-left: 10px; }
-	.__pr-2175 { padding-right: 10px; }
-	.__pt-2176 { padding-top: 8px; }
-	.__pb-2177 { padding-bottom: 8px; }
-	.__bblr-2178 { border-bottom-left-radius: 6px; }
-	.__bbrr-2179 { border-bottom-right-radius: 6px; }
-	.__b-2180 { bottom: 0px; }
-	.__bgc-2181 { background-color: rgba(0,0,0,.1); }
-	.__rl-2182 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-2182 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2183 { color: #FFFFFF !important; }
-	.__tt-2184 { text-transform: uppercase; }
-	.__fwt-2185 { font-weight: 700; }
-	.__w-2186 { width: 100%; }
-	.__g-2187 { gap: 5px; }
-	.__rl-2188 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2188 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2189 { color: #212738 !important; }
-	.__rl-2190 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2190 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-2191 { width: 80%; }
-	.__c-2192 { color: #707070 !important; }
-	.__w-2193 { width: 100%; }
-	.__mt-2194 { margin-top: 40px; }
-	.__pos-2197 { position: absolute; }
-	.__t-2198 { top: 8px; }
-	.__r-2199 { right: 8px; }
-	.__z-2200 { z-index: 999; }
-	.__cur-2201 { cursor: pointer; }
-	.__w-2202 { width: 12px; }
-	.__jc-2203 { justify-content: center; }
-	.__ali-2204 { align-items: center; }
-	.__jc-2205 { justify-content: space-between; }
-	.__w-2206 { width: 100%; }
-	.__pl-2207 { padding-left: 12px; }
-	.__pr-2208 { padding-right: 12px; }
-	.__pt-2209 { padding-top: 15px; }
-	.__pb-2210 { padding-bottom: 15px; }
-	.__bw-2211 { border-width: 1px; }
-	.__br-2212 { border-radius: 6px; }
-	.__bc-2213 { border-color: #EEEEEE; }
-	.__g-2214 { gap: 15px; }
-	.__w-2215 { width: 100px; }
-	.__h-2216 { height: 80px; }
-	.__w-2217 { width: 100%; }
-	.__h-2218 { height: 100%; }
-	.__mt-2219 { margin-top: -44px; }
-	.__bw-2220 { border-width: 1px; }
-	.__br-2221 { border-radius: 6px; }
-	.__bc-2222 { border-color: #A0A0A0; }
-	.__bgc-2223 { background-color: #B36328; }
-	.__pos-2224 { position: absolute; }
-	.__w-2225 { width: 100%; }
-	.__pl-2226 { padding-left: 10px; }
-	.__pr-2227 { padding-right: 10px; }
-	.__pt-2228 { padding-top: 8px; }
-	.__pb-2229 { padding-bottom: 8px; }
-	.__bblr-2230 { border-bottom-left-radius: 6px; }
-	.__bbrr-2231 { border-bottom-right-radius: 6px; }
-	.__b-2232 { bottom: 0px; }
-	.__bgc-2233 { background-color: rgba(0,0,0,.1); }
-	.__rl-2234 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-2234 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2235 { color: #FFFFFF !important; }
-	.__tt-2236 { text-transform: uppercase; }
-	.__fwt-2237 { font-weight: 700; }
-	.__w-2238 { width: 100%; }
-	.__g-2239 { gap: 5px; }
-	.__rl-2240 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2240 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2241 { color: #212738 !important; }
-	.__rl-2242 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2242 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-2243 { width: 80%; }
-	.__c-2244 { color: #707070 !important; }
-	.__w-2245 { width: 100%; }
-	.__mt-2246 { margin-top: 40px; }
-	.__pos-2249 { position: absolute; }
-	.__t-2250 { top: 8px; }
-	.__r-2251 { right: 8px; }
-	.__z-2252 { z-index: 999; }
-	.__cur-2253 { cursor: pointer; }
-	.__w-2254 { width: 12px; }
-	.__jc-2255 { justify-content: center; }
-	.__ali-2256 { align-items: center; }
-	.__jc-2257 { justify-content: space-between; }
-	.__w-2258 { width: 100%; }
-	.__pl-2259 { padding-left: 12px; }
-	.__pr-2260 { padding-right: 12px; }
-	.__pt-2261 { padding-top: 15px; }
-	.__pb-2262 { padding-bottom: 15px; }
-	.__bw-2263 { border-width: 1px; }
-	.__br-2264 { border-radius: 6px; }
-	.__bc-2265 { border-color: #EEEEEE; }
-	.__g-2266 { gap: 15px; }
-	.__w-2267 { width: 100px; }
-	.__h-2268 { height: 80px; }
-	.__w-2269 { width: 100%; }
-	.__h-2270 { height: 100%; }
-	.__mt-2271 { margin-top: -44px; }
-	.__bw-2272 { border-width: 1px; }
-	.__br-2273 { border-radius: 6px; }
-	.__bc-2274 { border-color: #A0A0A0; }
-	.__bgc-2275 { background-color: #F3A063; }
-	.__pos-2276 { position: absolute; }
-	.__w-2277 { width: 100%; }
-	.__pl-2278 { padding-left: 10px; }
-	.__pr-2279 { padding-right: 10px; }
-	.__pt-2280 { padding-top: 8px; }
-	.__pb-2281 { padding-bottom: 8px; }
-	.__bblr-2282 { border-bottom-left-radius: 6px; }
-	.__bbrr-2283 { border-bottom-right-radius: 6px; }
-	.__b-2284 { bottom: 0px; }
-	.__bgc-2285 { background-color: rgba(0,0,0,.1); }
-	.__rl-2286 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-2286 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2287 { color: #FFFFFF !important; }
-	.__tt-2288 { text-transform: uppercase; }
-	.__fwt-2289 { font-weight: 700; }
-	.__w-2290 { width: 100%; }
-	.__g-2291 { gap: 5px; }
-	.__rl-2292 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2292 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2293 { color: #212738 !important; }
-	.__rl-2294 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2294 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-2295 { width: 80%; }
-	.__c-2296 { color: #707070 !important; }
-	.__w-2297 { width: 100%; }
-	.__mt-2298 { margin-top: 40px; }
-	.__pos-2301 { position: absolute; }
-	.__t-2302 { top: 8px; }
-	.__r-2303 { right: 8px; }
-	.__z-2304 { z-index: 999; }
-	.__cur-2305 { cursor: pointer; }
-	.__w-2306 { width: 12px; }
-	.__jc-2307 { justify-content: center; }
-	.__ali-2308 { align-items: center; }
-	.__jc-2309 { justify-content: space-between; }
-	.__w-2310 { width: 100%; }
-	.__pl-2311 { padding-left: 12px; }
-	.__pr-2312 { padding-right: 12px; }
-	.__pt-2313 { padding-top: 15px; }
-	.__pb-2314 { padding-bottom: 15px; }
-	.__bw-2315 { border-width: 1px; }
-	.__br-2316 { border-radius: 6px; }
-	.__bc-2317 { border-color: #EEEEEE; }
-	.__g-2318 { gap: 15px; }
-	.__w-2319 { width: 100px; }
-	.__h-2320 { height: 80px; }
-	.__w-2321 { width: 100%; }
-	.__h-2322 { height: 100%; }
-	.__mt-2323 { margin-top: -44px; }
-	.__bw-2324 { border-width: 1px; }
-	.__br-2325 { border-radius: 6px; }
-	.__bc-2326 { border-color: #A0A0A0; }
-	.__bgc-2327 { background-color: #FFFFFF; }
-	.__pos-2328 { position: absolute; }
-	.__w-2329 { width: 100%; }
-	.__pl-2330 { padding-left: 10px; }
-	.__pr-2331 { padding-right: 10px; }
-	.__pt-2332 { padding-top: 8px; }
-	.__pb-2333 { padding-bottom: 8px; }
-	.__bblr-2334 { border-bottom-left-radius: 6px; }
-	.__bbrr-2335 { border-bottom-right-radius: 6px; }
-	.__b-2336 { bottom: 0px; }
-	.__bgc-2337 { background-color: rgba(0,0,0,.1); }
-	.__rl-2338 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-2338 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2339 { color: #FFFFFF !important; }
-	.__tt-2340 { text-transform: uppercase; }
-	.__fwt-2341 { font-weight: 700; }
-	.__w-2342 { width: 100%; }
-	.__g-2343 { gap: 5px; }
-	.__rl-2344 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2344 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2345 { color: #212738 !important; }
-	.__rl-2346 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2346 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-2347 { width: 80%; }
-	.__c-2348 { color: #707070 !important; }
-	.__w-2349 { width: 100%; }
-	.__mt-2350 { margin-top: 60px; }
-	.__w-2351 { width: 100%; }
-	.__bbw-2352 { border-bottom-width: 1px; }
-	.__bc-2353 { border-color: #212738; }
-	.__jc-2354 { justify-content: center; }
-	.__ali-2355 { align-items: center; }
-	.__g-2356 { gap: 24px; }
-	.__rl-2357 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 20px; font-weight: 700; line-height: 26px; }
-	body.mobile .__rl-2357 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 700; line-height: 24px; }
-	.__c-2358 { color: #212738 !important; }
-	.__fwt-2359 { font-weight: 700; }
-	.__p-2360 { padding: 12px; }
-	.__jc-2361 { justify-content: center; }
-	.__ali-2362 { align-items: center; }
-	.__g-2363 { gap: 4px; }
-	.__cur-2364 { cursor: pointer; }
-	.__w-2365 { width: 28px; }
-	.__h-2366 { height: 28px; }
-	.__p-2367 { padding: 2px; }
-	.__br-2368 { border-radius: 100px; }
-	.__w-2375 { width: 100%; }
-	.__fw-2376 { flex-wrap: wrap; }
-	.__g-2377 { gap: 40px; }
-	.__w-2378 { width: 100%; }
-	.__mt-2379 { margin-top: 40px; }
-	.__pos-2382 { position: absolute; }
-	.__t-2383 { top: 8px; }
-	.__r-2384 { right: 8px; }
-	.__z-2385 { z-index: 999; }
-	.__cur-2386 { cursor: pointer; }
-	.__w-2387 { width: 12px; }
-	.__jc-2388 { justify-content: center; }
-	.__ali-2389 { align-items: center; }
-	.__jc-2390 { justify-content: space-between; }
-	.__w-2391 { width: 100%; }
-	.__pl-2392 { padding-left: 12px; }
-	.__pr-2393 { padding-right: 12px; }
-	.__pt-2394 { padding-top: 15px; }
-	.__pb-2395 { padding-bottom: 15px; }
-	.__bw-2396 { border-width: 1px; }
-	.__br-2397 { border-radius: 6px; }
-	.__bc-2398 { border-color: #EEEEEE; }
-	.__g-2399 { gap: 15px; }
-	.__w-2400 { width: 100px; }
-	.__h-2401 { height: 80px; }
-	.__w-2402 { width: 100%; }
-	.__h-2403 { height: 100%; }
-	.__mt-2404 { margin-top: -44px; }
-	.__bw-2405 { border-width: 1px; }
-	.__br-2406 { border-radius: 6px; }
-	.__bc-2407 { border-color: #A0A0A0; }
-	.__bgc-2408 { background-color: #EBE8E5; }
-	.__pos-2409 { position: absolute; }
-	.__w-2410 { width: 100%; }
-	.__pl-2411 { padding-left: 10px; }
-	.__pr-2412 { padding-right: 10px; }
-	.__pt-2413 { padding-top: 8px; }
-	.__pb-2414 { padding-bottom: 8px; }
-	.__bblr-2415 { border-bottom-left-radius: 6px; }
-	.__bbrr-2416 { border-bottom-right-radius: 6px; }
-	.__b-2417 { bottom: 0px; }
-	.__bgc-2418 { background-color: rgba(0,0,0,.1); }
-	.__rl-2419 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-2419 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2420 { color: #FFFFFF !important; }
-	.__tt-2421 { text-transform: uppercase; }
-	.__fwt-2422 { font-weight: 700; }
-	.__w-2423 { width: 100%; }
-	.__g-2424 { gap: 5px; }
-	.__rl-2425 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2425 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2426 { color: #212738 !important; }
-	.__rl-2427 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2427 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-2428 { width: 80%; }
-	.__c-2429 { color: #707070 !important; }
-	.__w-2430 { width: 100%; }
-	.__mt-2431 { margin-top: 40px; }
-	.__pos-2434 { position: absolute; }
-	.__t-2435 { top: 8px; }
-	.__r-2436 { right: 8px; }
-	.__z-2437 { z-index: 999; }
-	.__cur-2438 { cursor: pointer; }
-	.__w-2439 { width: 12px; }
-	.__jc-2440 { justify-content: center; }
-	.__ali-2441 { align-items: center; }
-	.__jc-2442 { justify-content: space-between; }
-	.__w-2443 { width: 100%; }
-	.__pl-2444 { padding-left: 12px; }
-	.__pr-2445 { padding-right: 12px; }
-	.__pt-2446 { padding-top: 15px; }
-	.__pb-2447 { padding-bottom: 15px; }
-	.__bw-2448 { border-width: 1px; }
-	.__br-2449 { border-radius: 6px; }
-	.__bc-2450 { border-color: #EEEEEE; }
-	.__g-2451 { gap: 15px; }
-	.__w-2452 { width: 100px; }
-	.__h-2453 { height: 80px; }
-	.__w-2454 { width: 100%; }
-	.__h-2455 { height: 100%; }
-	.__mt-2456 { margin-top: -44px; }
-	.__bw-2457 { border-width: 1px; }
-	.__br-2458 { border-radius: 6px; }
-	.__bc-2459 { border-color: #A0A0A0; }
-	.__bgc-2460 { background-color: #D4D1CE; }
-	.__pos-2461 { position: absolute; }
-	.__w-2462 { width: 100%; }
-	.__pl-2463 { padding-left: 10px; }
-	.__pr-2464 { padding-right: 10px; }
-	.__pt-2465 { padding-top: 8px; }
-	.__pb-2466 { padding-bottom: 8px; }
-	.__bblr-2467 { border-bottom-left-radius: 6px; }
-	.__bbrr-2468 { border-bottom-right-radius: 6px; }
-	.__b-2469 { bottom: 0px; }
-	.__bgc-2470 { background-color: rgba(0,0,0,.1); }
-	.__rl-2471 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-2471 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2472 { color: #FFFFFF !important; }
-	.__tt-2473 { text-transform: uppercase; }
-	.__fwt-2474 { font-weight: 700; }
-	.__w-2475 { width: 100%; }
-	.__g-2476 { gap: 5px; }
-	.__rl-2477 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2477 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2478 { color: #212738 !important; }
-	.__rl-2479 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2479 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-2480 { width: 80%; }
-	.__c-2481 { color: #707070 !important; }
-	.__w-2482 { width: 100%; }
-	.__mt-2483 { margin-top: 40px; }
-	.__pos-2486 { position: absolute; }
-	.__t-2487 { top: 8px; }
-	.__r-2488 { right: 8px; }
-	.__z-2489 { z-index: 999; }
-	.__cur-2490 { cursor: pointer; }
-	.__w-2491 { width: 12px; }
-	.__jc-2492 { justify-content: center; }
-	.__ali-2493 { align-items: center; }
-	.__jc-2494 { justify-content: space-between; }
-	.__w-2495 { width: 100%; }
-	.__pl-2496 { padding-left: 12px; }
-	.__pr-2497 { padding-right: 12px; }
-	.__pt-2498 { padding-top: 15px; }
-	.__pb-2499 { padding-bottom: 15px; }
-	.__bw-2500 { border-width: 1px; }
-	.__br-2501 { border-radius: 6px; }
-	.__bc-2502 { border-color: #EEEEEE; }
-	.__g-2503 { gap: 15px; }
-	.__w-2504 { width: 100px; }
-	.__h-2505 { height: 80px; }
-	.__w-2506 { width: 100%; }
-	.__h-2507 { height: 100%; }
-	.__mt-2508 { margin-top: -44px; }
-	.__bw-2509 { border-width: 1px; }
-	.__br-2510 { border-radius: 6px; }
-	.__bc-2511 { border-color: #A0A0A0; }
-	.__bgc-2512 { background-color: #F9F8F7; }
-	.__pos-2513 { position: absolute; }
-	.__w-2514 { width: 100%; }
-	.__pl-2515 { padding-left: 10px; }
-	.__pr-2516 { padding-right: 10px; }
-	.__pt-2517 { padding-top: 8px; }
-	.__pb-2518 { padding-bottom: 8px; }
-	.__bblr-2519 { border-bottom-left-radius: 6px; }
-	.__bbrr-2520 { border-bottom-right-radius: 6px; }
-	.__b-2521 { bottom: 0px; }
-	.__bgc-2522 { background-color: rgba(0,0,0,.1); }
-	.__rl-2523 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-2523 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2524 { color: #FFFFFF !important; }
-	.__tt-2525 { text-transform: uppercase; }
-	.__fwt-2526 { font-weight: 700; }
-	.__w-2527 { width: 100%; }
-	.__g-2528 { gap: 5px; }
-	.__rl-2529 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2529 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2530 { color: #212738 !important; }
-	.__rl-2531 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2531 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-2532 { width: 80%; }
-	.__c-2533 { color: #707070 !important; }
-	.__w-2534 { width: 100%; }
-	.__mt-2535 { margin-top: 40px; }
-	.__pos-2538 { position: absolute; }
-	.__t-2539 { top: 8px; }
-	.__r-2540 { right: 8px; }
-	.__z-2541 { z-index: 999; }
-	.__cur-2542 { cursor: pointer; }
-	.__w-2543 { width: 12px; }
-	.__jc-2544 { justify-content: center; }
-	.__ali-2545 { align-items: center; }
-	.__jc-2546 { justify-content: space-between; }
-	.__w-2547 { width: 100%; }
-	.__pl-2548 { padding-left: 12px; }
-	.__pr-2549 { padding-right: 12px; }
-	.__pt-2550 { padding-top: 15px; }
-	.__pb-2551 { padding-bottom: 15px; }
-	.__bw-2552 { border-width: 1px; }
-	.__br-2553 { border-radius: 6px; }
-	.__bc-2554 { border-color: #EEEEEE; }
-	.__g-2555 { gap: 15px; }
-	.__w-2556 { width: 100px; }
-	.__h-2557 { height: 80px; }
-	.__w-2558 { width: 100%; }
-	.__h-2559 { height: 100%; }
-	.__mt-2560 { margin-top: -44px; }
-	.__bw-2561 { border-width: 1px; }
-	.__br-2562 { border-radius: 6px; }
-	.__bc-2563 { border-color: #A0A0A0; }
-	.__bgc-2564 { background-color: #BCBAB7; }
-	.__pos-2565 { position: absolute; }
-	.__w-2566 { width: 100%; }
-	.__pl-2567 { padding-left: 10px; }
-	.__pr-2568 { padding-right: 10px; }
-	.__pt-2569 { padding-top: 8px; }
-	.__pb-2570 { padding-bottom: 8px; }
-	.__bblr-2571 { border-bottom-left-radius: 6px; }
-	.__bbrr-2572 { border-bottom-right-radius: 6px; }
-	.__b-2573 { bottom: 0px; }
-	.__bgc-2574 { background-color: rgba(0,0,0,.1); }
-	.__rl-2575 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-2575 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2576 { color: #FFFFFF !important; }
-	.__tt-2577 { text-transform: uppercase; }
-	.__fwt-2578 { font-weight: 700; }
-	.__w-2579 { width: 100%; }
-	.__g-2580 { gap: 5px; }
-	.__rl-2581 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2581 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2582 { color: #212738 !important; }
-	.__rl-2583 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2583 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-2584 { width: 80%; }
-	.__c-2585 { color: #707070 !important; }
-	.__w-2586 { width: 100%; }
-	.__mt-2587 { margin-top: 40px; }
-	.__pos-2590 { position: absolute; }
-	.__t-2591 { top: 8px; }
-	.__r-2592 { right: 8px; }
-	.__z-2593 { z-index: 999; }
-	.__cur-2594 { cursor: pointer; }
-	.__w-2595 { width: 12px; }
-	.__jc-2596 { justify-content: center; }
-	.__ali-2597 { align-items: center; }
-	.__jc-2598 { justify-content: space-between; }
-	.__w-2599 { width: 100%; }
-	.__pl-2600 { padding-left: 12px; }
-	.__pr-2601 { padding-right: 12px; }
-	.__pt-2602 { padding-top: 15px; }
-	.__pb-2603 { padding-bottom: 15px; }
-	.__bw-2604 { border-width: 1px; }
-	.__br-2605 { border-radius: 6px; }
-	.__bc-2606 { border-color: #EEEEEE; }
-	.__g-2607 { gap: 15px; }
-	.__w-2608 { width: 100px; }
-	.__h-2609 { height: 80px; }
-	.__w-2610 { width: 100%; }
-	.__h-2611 { height: 100%; }
-	.__mt-2612 { margin-top: -44px; }
-	.__bw-2613 { border-width: 1px; }
-	.__br-2614 { border-radius: 6px; }
-	.__bc-2615 { border-color: #A0A0A0; }
-	.__bgc-2616 { background-color: #B0AEAC; }
-	.__pos-2617 { position: absolute; }
-	.__w-2618 { width: 100%; }
-	.__pl-2619 { padding-left: 10px; }
-	.__pr-2620 { padding-right: 10px; }
-	.__pt-2621 { padding-top: 8px; }
-	.__pb-2622 { padding-bottom: 8px; }
-	.__bblr-2623 { border-bottom-left-radius: 6px; }
-	.__bbrr-2624 { border-bottom-right-radius: 6px; }
-	.__b-2625 { bottom: 0px; }
-	.__bgc-2626 { background-color: rgba(0,0,0,.1); }
-	.__rl-2627 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-2627 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2628 { color: #FFFFFF !important; }
-	.__tt-2629 { text-transform: uppercase; }
-	.__fwt-2630 { font-weight: 700; }
-	.__w-2631 { width: 100%; }
-	.__g-2632 { gap: 5px; }
-	.__rl-2633 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2633 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2634 { color: #212738 !important; }
-	.__rl-2635 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2635 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-2636 { width: 80%; }
-	.__c-2637 { color: #707070 !important; }
-	.__w-2638 { width: 100%; }
-	.__mt-2639 { margin-top: 40px; }
-	.__pos-2642 { position: absolute; }
-	.__t-2643 { top: 8px; }
-	.__r-2644 { right: 8px; }
-	.__z-2645 { z-index: 999; }
-	.__cur-2646 { cursor: pointer; }
-	.__w-2647 { width: 12px; }
-	.__jc-2648 { justify-content: center; }
-	.__ali-2649 { align-items: center; }
-	.__jc-2650 { justify-content: space-between; }
-	.__w-2651 { width: 100%; }
-	.__pl-2652 { padding-left: 12px; }
-	.__pr-2653 { padding-right: 12px; }
-	.__pt-2654 { padding-top: 15px; }
-	.__pb-2655 { padding-bottom: 15px; }
-	.__bw-2656 { border-width: 1px; }
-	.__br-2657 { border-radius: 6px; }
-	.__bc-2658 { border-color: #EEEEEE; }
-	.__g-2659 { gap: 15px; }
-	.__w-2660 { width: 100px; }
-	.__h-2661 { height: 80px; }
-	.__w-2662 { width: 100%; }
-	.__h-2663 { height: 100%; }
-	.__mt-2664 { margin-top: -44px; }
-	.__bw-2665 { border-width: 1px; }
-	.__br-2666 { border-radius: 6px; }
-	.__bc-2667 { border-color: #A0A0A0; }
-	.__bgc-2668 { background-color: #B0AEAC; }
-	.__pos-2669 { position: absolute; }
-	.__w-2670 { width: 100%; }
-	.__pl-2671 { padding-left: 10px; }
-	.__pr-2672 { padding-right: 10px; }
-	.__pt-2673 { padding-top: 8px; }
-	.__pb-2674 { padding-bottom: 8px; }
-	.__bblr-2675 { border-bottom-left-radius: 6px; }
-	.__bbrr-2676 { border-bottom-right-radius: 6px; }
-	.__b-2677 { bottom: 0px; }
-	.__bgc-2678 { background-color: rgba(0,0,0,.1); }
-	.__rl-2679 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-2679 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2680 { color: #FFFFFF !important; }
-	.__tt-2681 { text-transform: uppercase; }
-	.__fwt-2682 { font-weight: 700; }
-	.__w-2683 { width: 100%; }
-	.__g-2684 { gap: 5px; }
-	.__rl-2685 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2685 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2686 { color: #212738 !important; }
-	.__rl-2687 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2687 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-2688 { width: 80%; }
-	.__c-2689 { color: #707070 !important; }
-	.__w-2690 { width: 100%; }
-	.__mt-2691 { margin-top: 40px; }
-	.__pos-2694 { position: absolute; }
-	.__t-2695 { top: 8px; }
-	.__r-2696 { right: 8px; }
-	.__z-2697 { z-index: 999; }
-	.__cur-2698 { cursor: pointer; }
-	.__w-2699 { width: 12px; }
-	.__jc-2700 { justify-content: center; }
-	.__ali-2701 { align-items: center; }
-	.__jc-2702 { justify-content: space-between; }
-	.__w-2703 { width: 100%; }
-	.__pl-2704 { padding-left: 12px; }
-	.__pr-2705 { padding-right: 12px; }
-	.__pt-2706 { padding-top: 15px; }
-	.__pb-2707 { padding-bottom: 15px; }
-	.__bw-2708 { border-width: 1px; }
-	.__br-2709 { border-radius: 6px; }
-	.__bc-2710 { border-color: #EEEEEE; }
-	.__g-2711 { gap: 15px; }
-	.__w-2712 { width: 100px; }
-	.__h-2713 { height: 80px; }
-	.__w-2714 { width: 100%; }
-	.__h-2715 { height: 100%; }
-	.__mt-2716 { margin-top: -44px; }
-	.__bw-2717 { border-width: 1px; }
-	.__br-2718 { border-radius: 6px; }
-	.__bc-2719 { border-color: #A0A0A0; }
-	.__bgc-2720 { background-color: #333333; }
-	.__pos-2721 { position: absolute; }
-	.__w-2722 { width: 100%; }
-	.__pl-2723 { padding-left: 10px; }
-	.__pr-2724 { padding-right: 10px; }
-	.__pt-2725 { padding-top: 8px; }
-	.__pb-2726 { padding-bottom: 8px; }
-	.__bblr-2727 { border-bottom-left-radius: 6px; }
-	.__bbrr-2728 { border-bottom-right-radius: 6px; }
-	.__b-2729 { bottom: 0px; }
-	.__bgc-2730 { background-color: rgba(0,0,0,.1); }
-	.__rl-2731 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-2731 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2732 { color: #FFFFFF !important; }
-	.__tt-2733 { text-transform: uppercase; }
-	.__fwt-2734 { font-weight: 700; }
-	.__w-2735 { width: 100%; }
-	.__g-2736 { gap: 5px; }
-	.__rl-2737 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2737 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2738 { color: #212738 !important; }
-	.__rl-2739 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2739 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-2740 { width: 80%; }
-	.__c-2741 { color: #707070 !important; }
-	.__w-2742 { width: 100%; }
-	.__mt-2743 { margin-top: 60px; }
-	.__w-2744 { width: 100%; }
-	.__bbw-2745 { border-bottom-width: 1px; }
-	.__bc-2746 { border-color: #212738; }
-	.__jc-2747 { justify-content: center; }
-	.__ali-2748 { align-items: center; }
-	.__g-2749 { gap: 24px; }
-	.__rl-2750 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 20px; font-weight: 700; line-height: 26px; }
-	body.mobile .__rl-2750 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 700; line-height: 24px; }
-	.__c-2751 { color: #212738 !important; }
-	.__fwt-2752 { font-weight: 700; }
-	.__p-2753 { padding: 12px; }
-	.__jc-2754 { justify-content: center; }
-	.__ali-2755 { align-items: center; }
-	.__g-2756 { gap: 4px; }
-	.__cur-2757 { cursor: pointer; }
-	.__w-2758 { width: 28px; }
-	.__h-2759 { height: 28px; }
-	.__p-2760 { padding: 2px; }
-	.__br-2761 { border-radius: 100px; }
-	.__w-2768 { width: 100%; }
-	.__fw-2769 { flex-wrap: wrap; }
-	.__g-2770 { gap: 40px; }
-	.__w-2771 { width: 100%; }
-	.__mt-2772 { margin-top: 40px; }
-	.__pos-2775 { position: absolute; }
-	.__t-2776 { top: 8px; }
-	.__r-2777 { right: 8px; }
-	.__z-2778 { z-index: 999; }
-	.__cur-2779 { cursor: pointer; }
-	.__w-2780 { width: 12px; }
-	.__jc-2781 { justify-content: center; }
-	.__ali-2782 { align-items: center; }
-	.__jc-2783 { justify-content: space-between; }
-	.__w-2784 { width: 100%; }
-	.__pl-2785 { padding-left: 12px; }
-	.__pr-2786 { padding-right: 12px; }
-	.__pt-2787 { padding-top: 15px; }
-	.__pb-2788 { padding-bottom: 15px; }
-	.__bw-2789 { border-width: 1px; }
-	.__br-2790 { border-radius: 6px; }
-	.__bc-2791 { border-color: #EEEEEE; }
-	.__g-2792 { gap: 15px; }
-	.__w-2793 { width: 100px; }
-	.__h-2794 { height: 80px; }
-	.__w-2795 { width: 100%; }
-	.__h-2796 { height: 100%; }
-	.__mt-2797 { margin-top: -44px; }
-	.__bw-2798 { border-width: 1px; }
-	.__br-2799 { border-radius: 6px; }
-	.__bc-2800 { border-color: #A0A0A0; }
-	.__bgc-2801 { background-color: #f9e4e1; }
-	.__pos-2802 { position: absolute; }
-	.__w-2803 { width: 100%; }
-	.__pl-2804 { padding-left: 10px; }
-	.__pr-2805 { padding-right: 10px; }
-	.__pt-2806 { padding-top: 8px; }
-	.__pb-2807 { padding-bottom: 8px; }
-	.__bblr-2808 { border-bottom-left-radius: 6px; }
-	.__bbrr-2809 { border-bottom-right-radius: 6px; }
-	.__b-2810 { bottom: 0px; }
-	.__bgc-2811 { background-color: rgba(0,0,0,.1); }
-	.__rl-2812 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-2812 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2813 { color: #FFFFFF !important; }
-	.__tt-2814 { text-transform: uppercase; }
-	.__fwt-2815 { font-weight: 700; }
-	.__w-2816 { width: 100%; }
-	.__g-2817 { gap: 5px; }
-	.__rl-2818 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2818 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2819 { color: #212738 !important; }
-	.__rl-2820 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2820 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-2821 { width: 80%; }
-	.__c-2822 { color: #707070 !important; }
-	.__w-2823 { width: 100%; }
-	.__mt-2824 { margin-top: 40px; }
-	.__pos-2827 { position: absolute; }
-	.__t-2828 { top: 8px; }
-	.__r-2829 { right: 8px; }
-	.__z-2830 { z-index: 999; }
-	.__cur-2831 { cursor: pointer; }
-	.__w-2832 { width: 12px; }
-	.__jc-2833 { justify-content: center; }
-	.__ali-2834 { align-items: center; }
-	.__jc-2835 { justify-content: space-between; }
-	.__w-2836 { width: 100%; }
-	.__pl-2837 { padding-left: 12px; }
-	.__pr-2838 { padding-right: 12px; }
-	.__pt-2839 { padding-top: 15px; }
-	.__pb-2840 { padding-bottom: 15px; }
-	.__bw-2841 { border-width: 1px; }
-	.__br-2842 { border-radius: 6px; }
-	.__bc-2843 { border-color: #EEEEEE; }
-	.__g-2844 { gap: 15px; }
-	.__w-2845 { width: 100px; }
-	.__h-2846 { height: 80px; }
-	.__w-2847 { width: 100%; }
-	.__h-2848 { height: 100%; }
-	.__mt-2849 { margin-top: -44px; }
-	.__bw-2850 { border-width: 1px; }
-	.__br-2851 { border-radius: 6px; }
-	.__bc-2852 { border-color: #A0A0A0; }
-	.__bgc-2853 { background-color: #f1bdb6; }
-	.__pos-2854 { position: absolute; }
-	.__w-2855 { width: 100%; }
-	.__pl-2856 { padding-left: 10px; }
-	.__pr-2857 { padding-right: 10px; }
-	.__pt-2858 { padding-top: 8px; }
-	.__pb-2859 { padding-bottom: 8px; }
-	.__bblr-2860 { border-bottom-left-radius: 6px; }
-	.__bbrr-2861 { border-bottom-right-radius: 6px; }
-	.__b-2862 { bottom: 0px; }
-	.__bgc-2863 { background-color: rgba(0,0,0,.1); }
-	.__rl-2864 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-2864 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2865 { color: #FFFFFF !important; }
-	.__tt-2866 { text-transform: uppercase; }
-	.__fwt-2867 { font-weight: 700; }
-	.__w-2868 { width: 100%; }
-	.__g-2869 { gap: 5px; }
-	.__rl-2870 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2870 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2871 { color: #212738 !important; }
-	.__rl-2872 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2872 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-2873 { width: 80%; }
-	.__c-2874 { color: #707070 !important; }
-	.__w-2875 { width: 100%; }
-	.__mt-2876 { margin-top: 40px; }
-	.__pos-2879 { position: absolute; }
-	.__t-2880 { top: 8px; }
-	.__r-2881 { right: 8px; }
-	.__z-2882 { z-index: 999; }
-	.__cur-2883 { cursor: pointer; }
-	.__w-2884 { width: 12px; }
-	.__jc-2885 { justify-content: center; }
-	.__ali-2886 { align-items: center; }
-	.__jc-2887 { justify-content: space-between; }
-	.__w-2888 { width: 100%; }
-	.__pl-2889 { padding-left: 12px; }
-	.__pr-2890 { padding-right: 12px; }
-	.__pt-2891 { padding-top: 15px; }
-	.__pb-2892 { padding-bottom: 15px; }
-	.__bw-2893 { border-width: 1px; }
-	.__br-2894 { border-radius: 6px; }
-	.__bc-2895 { border-color: #EEEEEE; }
-	.__g-2896 { gap: 15px; }
-	.__w-2897 { width: 100px; }
-	.__h-2898 { height: 80px; }
-	.__w-2899 { width: 100%; }
-	.__h-2900 { height: 100%; }
-	.__mt-2901 { margin-top: -44px; }
-	.__bw-2902 { border-width: 1px; }
-	.__br-2903 { border-radius: 6px; }
-	.__bc-2904 { border-color: #A0A0A0; }
-	.__bgc-2905 { background-color: #faeceb; }
-	.__pos-2906 { position: absolute; }
-	.__w-2907 { width: 100%; }
-	.__pl-2908 { padding-left: 10px; }
-	.__pr-2909 { padding-right: 10px; }
-	.__pt-2910 { padding-top: 8px; }
-	.__pb-2911 { padding-bottom: 8px; }
-	.__bblr-2912 { border-bottom-left-radius: 6px; }
-	.__bbrr-2913 { border-bottom-right-radius: 6px; }
-	.__b-2914 { bottom: 0px; }
-	.__bgc-2915 { background-color: rgba(0,0,0,.1); }
-	.__rl-2916 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-2916 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2917 { color: #FFFFFF !important; }
-	.__tt-2918 { text-transform: uppercase; }
-	.__fwt-2919 { font-weight: 700; }
-	.__w-2920 { width: 100%; }
-	.__g-2921 { gap: 5px; }
-	.__rl-2922 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2922 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2923 { color: #212738 !important; }
-	.__rl-2924 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2924 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-2925 { width: 80%; }
-	.__c-2926 { color: #707070 !important; }
-	.__w-2927 { width: 100%; }
-	.__mt-2928 { margin-top: 40px; }
-	.__pos-2931 { position: absolute; }
-	.__t-2932 { top: 8px; }
-	.__r-2933 { right: 8px; }
-	.__z-2934 { z-index: 999; }
-	.__cur-2935 { cursor: pointer; }
-	.__w-2936 { width: 12px; }
-	.__jc-2937 { justify-content: center; }
-	.__ali-2938 { align-items: center; }
-	.__jc-2939 { justify-content: space-between; }
-	.__w-2940 { width: 100%; }
-	.__pl-2941 { padding-left: 12px; }
-	.__pr-2942 { padding-right: 12px; }
-	.__pt-2943 { padding-top: 15px; }
-	.__pb-2944 { padding-bottom: 15px; }
-	.__bw-2945 { border-width: 1px; }
-	.__br-2946 { border-radius: 6px; }
-	.__bc-2947 { border-color: #EEEEEE; }
-	.__g-2948 { gap: 15px; }
-	.__w-2949 { width: 100px; }
-	.__h-2950 { height: 80px; }
-	.__w-2951 { width: 100%; }
-	.__h-2952 { height: 100%; }
-	.__mt-2953 { margin-top: -44px; }
-	.__bw-2954 { border-width: 1px; }
-	.__br-2955 { border-radius: 6px; }
-	.__bc-2956 { border-color: #A0A0A0; }
-	.__bgc-2957 { background-color: #d46a63; }
-	.__pos-2958 { position: absolute; }
-	.__w-2959 { width: 100%; }
-	.__pl-2960 { padding-left: 10px; }
-	.__pr-2961 { padding-right: 10px; }
-	.__pt-2962 { padding-top: 8px; }
-	.__pb-2963 { padding-bottom: 8px; }
-	.__bblr-2964 { border-bottom-left-radius: 6px; }
-	.__bbrr-2965 { border-bottom-right-radius: 6px; }
-	.__b-2966 { bottom: 0px; }
-	.__bgc-2967 { background-color: rgba(0,0,0,.1); }
-	.__rl-2968 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-2968 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2969 { color: #FFFFFF !important; }
-	.__tt-2970 { text-transform: uppercase; }
-	.__fwt-2971 { font-weight: 700; }
-	.__w-2972 { width: 100%; }
-	.__g-2973 { gap: 5px; }
-	.__rl-2974 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2974 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-2975 { color: #212738 !important; }
-	.__rl-2976 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-2976 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-2977 { width: 80%; }
-	.__c-2978 { color: #707070 !important; }
-	.__w-2979 { width: 100%; }
-	.__mt-2980 { margin-top: 40px; }
-	.__pos-2983 { position: absolute; }
-	.__t-2984 { top: 8px; }
-	.__r-2985 { right: 8px; }
-	.__z-2986 { z-index: 999; }
-	.__cur-2987 { cursor: pointer; }
-	.__w-2988 { width: 12px; }
-	.__jc-2989 { justify-content: center; }
-	.__ali-2990 { align-items: center; }
-	.__jc-2991 { justify-content: space-between; }
-	.__w-2992 { width: 100%; }
-	.__pl-2993 { padding-left: 12px; }
-	.__pr-2994 { padding-right: 12px; }
-	.__pt-2995 { padding-top: 15px; }
-	.__pb-2996 { padding-bottom: 15px; }
-	.__bw-2997 { border-width: 1px; }
-	.__br-2998 { border-radius: 6px; }
-	.__bc-2999 { border-color: #EEEEEE; }
-	.__g-3000 { gap: 15px; }
-	.__w-3001 { width: 100px; }
-	.__h-3002 { height: 80px; }
-	.__w-3003 { width: 100%; }
-	.__h-3004 { height: 100%; }
-	.__mt-3005 { margin-top: -44px; }
-	.__bw-3006 { border-width: 1px; }
-	.__br-3007 { border-radius: 6px; }
-	.__bc-3008 { border-color: #A0A0A0; }
-	.__bgc-3009 { background-color: #d97973; }
-	.__pos-3010 { position: absolute; }
-	.__w-3011 { width: 100%; }
-	.__pl-3012 { padding-left: 10px; }
-	.__pr-3013 { padding-right: 10px; }
-	.__pt-3014 { padding-top: 8px; }
-	.__pb-3015 { padding-bottom: 8px; }
-	.__bblr-3016 { border-bottom-left-radius: 6px; }
-	.__bbrr-3017 { border-bottom-right-radius: 6px; }
-	.__b-3018 { bottom: 0px; }
-	.__bgc-3019 { background-color: rgba(0,0,0,.1); }
-	.__rl-3020 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-3020 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3021 { color: #FFFFFF !important; }
-	.__tt-3022 { text-transform: uppercase; }
-	.__fwt-3023 { font-weight: 700; }
-	.__w-3024 { width: 100%; }
-	.__g-3025 { gap: 5px; }
-	.__rl-3026 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3026 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3027 { color: #212738 !important; }
-	.__rl-3028 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3028 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-3029 { width: 80%; }
-	.__c-3030 { color: #707070 !important; }
-	.__w-3031 { width: 100%; }
-	.__mt-3032 { margin-top: 40px; }
-	.__pos-3035 { position: absolute; }
-	.__t-3036 { top: 8px; }
-	.__r-3037 { right: 8px; }
-	.__z-3038 { z-index: 999; }
-	.__cur-3039 { cursor: pointer; }
-	.__w-3040 { width: 12px; }
-	.__jc-3041 { justify-content: center; }
-	.__ali-3042 { align-items: center; }
-	.__jc-3043 { justify-content: space-between; }
-	.__w-3044 { width: 100%; }
-	.__pl-3045 { padding-left: 12px; }
-	.__pr-3046 { padding-right: 12px; }
-	.__pt-3047 { padding-top: 15px; }
-	.__pb-3048 { padding-bottom: 15px; }
-	.__bw-3049 { border-width: 1px; }
-	.__br-3050 { border-radius: 6px; }
-	.__bc-3051 { border-color: #EEEEEE; }
-	.__g-3052 { gap: 15px; }
-	.__w-3053 { width: 100px; }
-	.__h-3054 { height: 80px; }
-	.__w-3055 { width: 100%; }
-	.__h-3056 { height: 100%; }
-	.__mt-3057 { margin-top: -44px; }
-	.__bw-3058 { border-width: 1px; }
-	.__br-3059 { border-radius: 6px; }
-	.__bc-3060 { border-color: #A0A0A0; }
-	.__bgc-3061 { background-color: #E9968C; }
-	.__pos-3062 { position: absolute; }
-	.__w-3063 { width: 100%; }
-	.__pl-3064 { padding-left: 10px; }
-	.__pr-3065 { padding-right: 10px; }
-	.__pt-3066 { padding-top: 8px; }
-	.__pb-3067 { padding-bottom: 8px; }
-	.__bblr-3068 { border-bottom-left-radius: 6px; }
-	.__bbrr-3069 { border-bottom-right-radius: 6px; }
-	.__b-3070 { bottom: 0px; }
-	.__bgc-3071 { background-color: rgba(0,0,0,.1); }
-	.__rl-3072 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-3072 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3073 { color: #FFFFFF !important; }
-	.__tt-3074 { text-transform: uppercase; }
-	.__fwt-3075 { font-weight: 700; }
-	.__w-3076 { width: 100%; }
-	.__g-3077 { gap: 5px; }
-	.__rl-3078 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3078 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3079 { color: #212738 !important; }
-	.__rl-3080 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3080 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-3081 { width: 80%; }
-	.__c-3082 { color: #707070 !important; }
-	.__w-3083 { width: 100%; }
-	.__mt-3084 { margin-top: 40px; }
-	.__pos-3087 { position: absolute; }
-	.__t-3088 { top: 8px; }
-	.__r-3089 { right: 8px; }
-	.__z-3090 { z-index: 999; }
-	.__cur-3091 { cursor: pointer; }
-	.__w-3092 { width: 12px; }
-	.__jc-3093 { justify-content: center; }
-	.__ali-3094 { align-items: center; }
-	.__jc-3095 { justify-content: space-between; }
-	.__w-3096 { width: 100%; }
-	.__pl-3097 { padding-left: 12px; }
-	.__pr-3098 { padding-right: 12px; }
-	.__pt-3099 { padding-top: 15px; }
-	.__pb-3100 { padding-bottom: 15px; }
-	.__bw-3101 { border-width: 1px; }
-	.__br-3102 { border-radius: 6px; }
-	.__bc-3103 { border-color: #EEEEEE; }
-	.__g-3104 { gap: 15px; }
-	.__w-3105 { width: 100px; }
-	.__h-3106 { height: 80px; }
-	.__w-3107 { width: 100%; }
-	.__h-3108 { height: 100%; }
-	.__mt-3109 { margin-top: -44px; }
-	.__bw-3110 { border-width: 1px; }
-	.__br-3111 { border-radius: 6px; }
-	.__bc-3112 { border-color: #A0A0A0; }
-	.__bgc-3113 { background-color: #1C1B1F; }
-	.__pos-3114 { position: absolute; }
-	.__w-3115 { width: 100%; }
-	.__pl-3116 { padding-left: 10px; }
-	.__pr-3117 { padding-right: 10px; }
-	.__pt-3118 { padding-top: 8px; }
-	.__pb-3119 { padding-bottom: 8px; }
-	.__bblr-3120 { border-bottom-left-radius: 6px; }
-	.__bbrr-3121 { border-bottom-right-radius: 6px; }
-	.__b-3122 { bottom: 0px; }
-	.__bgc-3123 { background-color: rgba(0,0,0,.1); }
-	.__rl-3124 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-3124 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3125 { color: #FFFFFF !important; }
-	.__tt-3126 { text-transform: uppercase; }
-	.__fwt-3127 { font-weight: 700; }
-	.__w-3128 { width: 100%; }
-	.__g-3129 { gap: 5px; }
-	.__rl-3130 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3130 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3131 { color: #212738 !important; }
-	.__rl-3132 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3132 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-3133 { width: 80%; }
-	.__c-3134 { color: #707070 !important; }
-	.__w-3135 { width: 100%; }
-	.__mt-3136 { margin-top: 60px; }
-	.__w-3137 { width: 100%; }
-	.__bbw-3138 { border-bottom-width: 1px; }
-	.__bc-3139 { border-color: #212738; }
-	.__jc-3140 { justify-content: center; }
-	.__ali-3141 { align-items: center; }
-	.__g-3142 { gap: 24px; }
-	.__rl-3143 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 20px; font-weight: 700; line-height: 26px; }
-	body.mobile .__rl-3143 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 700; line-height: 24px; }
-	.__c-3144 { color: #212738 !important; }
-	.__fwt-3145 { font-weight: 700; }
-	.__p-3146 { padding: 12px; }
-	.__jc-3147 { justify-content: center; }
-	.__ali-3148 { align-items: center; }
-	.__g-3149 { gap: 4px; }
-	.__cur-3150 { cursor: pointer; }
-	.__w-3151 { width: 28px; }
-	.__h-3152 { height: 28px; }
-	.__p-3153 { padding: 2px; }
-	.__br-3154 { border-radius: 100px; }
-	.__w-3161 { width: 100%; }
-	.__fw-3162 { flex-wrap: wrap; }
-	.__g-3163 { gap: 40px; }
-	.__w-3164 { width: 100%; }
-	.__mt-3165 { margin-top: 40px; }
-	.__pos-3168 { position: absolute; }
-	.__t-3169 { top: 8px; }
-	.__r-3170 { right: 8px; }
-	.__z-3171 { z-index: 999; }
-	.__cur-3172 { cursor: pointer; }
-	.__w-3173 { width: 12px; }
-	.__jc-3174 { justify-content: center; }
-	.__ali-3175 { align-items: center; }
-	.__jc-3176 { justify-content: space-between; }
-	.__w-3177 { width: 100%; }
-	.__pl-3178 { padding-left: 12px; }
-	.__pr-3179 { padding-right: 12px; }
-	.__pt-3180 { padding-top: 15px; }
-	.__pb-3181 { padding-bottom: 15px; }
-	.__bw-3182 { border-width: 1px; }
-	.__br-3183 { border-radius: 6px; }
-	.__bc-3184 { border-color: #EEEEEE; }
-	.__g-3185 { gap: 15px; }
-	.__w-3186 { width: 100px; }
-	.__h-3187 { height: 80px; }
-	.__w-3188 { width: 100%; }
-	.__h-3189 { height: 100%; }
-	.__mt-3190 { margin-top: -44px; }
-	.__bw-3191 { border-width: 1px; }
-	.__br-3192 { border-radius: 6px; }
-	.__bc-3193 { border-color: #A0A0A0; }
-	.__bgc-3194 { background-color: #F9E4E1; }
-	.__pos-3195 { position: absolute; }
-	.__w-3196 { width: 100%; }
-	.__pl-3197 { padding-left: 10px; }
-	.__pr-3198 { padding-right: 10px; }
-	.__pt-3199 { padding-top: 8px; }
-	.__pb-3200 { padding-bottom: 8px; }
-	.__bblr-3201 { border-bottom-left-radius: 6px; }
-	.__bbrr-3202 { border-bottom-right-radius: 6px; }
-	.__b-3203 { bottom: 0px; }
-	.__bgc-3204 { background-color: rgba(0,0,0,.1); }
-	.__rl-3205 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-3205 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3206 { color: #FFFFFF !important; }
-	.__tt-3207 { text-transform: uppercase; }
-	.__fwt-3208 { font-weight: 700; }
-	.__w-3209 { width: 100%; }
-	.__g-3210 { gap: 5px; }
-	.__rl-3211 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3211 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3212 { color: #212738 !important; }
-	.__rl-3213 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3213 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-3214 { width: 80%; }
-	.__c-3215 { color: #707070 !important; }
-	.__w-3216 { width: 100%; }
-	.__mt-3217 { margin-top: 40px; }
-	.__pos-3220 { position: absolute; }
-	.__t-3221 { top: 8px; }
-	.__r-3222 { right: 8px; }
-	.__z-3223 { z-index: 999; }
-	.__cur-3224 { cursor: pointer; }
-	.__w-3225 { width: 12px; }
-	.__jc-3226 { justify-content: center; }
-	.__ali-3227 { align-items: center; }
-	.__jc-3228 { justify-content: space-between; }
-	.__w-3229 { width: 100%; }
-	.__pl-3230 { padding-left: 12px; }
-	.__pr-3231 { padding-right: 12px; }
-	.__pt-3232 { padding-top: 15px; }
-	.__pb-3233 { padding-bottom: 15px; }
-	.__bw-3234 { border-width: 1px; }
-	.__br-3235 { border-radius: 6px; }
-	.__bc-3236 { border-color: #EEEEEE; }
-	.__g-3237 { gap: 15px; }
-	.__w-3238 { width: 100px; }
-	.__h-3239 { height: 80px; }
-	.__w-3240 { width: 100%; }
-	.__h-3241 { height: 100%; }
-	.__mt-3242 { margin-top: -44px; }
-	.__bw-3243 { border-width: 1px; }
-	.__br-3244 { border-radius: 6px; }
-	.__bc-3245 { border-color: #A0A0A0; }
-	.__bgc-3246 { background-color: #F9E4E1; }
-	.__w-3247 { width: 100%; }
-	.__h-3248 { height: 33px; }
-	.__bgc-3249 { background-color: #E9968C; }
-	.__pos-3250 { position: absolute; }
-	.__w-3251 { width: 100%; }
-	.__pl-3252 { padding-left: 10px; }
-	.__pr-3253 { padding-right: 10px; }
-	.__pt-3254 { padding-top: 8px; }
-	.__pb-3255 { padding-bottom: 8px; }
-	.__bblr-3256 { border-bottom-left-radius: 6px; }
-	.__bbrr-3257 { border-bottom-right-radius: 6px; }
-	.__b-3258 { bottom: 0px; }
-	.__bgc-3259 { background-color: rgba(0,0,0,.1); }
-	.__rl-3260 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-3260 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3261 { color: #FFFFFF !important; }
-	.__tt-3262 { text-transform: uppercase; }
-	.__fwt-3263 { font-weight: 700; }
-	.__w-3264 { width: 100%; }
-	.__h-3265 { height: 33px; }
-	.__bgc-3266 { background-color: #E9968C; }
-	.__pos-3267 { position: absolute; }
-	.__w-3268 { width: 100%; }
-	.__pl-3269 { padding-left: 10px; }
-	.__pr-3270 { padding-right: 10px; }
-	.__pt-3271 { padding-top: 8px; }
-	.__pb-3272 { padding-bottom: 8px; }
-	.__bblr-3273 { border-bottom-left-radius: 6px; }
-	.__bbrr-3274 { border-bottom-right-radius: 6px; }
-	.__b-3275 { bottom: 0px; }
-	.__bgc-3276 { background-color: rgba(0,0,0,.1); }
-	.__rl-3277 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-3277 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3278 { color: #FFFFFF !important; }
-	.__tt-3279 { text-transform: uppercase; }
-	.__fwt-3280 { font-weight: 700; }
-	.__pos-3281 { position: absolute; }
-	.__w-3282 { width: 100%; }
-	.__pl-3283 { padding-left: 10px; }
-	.__pr-3284 { padding-right: 10px; }
-	.__pt-3285 { padding-top: 8px; }
-	.__pb-3286 { padding-bottom: 8px; }
-	.__bblr-3287 { border-bottom-left-radius: 6px; }
-	.__bbrr-3288 { border-bottom-right-radius: 6px; }
-	.__b-3289 { bottom: 0px; }
-	.__bgc-3290 { background-color: rgba(0,0,0,.1); }
-	.__rl-3291 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-3291 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3292 { color: #FFFFFF !important; }
-	.__tt-3293 { text-transform: uppercase; }
-	.__fwt-3294 { font-weight: 700; }
-	.__w-3295 { width: 100%; }
-	.__g-3296 { gap: 5px; }
-	.__rl-3297 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3297 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3298 { color: #212738 !important; }
-	.__rl-3299 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3299 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-3300 { width: 80%; }
-	.__c-3301 { color: #707070 !important; }
-	.__w-3302 { width: 100%; }
-	.__mt-3303 { margin-top: 40px; }
-	.__pos-3306 { position: absolute; }
-	.__t-3307 { top: 8px; }
-	.__r-3308 { right: 8px; }
-	.__z-3309 { z-index: 999; }
-	.__cur-3310 { cursor: pointer; }
-	.__w-3311 { width: 12px; }
-	.__jc-3312 { justify-content: center; }
-	.__ali-3313 { align-items: center; }
-	.__jc-3314 { justify-content: space-between; }
-	.__w-3315 { width: 100%; }
-	.__pl-3316 { padding-left: 12px; }
-	.__pr-3317 { padding-right: 12px; }
-	.__pt-3318 { padding-top: 15px; }
-	.__pb-3319 { padding-bottom: 15px; }
-	.__bw-3320 { border-width: 1px; }
-	.__br-3321 { border-radius: 6px; }
-	.__bc-3322 { border-color: #EEEEEE; }
-	.__g-3323 { gap: 15px; }
-	.__w-3324 { width: 100px; }
-	.__h-3325 { height: 80px; }
-	.__w-3326 { width: 100%; }
-	.__h-3327 { height: 100%; }
-	.__mt-3328 { margin-top: -44px; }
-	.__bw-3329 { border-width: 1px; }
-	.__br-3330 { border-radius: 6px; }
-	.__bc-3331 { border-color: #A0A0A0; }
-	.__bgc-3332 { background-color: #D84836; }
-	.__pos-3333 { position: absolute; }
-	.__w-3334 { width: 100%; }
-	.__pl-3335 { padding-left: 10px; }
-	.__pr-3336 { padding-right: 10px; }
-	.__pt-3337 { padding-top: 8px; }
-	.__pb-3338 { padding-bottom: 8px; }
-	.__bblr-3339 { border-bottom-left-radius: 6px; }
-	.__bbrr-3340 { border-bottom-right-radius: 6px; }
-	.__b-3341 { bottom: 0px; }
-	.__bgc-3342 { background-color: rgba(0,0,0,.1); }
-	.__rl-3343 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-3343 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3344 { color: #FFFFFF !important; }
-	.__tt-3345 { text-transform: uppercase; }
-	.__fwt-3346 { font-weight: 700; }
-	.__w-3347 { width: 100%; }
-	.__g-3348 { gap: 5px; }
-	.__rl-3349 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3349 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3350 { color: #212738 !important; }
-	.__rl-3351 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3351 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-3352 { width: 80%; }
-	.__c-3353 { color: #707070 !important; }
-	.__w-3354 { width: 100%; }
-	.__mt-3355 { margin-top: 40px; }
-	.__pos-3358 { position: absolute; }
-	.__t-3359 { top: 8px; }
-	.__r-3360 { right: 8px; }
-	.__z-3361 { z-index: 999; }
-	.__cur-3362 { cursor: pointer; }
-	.__w-3363 { width: 12px; }
-	.__jc-3364 { justify-content: center; }
-	.__ali-3365 { align-items: center; }
-	.__jc-3366 { justify-content: space-between; }
-	.__w-3367 { width: 100%; }
-	.__pl-3368 { padding-left: 12px; }
-	.__pr-3369 { padding-right: 12px; }
-	.__pt-3370 { padding-top: 15px; }
-	.__pb-3371 { padding-bottom: 15px; }
-	.__bw-3372 { border-width: 1px; }
-	.__br-3373 { border-radius: 6px; }
-	.__bc-3374 { border-color: #EEEEEE; }
-	.__g-3375 { gap: 15px; }
-	.__w-3376 { width: 100px; }
-	.__h-3377 { height: 80px; }
-	.__w-3378 { width: 100%; }
-	.__h-3379 { height: 100%; }
-	.__mt-3380 { margin-top: -44px; }
-	.__bw-3381 { border-width: 1px; }
-	.__br-3382 { border-radius: 6px; }
-	.__bc-3383 { border-color: #A0A0A0; }
-	.__bgc-3384 { background-color: #E9968C; }
-	.__pos-3385 { position: absolute; }
-	.__w-3386 { width: 100%; }
-	.__pl-3387 { padding-left: 10px; }
-	.__pr-3388 { padding-right: 10px; }
-	.__pt-3389 { padding-top: 8px; }
-	.__pb-3390 { padding-bottom: 8px; }
-	.__bblr-3391 { border-bottom-left-radius: 6px; }
-	.__bbrr-3392 { border-bottom-right-radius: 6px; }
-	.__b-3393 { bottom: 0px; }
-	.__bgc-3394 { background-color: rgba(0,0,0,.1); }
-	.__rl-3395 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-3395 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3396 { color: #FFFFFF !important; }
-	.__tt-3397 { text-transform: uppercase; }
-	.__fwt-3398 { font-weight: 700; }
-	.__w-3399 { width: 100%; }
-	.__g-3400 { gap: 5px; }
-	.__rl-3401 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3401 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3402 { color: #212738 !important; }
-	.__rl-3403 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3403 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-3404 { width: 80%; }
-	.__c-3405 { color: #707070 !important; }
-	.__w-3406 { width: 100%; }
-	.__mt-3407 { margin-top: 60px; }
-	.__w-3408 { width: 100%; }
-	.__bbw-3409 { border-bottom-width: 1px; }
-	.__bc-3410 { border-color: #212738; }
-	.__jc-3411 { justify-content: center; }
-	.__ali-3412 { align-items: center; }
-	.__g-3413 { gap: 24px; }
-	.__rl-3414 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 20px; font-weight: 700; line-height: 26px; }
-	body.mobile .__rl-3414 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 700; line-height: 24px; }
-	.__c-3415 { color: #212738 !important; }
-	.__fwt-3416 { font-weight: 700; }
-	.__p-3417 { padding: 12px; }
-	.__jc-3418 { justify-content: center; }
-	.__ali-3419 { align-items: center; }
-	.__g-3420 { gap: 4px; }
-	.__cur-3421 { cursor: pointer; }
-	.__w-3422 { width: 28px; }
-	.__h-3423 { height: 28px; }
-	.__p-3424 { padding: 2px; }
-	.__br-3425 { border-radius: 100px; }
-	.__w-3432 { width: 100%; }
-	.__fw-3433 { flex-wrap: wrap; }
-	.__g-3434 { gap: 40px; }
-	.__w-3435 { width: 100%; }
-	.__mt-3436 { margin-top: 40px; }
-	.__pos-3439 { position: absolute; }
-	.__t-3440 { top: 8px; }
-	.__r-3441 { right: 8px; }
-	.__z-3442 { z-index: 999; }
-	.__cur-3443 { cursor: pointer; }
-	.__w-3444 { width: 12px; }
-	.__jc-3445 { justify-content: center; }
-	.__ali-3446 { align-items: center; }
-	.__jc-3447 { justify-content: space-between; }
-	.__w-3448 { width: 100%; }
-	.__pl-3449 { padding-left: 12px; }
-	.__pr-3450 { padding-right: 12px; }
-	.__pt-3451 { padding-top: 15px; }
-	.__pb-3452 { padding-bottom: 15px; }
-	.__bw-3453 { border-width: 1px; }
-	.__br-3454 { border-radius: 6px; }
-	.__bc-3455 { border-color: #EEEEEE; }
-	.__g-3456 { gap: 15px; }
-	.__w-3457 { width: 100px; }
-	.__h-3458 { height: 80px; }
-	.__w-3459 { width: 100%; }
-	.__h-3460 { height: 100%; }
-	.__mt-3461 { margin-top: -44px; }
-	.__bw-3462 { border-width: 1px; }
-	.__br-3463 { border-radius: 6px; }
-	.__bc-3464 { border-color: #A0A0A0; }
-	.__bgc-3465 { background-color: #DCEFE4; }
-	.__pos-3466 { position: absolute; }
-	.__w-3467 { width: 100%; }
-	.__pl-3468 { padding-left: 10px; }
-	.__pr-3469 { padding-right: 10px; }
-	.__pt-3470 { padding-top: 8px; }
-	.__pb-3471 { padding-bottom: 8px; }
-	.__bblr-3472 { border-bottom-left-radius: 6px; }
-	.__bbrr-3473 { border-bottom-right-radius: 6px; }
-	.__b-3474 { bottom: 0px; }
-	.__bgc-3475 { background-color: rgba(0,0,0,.1); }
-	.__rl-3476 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-3476 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3477 { color: #FFFFFF !important; }
-	.__tt-3478 { text-transform: uppercase; }
-	.__fwt-3479 { font-weight: 700; }
-	.__w-3480 { width: 100%; }
-	.__g-3481 { gap: 5px; }
-	.__rl-3482 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3482 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3483 { color: #212738 !important; }
-	.__rl-3484 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3484 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-3485 { width: 80%; }
-	.__c-3486 { color: #707070 !important; }
-	.__w-3487 { width: 100%; }
-	.__mt-3488 { margin-top: 40px; }
-	.__pos-3491 { position: absolute; }
-	.__t-3492 { top: 8px; }
-	.__r-3493 { right: 8px; }
-	.__z-3494 { z-index: 999; }
-	.__cur-3495 { cursor: pointer; }
-	.__w-3496 { width: 12px; }
-	.__jc-3497 { justify-content: center; }
-	.__ali-3498 { align-items: center; }
-	.__jc-3499 { justify-content: space-between; }
-	.__w-3500 { width: 100%; }
-	.__pl-3501 { padding-left: 12px; }
-	.__pr-3502 { padding-right: 12px; }
-	.__pt-3503 { padding-top: 15px; }
-	.__pb-3504 { padding-bottom: 15px; }
-	.__bw-3505 { border-width: 1px; }
-	.__br-3506 { border-radius: 6px; }
-	.__bc-3507 { border-color: #EEEEEE; }
-	.__g-3508 { gap: 15px; }
-	.__w-3509 { width: 100px; }
-	.__h-3510 { height: 80px; }
-	.__w-3511 { width: 100%; }
-	.__h-3512 { height: 100%; }
-	.__mt-3513 { margin-top: -44px; }
-	.__bw-3514 { border-width: 1px; }
-	.__br-3515 { border-radius: 6px; }
-	.__bc-3516 { border-color: #A0A0A0; }
-	.__bgc-3517 { background-color: #DCEFE4; }
-	.__w-3518 { width: 100%; }
-	.__h-3519 { height: 33px; }
-	.__bgc-3520 { background-color: #95D0AF; }
-	.__pos-3521 { position: absolute; }
-	.__w-3522 { width: 100%; }
-	.__pl-3523 { padding-left: 10px; }
-	.__pr-3524 { padding-right: 10px; }
-	.__pt-3525 { padding-top: 8px; }
-	.__pb-3526 { padding-bottom: 8px; }
-	.__bblr-3527 { border-bottom-left-radius: 6px; }
-	.__bbrr-3528 { border-bottom-right-radius: 6px; }
-	.__b-3529 { bottom: 0px; }
-	.__bgc-3530 { background-color: rgba(0,0,0,.1); }
-	.__rl-3531 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-3531 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3532 { color: #FFFFFF !important; }
-	.__tt-3533 { text-transform: uppercase; }
-	.__fwt-3534 { font-weight: 700; }
-	.__w-3535 { width: 100%; }
-	.__h-3536 { height: 33px; }
-	.__bgc-3537 { background-color: #95D0AF; }
-	.__pos-3538 { position: absolute; }
-	.__w-3539 { width: 100%; }
-	.__pl-3540 { padding-left: 10px; }
-	.__pr-3541 { padding-right: 10px; }
-	.__pt-3542 { padding-top: 8px; }
-	.__pb-3543 { padding-bottom: 8px; }
-	.__bblr-3544 { border-bottom-left-radius: 6px; }
-	.__bbrr-3545 { border-bottom-right-radius: 6px; }
-	.__b-3546 { bottom: 0px; }
-	.__bgc-3547 { background-color: rgba(0,0,0,.1); }
-	.__rl-3548 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-3548 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3549 { color: #FFFFFF !important; }
-	.__tt-3550 { text-transform: uppercase; }
-	.__fwt-3551 { font-weight: 700; }
-	.__pos-3552 { position: absolute; }
-	.__w-3553 { width: 100%; }
-	.__pl-3554 { padding-left: 10px; }
-	.__pr-3555 { padding-right: 10px; }
-	.__pt-3556 { padding-top: 8px; }
-	.__pb-3557 { padding-bottom: 8px; }
-	.__bblr-3558 { border-bottom-left-radius: 6px; }
-	.__bbrr-3559 { border-bottom-right-radius: 6px; }
-	.__b-3560 { bottom: 0px; }
-	.__bgc-3561 { background-color: rgba(0,0,0,.1); }
-	.__rl-3562 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-3562 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3563 { color: #FFFFFF !important; }
-	.__tt-3564 { text-transform: uppercase; }
-	.__fwt-3565 { font-weight: 700; }
-	.__w-3566 { width: 100%; }
-	.__g-3567 { gap: 5px; }
-	.__rl-3568 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3568 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3569 { color: #212738 !important; }
-	.__rl-3570 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3570 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-3571 { width: 80%; }
-	.__c-3572 { color: #707070 !important; }
-	.__w-3573 { width: 100%; }
-	.__mt-3574 { margin-top: 40px; }
-	.__pos-3577 { position: absolute; }
-	.__t-3578 { top: 8px; }
-	.__r-3579 { right: 8px; }
-	.__z-3580 { z-index: 999; }
-	.__cur-3581 { cursor: pointer; }
-	.__w-3582 { width: 12px; }
-	.__jc-3583 { justify-content: center; }
-	.__ali-3584 { align-items: center; }
-	.__jc-3585 { justify-content: space-between; }
-	.__w-3586 { width: 100%; }
-	.__pl-3587 { padding-left: 12px; }
-	.__pr-3588 { padding-right: 12px; }
-	.__pt-3589 { padding-top: 15px; }
-	.__pb-3590 { padding-bottom: 15px; }
-	.__bw-3591 { border-width: 1px; }
-	.__br-3592 { border-radius: 6px; }
-	.__bc-3593 { border-color: #EEEEEE; }
-	.__g-3594 { gap: 15px; }
-	.__w-3595 { width: 100px; }
-	.__h-3596 { height: 80px; }
-	.__w-3597 { width: 100%; }
-	.__h-3598 { height: 100%; }
-	.__mt-3599 { margin-top: -44px; }
-	.__bw-3600 { border-width: 1px; }
-	.__br-3601 { border-radius: 6px; }
-	.__bc-3602 { border-color: #A0A0A0; }
-	.__bgc-3603 { background-color: #3E8D61; }
-	.__pos-3604 { position: absolute; }
-	.__w-3605 { width: 100%; }
-	.__pl-3606 { padding-left: 10px; }
-	.__pr-3607 { padding-right: 10px; }
-	.__pt-3608 { padding-top: 8px; }
-	.__pb-3609 { padding-bottom: 8px; }
-	.__bblr-3610 { border-bottom-left-radius: 6px; }
-	.__bbrr-3611 { border-bottom-right-radius: 6px; }
-	.__b-3612 { bottom: 0px; }
-	.__bgc-3613 { background-color: rgba(0,0,0,.1); }
-	.__rl-3614 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-3614 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3615 { color: #FFFFFF !important; }
-	.__tt-3616 { text-transform: uppercase; }
-	.__fwt-3617 { font-weight: 700; }
-	.__w-3618 { width: 100%; }
-	.__g-3619 { gap: 5px; }
-	.__rl-3620 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3620 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3621 { color: #212738 !important; }
-	.__rl-3622 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3622 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-3623 { width: 80%; }
-	.__c-3624 { color: #707070 !important; }
-	.__w-3625 { width: 100%; }
-	.__mt-3626 { margin-top: 40px; }
-	.__pos-3629 { position: absolute; }
-	.__t-3630 { top: 8px; }
-	.__r-3631 { right: 8px; }
-	.__z-3632 { z-index: 999; }
-	.__cur-3633 { cursor: pointer; }
-	.__w-3634 { width: 12px; }
-	.__jc-3635 { justify-content: center; }
-	.__ali-3636 { align-items: center; }
-	.__jc-3637 { justify-content: space-between; }
-	.__w-3638 { width: 100%; }
-	.__pl-3639 { padding-left: 12px; }
-	.__pr-3640 { padding-right: 12px; }
-	.__pt-3641 { padding-top: 15px; }
-	.__pb-3642 { padding-bottom: 15px; }
-	.__bw-3643 { border-width: 1px; }
-	.__br-3644 { border-radius: 6px; }
-	.__bc-3645 { border-color: #EEEEEE; }
-	.__g-3646 { gap: 15px; }
-	.__w-3647 { width: 100px; }
-	.__h-3648 { height: 80px; }
-	.__w-3649 { width: 100%; }
-	.__h-3650 { height: 100%; }
-	.__mt-3651 { margin-top: -44px; }
-	.__bw-3652 { border-width: 1px; }
-	.__br-3653 { border-radius: 6px; }
-	.__bc-3654 { border-color: #A0A0A0; }
-	.__bgc-3655 { background-color: #95D0AF; }
-	.__pos-3656 { position: absolute; }
-	.__w-3657 { width: 100%; }
-	.__pl-3658 { padding-left: 10px; }
-	.__pr-3659 { padding-right: 10px; }
-	.__pt-3660 { padding-top: 8px; }
-	.__pb-3661 { padding-bottom: 8px; }
-	.__bblr-3662 { border-bottom-left-radius: 6px; }
-	.__bbrr-3663 { border-bottom-right-radius: 6px; }
-	.__b-3664 { bottom: 0px; }
-	.__bgc-3665 { background-color: rgba(0,0,0,.1); }
-	.__rl-3666 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-3666 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3667 { color: #FFFFFF !important; }
-	.__tt-3668 { text-transform: uppercase; }
-	.__fwt-3669 { font-weight: 700; }
-	.__w-3670 { width: 100%; }
-	.__g-3671 { gap: 5px; }
-	.__rl-3672 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3672 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3673 { color: #212738 !important; }
-	.__rl-3674 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3674 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-3675 { width: 80%; }
-	.__c-3676 { color: #707070 !important; }
-	.__w-3677 { width: 100%; }
-	.__mt-3678 { margin-top: 60px; }
-	.__w-3679 { width: 100%; }
-	.__bbw-3680 { border-bottom-width: 1px; }
-	.__bc-3681 { border-color: #212738; }
-	.__jc-3682 { justify-content: center; }
-	.__ali-3683 { align-items: center; }
-	.__g-3684 { gap: 24px; }
-	.__rl-3685 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 20px; font-weight: 700; line-height: 26px; }
-	body.mobile .__rl-3685 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 700; line-height: 24px; }
-	.__c-3686 { color: #212738 !important; }
-	.__fwt-3687 { font-weight: 700; }
-	.__p-3688 { padding: 12px; }
-	.__jc-3689 { justify-content: center; }
-	.__ali-3690 { align-items: center; }
-	.__g-3691 { gap: 4px; }
-	.__cur-3692 { cursor: pointer; }
-	.__w-3693 { width: 28px; }
-	.__h-3694 { height: 28px; }
-	.__p-3695 { padding: 2px; }
-	.__br-3696 { border-radius: 100px; }
-	.__w-3703 { width: 100%; }
-	.__fw-3704 { flex-wrap: wrap; }
-	.__g-3705 { gap: 40px; }
-	.__w-3706 { width: 100%; }
-	.__mt-3707 { margin-top: 40px; }
-	.__pos-3710 { position: absolute; }
-	.__t-3711 { top: 8px; }
-	.__r-3712 { right: 8px; }
-	.__z-3713 { z-index: 999; }
-	.__cur-3714 { cursor: pointer; }
-	.__w-3715 { width: 12px; }
-	.__jc-3716 { justify-content: center; }
-	.__ali-3717 { align-items: center; }
-	.__jc-3718 { justify-content: space-between; }
-	.__w-3719 { width: 100%; }
-	.__pl-3720 { padding-left: 12px; }
-	.__pr-3721 { padding-right: 12px; }
-	.__pt-3722 { padding-top: 15px; }
-	.__pb-3723 { padding-bottom: 15px; }
-	.__bw-3724 { border-width: 1px; }
-	.__br-3725 { border-radius: 6px; }
-	.__bc-3726 { border-color: #EEEEEE; }
-	.__g-3727 { gap: 15px; }
-	.__w-3728 { width: 100px; }
-	.__h-3729 { height: 80px; }
-	.__w-3730 { width: 100%; }
-	.__h-3731 { height: 100%; }
-	.__mt-3732 { margin-top: -44px; }
-	.__bw-3733 { border-width: 1px; }
-	.__br-3734 { border-radius: 6px; }
-	.__bc-3735 { border-color: #A0A0A0; }
-	.__bgc-3736 { background-color: #FDF7F1; }
-	.__pos-3737 { position: absolute; }
-	.__w-3738 { width: 100%; }
-	.__pl-3739 { padding-left: 10px; }
-	.__pr-3740 { padding-right: 10px; }
-	.__pt-3741 { padding-top: 8px; }
-	.__pb-3742 { padding-bottom: 8px; }
-	.__bblr-3743 { border-bottom-left-radius: 6px; }
-	.__bbrr-3744 { border-bottom-right-radius: 6px; }
-	.__b-3745 { bottom: 0px; }
-	.__bgc-3746 { background-color: rgba(0,0,0,.1); }
-	.__rl-3747 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-3747 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3748 { color: #FFFFFF !important; }
-	.__tt-3749 { text-transform: uppercase; }
-	.__fwt-3750 { font-weight: 700; }
-	.__w-3751 { width: 100%; }
-	.__g-3752 { gap: 5px; }
-	.__rl-3753 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3753 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3754 { color: #212738 !important; }
-	.__rl-3755 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3755 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-3756 { width: 80%; }
-	.__c-3757 { color: #707070 !important; }
-	.__w-3758 { width: 100%; }
-	.__mt-3759 { margin-top: 40px; }
-	.__pos-3762 { position: absolute; }
-	.__t-3763 { top: 8px; }
-	.__r-3764 { right: 8px; }
-	.__z-3765 { z-index: 999; }
-	.__cur-3766 { cursor: pointer; }
-	.__w-3767 { width: 12px; }
-	.__jc-3768 { justify-content: center; }
-	.__ali-3769 { align-items: center; }
-	.__jc-3770 { justify-content: space-between; }
-	.__w-3771 { width: 100%; }
-	.__pl-3772 { padding-left: 12px; }
-	.__pr-3773 { padding-right: 12px; }
-	.__pt-3774 { padding-top: 15px; }
-	.__pb-3775 { padding-bottom: 15px; }
-	.__bw-3776 { border-width: 1px; }
-	.__br-3777 { border-radius: 6px; }
-	.__bc-3778 { border-color: #EEEEEE; }
-	.__g-3779 { gap: 15px; }
-	.__w-3780 { width: 100px; }
-	.__h-3781 { height: 80px; }
-	.__w-3782 { width: 100%; }
-	.__h-3783 { height: 100%; }
-	.__mt-3784 { margin-top: -44px; }
-	.__bw-3785 { border-width: 1px; }
-	.__br-3786 { border-radius: 6px; }
-	.__bc-3787 { border-color: #A0A0A0; }
-	.__bgc-3788 { background-color: #FDF7F1; }
-	.__w-3789 { width: 100%; }
-	.__h-3790 { height: 33px; }
-	.__bgc-3791 { background-color: #F2C097; }
-	.__pos-3792 { position: absolute; }
-	.__w-3793 { width: 100%; }
-	.__pl-3794 { padding-left: 10px; }
-	.__pr-3795 { padding-right: 10px; }
-	.__pt-3796 { padding-top: 8px; }
-	.__pb-3797 { padding-bottom: 8px; }
-	.__bblr-3798 { border-bottom-left-radius: 6px; }
-	.__bbrr-3799 { border-bottom-right-radius: 6px; }
-	.__b-3800 { bottom: 0px; }
-	.__bgc-3801 { background-color: rgba(0,0,0,.1); }
-	.__rl-3802 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-3802 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3803 { color: #FFFFFF !important; }
-	.__tt-3804 { text-transform: uppercase; }
-	.__fwt-3805 { font-weight: 700; }
-	.__w-3806 { width: 100%; }
-	.__h-3807 { height: 33px; }
-	.__bgc-3808 { background-color: #F2C097; }
-	.__pos-3809 { position: absolute; }
-	.__w-3810 { width: 100%; }
-	.__pl-3811 { padding-left: 10px; }
-	.__pr-3812 { padding-right: 10px; }
-	.__pt-3813 { padding-top: 8px; }
-	.__pb-3814 { padding-bottom: 8px; }
-	.__bblr-3815 { border-bottom-left-radius: 6px; }
-	.__bbrr-3816 { border-bottom-right-radius: 6px; }
-	.__b-3817 { bottom: 0px; }
-	.__bgc-3818 { background-color: rgba(0,0,0,.1); }
-	.__rl-3819 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-3819 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3820 { color: #FFFFFF !important; }
-	.__tt-3821 { text-transform: uppercase; }
-	.__fwt-3822 { font-weight: 700; }
-	.__pos-3823 { position: absolute; }
-	.__w-3824 { width: 100%; }
-	.__pl-3825 { padding-left: 10px; }
-	.__pr-3826 { padding-right: 10px; }
-	.__pt-3827 { padding-top: 8px; }
-	.__pb-3828 { padding-bottom: 8px; }
-	.__bblr-3829 { border-bottom-left-radius: 6px; }
-	.__bbrr-3830 { border-bottom-right-radius: 6px; }
-	.__b-3831 { bottom: 0px; }
-	.__bgc-3832 { background-color: rgba(0,0,0,.1); }
-	.__rl-3833 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-3833 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3834 { color: #FFFFFF !important; }
-	.__tt-3835 { text-transform: uppercase; }
-	.__fwt-3836 { font-weight: 700; }
-	.__w-3837 { width: 100%; }
-	.__g-3838 { gap: 5px; }
-	.__rl-3839 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3839 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3840 { color: #212738 !important; }
-	.__rl-3841 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3841 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-3842 { width: 80%; }
-	.__c-3843 { color: #707070 !important; }
-	.__w-3844 { width: 100%; }
-	.__mt-3845 { margin-top: 40px; }
-	.__pos-3848 { position: absolute; }
-	.__t-3849 { top: 8px; }
-	.__r-3850 { right: 8px; }
-	.__z-3851 { z-index: 999; }
-	.__cur-3852 { cursor: pointer; }
-	.__w-3853 { width: 12px; }
-	.__jc-3854 { justify-content: center; }
-	.__ali-3855 { align-items: center; }
-	.__jc-3856 { justify-content: space-between; }
-	.__w-3857 { width: 100%; }
-	.__pl-3858 { padding-left: 12px; }
-	.__pr-3859 { padding-right: 12px; }
-	.__pt-3860 { padding-top: 15px; }
-	.__pb-3861 { padding-bottom: 15px; }
-	.__bw-3862 { border-width: 1px; }
-	.__br-3863 { border-radius: 6px; }
-	.__bc-3864 { border-color: #EEEEEE; }
-	.__g-3865 { gap: 15px; }
-	.__w-3866 { width: 100px; }
-	.__h-3867 { height: 80px; }
-	.__w-3868 { width: 100%; }
-	.__h-3869 { height: 100%; }
-	.__mt-3870 { margin-top: -44px; }
-	.__bw-3871 { border-width: 1px; }
-	.__br-3872 { border-radius: 6px; }
-	.__bc-3873 { border-color: #A0A0A0; }
-	.__bgc-3874 { background-color: #E78B3E; }
-	.__pos-3875 { position: absolute; }
-	.__w-3876 { width: 100%; }
-	.__pl-3877 { padding-left: 10px; }
-	.__pr-3878 { padding-right: 10px; }
-	.__pt-3879 { padding-top: 8px; }
-	.__pb-3880 { padding-bottom: 8px; }
-	.__bblr-3881 { border-bottom-left-radius: 6px; }
-	.__bbrr-3882 { border-bottom-right-radius: 6px; }
-	.__b-3883 { bottom: 0px; }
-	.__bgc-3884 { background-color: rgba(0,0,0,.1); }
-	.__rl-3885 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-3885 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3886 { color: #FFFFFF !important; }
-	.__tt-3887 { text-transform: uppercase; }
-	.__fwt-3888 { font-weight: 700; }
-	.__w-3889 { width: 100%; }
-	.__g-3890 { gap: 5px; }
-	.__rl-3891 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3891 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3892 { color: #212738 !important; }
-	.__rl-3893 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3893 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-3894 { width: 80%; }
-	.__c-3895 { color: #707070 !important; }
-	.__w-3896 { width: 100%; }
-	.__mt-3897 { margin-top: 40px; }
-	.__pos-3900 { position: absolute; }
-	.__t-3901 { top: 8px; }
-	.__r-3902 { right: 8px; }
-	.__z-3903 { z-index: 999; }
-	.__cur-3904 { cursor: pointer; }
-	.__w-3905 { width: 12px; }
-	.__jc-3906 { justify-content: center; }
-	.__ali-3907 { align-items: center; }
-	.__jc-3908 { justify-content: space-between; }
-	.__w-3909 { width: 100%; }
-	.__pl-3910 { padding-left: 12px; }
-	.__pr-3911 { padding-right: 12px; }
-	.__pt-3912 { padding-top: 15px; }
-	.__pb-3913 { padding-bottom: 15px; }
-	.__bw-3914 { border-width: 1px; }
-	.__br-3915 { border-radius: 6px; }
-	.__bc-3916 { border-color: #EEEEEE; }
-	.__g-3917 { gap: 15px; }
-	.__w-3918 { width: 100px; }
-	.__h-3919 { height: 80px; }
-	.__w-3920 { width: 100%; }
-	.__h-3921 { height: 100%; }
-	.__mt-3922 { margin-top: -44px; }
-	.__bw-3923 { border-width: 1px; }
-	.__br-3924 { border-radius: 6px; }
-	.__bc-3925 { border-color: #A0A0A0; }
-	.__bgc-3926 { background-color: #F2C097; }
-	.__pos-3927 { position: absolute; }
-	.__w-3928 { width: 100%; }
-	.__pl-3929 { padding-left: 10px; }
-	.__pr-3930 { padding-right: 10px; }
-	.__pt-3931 { padding-top: 8px; }
-	.__pb-3932 { padding-bottom: 8px; }
-	.__bblr-3933 { border-bottom-left-radius: 6px; }
-	.__bbrr-3934 { border-bottom-right-radius: 6px; }
-	.__b-3935 { bottom: 0px; }
-	.__bgc-3936 { background-color: rgba(0,0,0,.1); }
-	.__rl-3937 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-3937 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3938 { color: #FFFFFF !important; }
-	.__tt-3939 { text-transform: uppercase; }
-	.__fwt-3940 { font-weight: 700; }
-	.__w-3941 { width: 100%; }
-	.__g-3942 { gap: 5px; }
-	.__rl-3943 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3943 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-3944 { color: #212738 !important; }
-	.__rl-3945 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-3945 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-3946 { width: 80%; }
-	.__c-3947 { color: #707070 !important; }
-	.__w-3948 { width: 100%; }
-	.__mt-3949 { margin-top: 60px; }
-	.__w-3950 { width: 100%; }
-	.__bbw-3951 { border-bottom-width: 1px; }
-	.__bc-3952 { border-color: #212738; }
-	.__jc-3953 { justify-content: center; }
-	.__ali-3954 { align-items: center; }
-	.__g-3955 { gap: 24px; }
-	.__rl-3956 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 20px; font-weight: 700; line-height: 26px; }
-	body.mobile .__rl-3956 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 700; line-height: 24px; }
-	.__c-3957 { color: #212738 !important; }
-	.__fwt-3958 { font-weight: 700; }
-	.__p-3959 { padding: 12px; }
-	.__jc-3960 { justify-content: center; }
-	.__ali-3961 { align-items: center; }
-	.__g-3962 { gap: 4px; }
-	.__cur-3963 { cursor: pointer; }
-	.__w-3964 { width: 28px; }
-	.__h-3965 { height: 28px; }
-	.__p-3966 { padding: 2px; }
-	.__br-3967 { border-radius: 100px; }
-	.__w-3974 { width: 100%; }
-	.__fw-3975 { flex-wrap: wrap; }
-	.__g-3976 { gap: 40px; }
-	.__w-3977 { width: 100%; }
-	.__mt-3978 { margin-top: 40px; }
-	.__pos-3981 { position: absolute; }
-	.__t-3982 { top: 8px; }
-	.__r-3983 { right: 8px; }
-	.__z-3984 { z-index: 999; }
-	.__cur-3985 { cursor: pointer; }
-	.__w-3986 { width: 12px; }
-	.__jc-3987 { justify-content: center; }
-	.__ali-3988 { align-items: center; }
-	.__jc-3989 { justify-content: space-between; }
-	.__w-3990 { width: 100%; }
-	.__pl-3991 { padding-left: 12px; }
-	.__pr-3992 { padding-right: 12px; }
-	.__pt-3993 { padding-top: 15px; }
-	.__pb-3994 { padding-bottom: 15px; }
-	.__bw-3995 { border-width: 1px; }
-	.__br-3996 { border-radius: 6px; }
-	.__bc-3997 { border-color: #EEEEEE; }
-	.__g-3998 { gap: 15px; }
-	.__w-3999 { width: 100px; }
-	.__h-4000 { height: 80px; }
-	.__w-4001 { width: 100%; }
-	.__h-4002 { height: 100%; }
-	.__mt-4003 { margin-top: -44px; }
-	.__bw-4004 { border-width: 1px; }
-	.__br-4005 { border-radius: 6px; }
-	.__bc-4006 { border-color: #A0A0A0; }
-	.__bgc-4007 { background-color: #DAE7FB; }
-	.__pos-4008 { position: absolute; }
-	.__w-4009 { width: 100%; }
-	.__pl-4010 { padding-left: 10px; }
-	.__pr-4011 { padding-right: 10px; }
-	.__pt-4012 { padding-top: 8px; }
-	.__pb-4013 { padding-bottom: 8px; }
-	.__bblr-4014 { border-bottom-left-radius: 6px; }
-	.__bbrr-4015 { border-bottom-right-radius: 6px; }
-	.__b-4016 { bottom: 0px; }
-	.__bgc-4017 { background-color: rgba(0,0,0,.1); }
-	.__rl-4018 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-4018 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4019 { color: #FFFFFF !important; }
-	.__tt-4020 { text-transform: uppercase; }
-	.__fwt-4021 { font-weight: 700; }
-	.__w-4022 { width: 100%; }
-	.__g-4023 { gap: 5px; }
-	.__rl-4024 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4024 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4025 { color: #212738 !important; }
-	.__rl-4026 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4026 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-4027 { width: 80%; }
-	.__c-4028 { color: #707070 !important; }
-	.__w-4029 { width: 100%; }
-	.__mt-4030 { margin-top: 40px; }
-	.__pos-4033 { position: absolute; }
-	.__t-4034 { top: 8px; }
-	.__r-4035 { right: 8px; }
-	.__z-4036 { z-index: 999; }
-	.__cur-4037 { cursor: pointer; }
-	.__w-4038 { width: 12px; }
-	.__jc-4039 { justify-content: center; }
-	.__ali-4040 { align-items: center; }
-	.__jc-4041 { justify-content: space-between; }
-	.__w-4042 { width: 100%; }
-	.__pl-4043 { padding-left: 12px; }
-	.__pr-4044 { padding-right: 12px; }
-	.__pt-4045 { padding-top: 15px; }
-	.__pb-4046 { padding-bottom: 15px; }
-	.__bw-4047 { border-width: 1px; }
-	.__br-4048 { border-radius: 6px; }
-	.__bc-4049 { border-color: #EEEEEE; }
-	.__g-4050 { gap: 15px; }
-	.__w-4051 { width: 100px; }
-	.__h-4052 { height: 80px; }
-	.__w-4053 { width: 100%; }
-	.__h-4054 { height: 100%; }
-	.__mt-4055 { margin-top: -44px; }
-	.__bw-4056 { border-width: 1px; }
-	.__br-4057 { border-radius: 6px; }
-	.__bc-4058 { border-color: #A0A0A0; }
-	.__bgc-4059 { background-color: #DAE7FB; }
-	.__w-4060 { width: 100%; }
-	.__h-4061 { height: 33px; }
-	.__bgc-4062 { background-color: #DAE7FB; }
-	.__pos-4063 { position: absolute; }
-	.__w-4064 { width: 100%; }
-	.__pl-4065 { padding-left: 10px; }
-	.__pr-4066 { padding-right: 10px; }
-	.__pt-4067 { padding-top: 8px; }
-	.__pb-4068 { padding-bottom: 8px; }
-	.__bblr-4069 { border-bottom-left-radius: 6px; }
-	.__bbrr-4070 { border-bottom-right-radius: 6px; }
-	.__b-4071 { bottom: 0px; }
-	.__bgc-4072 { background-color: rgba(0,0,0,.1); }
-	.__rl-4073 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-4073 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4074 { color: #FFFFFF !important; }
-	.__tt-4075 { text-transform: uppercase; }
-	.__fwt-4076 { font-weight: 700; }
-	.__w-4077 { width: 100%; }
-	.__h-4078 { height: 33px; }
-	.__bgc-4079 { background-color: #DAE7FB; }
-	.__pos-4080 { position: absolute; }
-	.__w-4081 { width: 100%; }
-	.__pl-4082 { padding-left: 10px; }
-	.__pr-4083 { padding-right: 10px; }
-	.__pt-4084 { padding-top: 8px; }
-	.__pb-4085 { padding-bottom: 8px; }
-	.__bblr-4086 { border-bottom-left-radius: 6px; }
-	.__bbrr-4087 { border-bottom-right-radius: 6px; }
-	.__b-4088 { bottom: 0px; }
-	.__bgc-4089 { background-color: rgba(0,0,0,.1); }
-	.__rl-4090 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-4090 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4091 { color: #FFFFFF !important; }
-	.__tt-4092 { text-transform: uppercase; }
-	.__fwt-4093 { font-weight: 700; }
-	.__pos-4094 { position: absolute; }
-	.__w-4095 { width: 100%; }
-	.__pl-4096 { padding-left: 10px; }
-	.__pr-4097 { padding-right: 10px; }
-	.__pt-4098 { padding-top: 8px; }
-	.__pb-4099 { padding-bottom: 8px; }
-	.__bblr-4100 { border-bottom-left-radius: 6px; }
-	.__bbrr-4101 { border-bottom-right-radius: 6px; }
-	.__b-4102 { bottom: 0px; }
-	.__bgc-4103 { background-color: rgba(0,0,0,.1); }
-	.__rl-4104 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-4104 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4105 { color: #FFFFFF !important; }
-	.__tt-4106 { text-transform: uppercase; }
-	.__fwt-4107 { font-weight: 700; }
-	.__w-4108 { width: 100%; }
-	.__g-4109 { gap: 5px; }
-	.__rl-4110 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4110 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4111 { color: #212738 !important; }
-	.__rl-4112 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4112 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-4113 { width: 80%; }
-	.__c-4114 { color: #707070 !important; }
-	.__w-4115 { width: 100%; }
-	.__mt-4116 { margin-top: 40px; }
-	.__pos-4119 { position: absolute; }
-	.__t-4120 { top: 8px; }
-	.__r-4121 { right: 8px; }
-	.__z-4122 { z-index: 999; }
-	.__cur-4123 { cursor: pointer; }
-	.__w-4124 { width: 12px; }
-	.__jc-4125 { justify-content: center; }
-	.__ali-4126 { align-items: center; }
-	.__jc-4127 { justify-content: space-between; }
-	.__w-4128 { width: 100%; }
-	.__pl-4129 { padding-left: 12px; }
-	.__pr-4130 { padding-right: 12px; }
-	.__pt-4131 { padding-top: 15px; }
-	.__pb-4132 { padding-bottom: 15px; }
-	.__bw-4133 { border-width: 1px; }
-	.__br-4134 { border-radius: 6px; }
-	.__bc-4135 { border-color: #EEEEEE; }
-	.__g-4136 { gap: 15px; }
-	.__w-4137 { width: 100px; }
-	.__h-4138 { height: 80px; }
-	.__w-4139 { width: 100%; }
-	.__h-4140 { height: 100%; }
-	.__mt-4141 { margin-top: -44px; }
-	.__bw-4142 { border-width: 1px; }
-	.__br-4143 { border-radius: 6px; }
-	.__bc-4144 { border-color: #A0A0A0; }
-	.__bgc-4145 { background-color: #DAE7FB; }
-	.__pos-4146 { position: absolute; }
-	.__w-4147 { width: 100%; }
-	.__pl-4148 { padding-left: 10px; }
-	.__pr-4149 { padding-right: 10px; }
-	.__pt-4150 { padding-top: 8px; }
-	.__pb-4151 { padding-bottom: 8px; }
-	.__bblr-4152 { border-bottom-left-radius: 6px; }
-	.__bbrr-4153 { border-bottom-right-radius: 6px; }
-	.__b-4154 { bottom: 0px; }
-	.__bgc-4155 { background-color: rgba(0,0,0,.1); }
-	.__rl-4156 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-4156 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4157 { color: #FFFFFF !important; }
-	.__tt-4158 { text-transform: uppercase; }
-	.__fwt-4159 { font-weight: 700; }
-	.__w-4160 { width: 100%; }
-	.__g-4161 { gap: 5px; }
-	.__rl-4162 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4162 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4163 { color: #212738 !important; }
-	.__rl-4164 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4164 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-4165 { width: 80%; }
-	.__c-4166 { color: #707070 !important; }
-	.__w-4167 { width: 100%; }
-	.__mt-4168 { margin-top: 40px; }
-	.__pos-4171 { position: absolute; }
-	.__t-4172 { top: 8px; }
-	.__r-4173 { right: 8px; }
-	.__z-4174 { z-index: 999; }
-	.__cur-4175 { cursor: pointer; }
-	.__w-4176 { width: 12px; }
-	.__jc-4177 { justify-content: center; }
-	.__ali-4178 { align-items: center; }
-	.__jc-4179 { justify-content: space-between; }
-	.__w-4180 { width: 100%; }
-	.__pl-4181 { padding-left: 12px; }
-	.__pr-4182 { padding-right: 12px; }
-	.__pt-4183 { padding-top: 15px; }
-	.__pb-4184 { padding-bottom: 15px; }
-	.__bw-4185 { border-width: 1px; }
-	.__br-4186 { border-radius: 6px; }
-	.__bc-4187 { border-color: #EEEEEE; }
-	.__g-4188 { gap: 15px; }
-	.__w-4189 { width: 100px; }
-	.__h-4190 { height: 80px; }
-	.__w-4191 { width: 100%; }
-	.__h-4192 { height: 100%; }
-	.__mt-4193 { margin-top: -44px; }
-	.__bw-4194 { border-width: 1px; }
-	.__br-4195 { border-radius: 6px; }
-	.__bc-4196 { border-color: #A0A0A0; }
-	.__bgc-4197 { background-color: #DAE7FB; }
-	.__pos-4198 { position: absolute; }
-	.__w-4199 { width: 100%; }
-	.__pl-4200 { padding-left: 10px; }
-	.__pr-4201 { padding-right: 10px; }
-	.__pt-4202 { padding-top: 8px; }
-	.__pb-4203 { padding-bottom: 8px; }
-	.__bblr-4204 { border-bottom-left-radius: 6px; }
-	.__bbrr-4205 { border-bottom-right-radius: 6px; }
-	.__b-4206 { bottom: 0px; }
-	.__bgc-4207 { background-color: rgba(0,0,0,.1); }
-	.__rl-4208 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-4208 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4209 { color: #FFFFFF !important; }
-	.__tt-4210 { text-transform: uppercase; }
-	.__fwt-4211 { font-weight: 700; }
-	.__w-4212 { width: 100%; }
-	.__g-4213 { gap: 5px; }
-	.__rl-4214 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4214 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4215 { color: #212738 !important; }
-	.__rl-4216 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4216 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-4217 { width: 80%; }
-	.__c-4218 { color: #707070 !important; }
-	.__w-4219 { width: 100%; }
-	.__mt-4220 { margin-top: 60px; }
-	.__w-4221 { width: 100%; }
-	.__bbw-4222 { border-bottom-width: 1px; }
-	.__bc-4223 { border-color: #212738; }
-	.__jc-4224 { justify-content: center; }
-	.__ali-4225 { align-items: center; }
-	.__g-4226 { gap: 24px; }
-	.__rl-4227 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 20px; font-weight: 700; line-height: 26px; }
-	body.mobile .__rl-4227 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 700; line-height: 24px; }
-	.__c-4228 { color: #212738 !important; }
-	.__fwt-4229 { font-weight: 700; }
-	.__p-4230 { padding: 12px; }
-	.__jc-4231 { justify-content: center; }
-	.__ali-4232 { align-items: center; }
-	.__g-4233 { gap: 4px; }
-	.__cur-4234 { cursor: pointer; }
-	.__w-4235 { width: 28px; }
-	.__h-4236 { height: 28px; }
-	.__p-4237 { padding: 2px; }
-	.__br-4238 { border-radius: 100px; }
-	.__w-4245 { width: 100%; }
-	.__fw-4246 { flex-wrap: wrap; }
-	.__g-4247 { gap: 40px; }
-	.__w-4248 { width: 100%; }
-	.__mt-4249 { margin-top: 40px; }
-	.__pos-4252 { position: absolute; }
-	.__t-4253 { top: 8px; }
-	.__r-4254 { right: 8px; }
-	.__z-4255 { z-index: 999; }
-	.__cur-4256 { cursor: pointer; }
-	.__w-4257 { width: 12px; }
-	.__jc-4258 { justify-content: center; }
-	.__ali-4259 { align-items: center; }
-	.__jc-4260 { justify-content: space-between; }
-	.__w-4261 { width: 100%; }
-	.__pl-4262 { padding-left: 12px; }
-	.__pr-4263 { padding-right: 12px; }
-	.__pt-4264 { padding-top: 15px; }
-	.__pb-4265 { padding-bottom: 15px; }
-	.__bw-4266 { border-width: 1px; }
-	.__br-4267 { border-radius: 6px; }
-	.__bc-4268 { border-color: #EEEEEE; }
-	.__g-4269 { gap: 15px; }
-	.__w-4270 { width: 100px; }
-	.__h-4271 { height: 80px; }
-	.__w-4272 { width: 100%; }
-	.__h-4273 { height: 100%; }
-	.__mt-4274 { margin-top: -44px; }
-	.__bw-4275 { border-width: 1px; }
-	.__br-4276 { border-radius: 6px; }
-	.__bc-4277 { border-color: #A0A0A0; }
-	.__bgc-4278 { background-color: #a53006; }
-	.__pos-4279 { position: absolute; }
-	.__w-4280 { width: 100%; }
-	.__pl-4281 { padding-left: 10px; }
-	.__pr-4282 { padding-right: 10px; }
-	.__pt-4283 { padding-top: 8px; }
-	.__pb-4284 { padding-bottom: 8px; }
-	.__bblr-4285 { border-bottom-left-radius: 6px; }
-	.__bbrr-4286 { border-bottom-right-radius: 6px; }
-	.__b-4287 { bottom: 0px; }
-	.__bgc-4288 { background-color: rgba(0,0,0,.1); }
-	.__rl-4289 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-4289 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4290 { color: #FFFFFF !important; }
-	.__tt-4291 { text-transform: uppercase; }
-	.__fwt-4292 { font-weight: 700; }
-	.__w-4293 { width: 100%; }
-	.__g-4294 { gap: 5px; }
-	.__rl-4295 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4295 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4296 { color: #212738 !important; }
-	.__rl-4297 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4297 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-4298 { width: 80%; }
-	.__c-4299 { color: #707070 !important; }
-	.__w-4300 { width: 100%; }
-	.__mt-4301 { margin-top: 40px; }
-	.__pos-4304 { position: absolute; }
-	.__t-4305 { top: 8px; }
-	.__r-4306 { right: 8px; }
-	.__z-4307 { z-index: 999; }
-	.__cur-4308 { cursor: pointer; }
-	.__w-4309 { width: 12px; }
-	.__jc-4310 { justify-content: center; }
-	.__ali-4311 { align-items: center; }
-	.__jc-4312 { justify-content: space-between; }
-	.__w-4313 { width: 100%; }
-	.__pl-4314 { padding-left: 12px; }
-	.__pr-4315 { padding-right: 12px; }
-	.__pt-4316 { padding-top: 15px; }
-	.__pb-4317 { padding-bottom: 15px; }
-	.__bw-4318 { border-width: 1px; }
-	.__br-4319 { border-radius: 6px; }
-	.__bc-4320 { border-color: #EEEEEE; }
-	.__g-4321 { gap: 15px; }
-	.__w-4322 { width: 100px; }
-	.__h-4323 { height: 80px; }
-	.__w-4324 { width: 100%; }
-	.__h-4325 { height: 100%; }
-	.__mt-4326 { margin-top: -44px; }
-	.__bw-4327 { border-width: 1px; }
-	.__br-4328 { border-radius: 6px; }
-	.__bc-4329 { border-color: #A0A0A0; }
-	.__bgc-4330 { background-color: #EF8435; }
-	.__pos-4331 { position: absolute; }
-	.__w-4332 { width: 100%; }
-	.__pl-4333 { padding-left: 10px; }
-	.__pr-4334 { padding-right: 10px; }
-	.__pt-4335 { padding-top: 8px; }
-	.__pb-4336 { padding-bottom: 8px; }
-	.__bblr-4337 { border-bottom-left-radius: 6px; }
-	.__bbrr-4338 { border-bottom-right-radius: 6px; }
-	.__b-4339 { bottom: 0px; }
-	.__bgc-4340 { background-color: rgba(0,0,0,.1); }
-	.__rl-4341 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-4341 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4342 { color: #FFFFFF !important; }
-	.__tt-4343 { text-transform: uppercase; }
-	.__fwt-4344 { font-weight: 700; }
-	.__w-4345 { width: 100%; }
-	.__g-4346 { gap: 5px; }
-	.__rl-4347 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4347 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4348 { color: #212738 !important; }
-	.__rl-4349 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4349 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-4350 { width: 80%; }
-	.__c-4351 { color: #707070 !important; }
-	.__w-4352 { width: 100%; }
-	.__mt-4353 { margin-top: 40px; }
-	.__pos-4356 { position: absolute; }
-	.__t-4357 { top: 8px; }
-	.__r-4358 { right: 8px; }
-	.__z-4359 { z-index: 999; }
-	.__cur-4360 { cursor: pointer; }
-	.__w-4361 { width: 12px; }
-	.__jc-4362 { justify-content: center; }
-	.__ali-4363 { align-items: center; }
-	.__jc-4364 { justify-content: space-between; }
-	.__w-4365 { width: 100%; }
-	.__pl-4366 { padding-left: 12px; }
-	.__pr-4367 { padding-right: 12px; }
-	.__pt-4368 { padding-top: 15px; }
-	.__pb-4369 { padding-bottom: 15px; }
-	.__bw-4370 { border-width: 1px; }
-	.__br-4371 { border-radius: 6px; }
-	.__bc-4372 { border-color: #EEEEEE; }
-	.__g-4373 { gap: 15px; }
-	.__w-4374 { width: 100px; }
-	.__h-4375 { height: 80px; }
-	.__w-4376 { width: 100%; }
-	.__h-4377 { height: 100%; }
-	.__mt-4378 { margin-top: -44px; }
-	.__bw-4379 { border-width: 1px; }
-	.__br-4380 { border-radius: 6px; }
-	.__bc-4381 { border-color: #A0A0A0; }
-	.__bgc-4382 { background-color: #ffc136; }
-	.__pos-4383 { position: absolute; }
-	.__w-4384 { width: 100%; }
-	.__pl-4385 { padding-left: 10px; }
-	.__pr-4386 { padding-right: 10px; }
-	.__pt-4387 { padding-top: 8px; }
-	.__pb-4388 { padding-bottom: 8px; }
-	.__bblr-4389 { border-bottom-left-radius: 6px; }
-	.__bbrr-4390 { border-bottom-right-radius: 6px; }
-	.__b-4391 { bottom: 0px; }
-	.__bgc-4392 { background-color: rgba(0,0,0,.1); }
-	.__rl-4393 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-4393 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4394 { color: #FFFFFF !important; }
-	.__tt-4395 { text-transform: uppercase; }
-	.__fwt-4396 { font-weight: 700; }
-	.__w-4397 { width: 100%; }
-	.__g-4398 { gap: 5px; }
-	.__rl-4399 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4399 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4400 { color: #212738 !important; }
-	.__rl-4401 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4401 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-4402 { width: 80%; }
-	.__c-4403 { color: #707070 !important; }
-	.__w-4404 { width: 100%; }
-	.__mt-4405 { margin-top: 60px; }
-	.__w-4406 { width: 100%; }
-	.__bbw-4407 { border-bottom-width: 1px; }
-	.__bc-4408 { border-color: #212738; }
-	.__jc-4409 { justify-content: center; }
-	.__ali-4410 { align-items: center; }
-	.__g-4411 { gap: 24px; }
-	.__rl-4412 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 20px; font-weight: 700; line-height: 26px; }
-	body.mobile .__rl-4412 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 700; line-height: 24px; }
-	.__c-4413 { color: #212738 !important; }
-	.__fwt-4414 { font-weight: 700; }
-	.__p-4415 { padding: 12px; }
-	.__jc-4416 { justify-content: center; }
-	.__ali-4417 { align-items: center; }
-	.__g-4418 { gap: 4px; }
-	.__cur-4419 { cursor: pointer; }
-	.__w-4420 { width: 28px; }
-	.__h-4421 { height: 28px; }
-	.__p-4422 { padding: 2px; }
-	.__br-4423 { border-radius: 100px; }
-	.__w-4430 { width: 100%; }
-	.__fw-4431 { flex-wrap: wrap; }
-	.__g-4432 { gap: 40px; }
-	.__w-4433 { width: 100%; }
-	.__mt-4434 { margin-top: 40px; }
-	.__pos-4437 { position: absolute; }
-	.__t-4438 { top: 8px; }
-	.__r-4439 { right: 8px; }
-	.__z-4440 { z-index: 999; }
-	.__cur-4441 { cursor: pointer; }
-	.__w-4442 { width: 12px; }
-	.__jc-4443 { justify-content: center; }
-	.__ali-4444 { align-items: center; }
-	.__jc-4445 { justify-content: space-between; }
-	.__w-4446 { width: 100%; }
-	.__pl-4447 { padding-left: 12px; }
-	.__pr-4448 { padding-right: 12px; }
-	.__pt-4449 { padding-top: 15px; }
-	.__pb-4450 { padding-bottom: 15px; }
-	.__bw-4451 { border-width: 1px; }
-	.__br-4452 { border-radius: 6px; }
-	.__bc-4453 { border-color: #EEEEEE; }
-	.__g-4454 { gap: 15px; }
-	.__w-4455 { width: 100px; }
-	.__h-4456 { height: 80px; }
-	.__w-4457 { width: 100%; }
-	.__h-4458 { height: 100%; }
-	.__mt-4459 { margin-top: -44px; }
-	.__bw-4460 { border-width: 1px; }
-	.__br-4461 { border-radius: 6px; }
-	.__bc-4462 { border-color: #A0A0A0; }
-	.__bgc-4463 { background-color: #000000; }
-	.__pos-4464 { position: absolute; }
-	.__w-4465 { width: 100%; }
-	.__pl-4466 { padding-left: 10px; }
-	.__pr-4467 { padding-right: 10px; }
-	.__pt-4468 { padding-top: 8px; }
-	.__pb-4469 { padding-bottom: 8px; }
-	.__bblr-4470 { border-bottom-left-radius: 6px; }
-	.__bbrr-4471 { border-bottom-right-radius: 6px; }
-	.__b-4472 { bottom: 0px; }
-	.__bgc-4473 { background-color: rgba(0,0,0,.1); }
-	.__rl-4474 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-4474 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4475 { color: #FFFFFF !important; }
-	.__tt-4476 { text-transform: uppercase; }
-	.__fwt-4477 { font-weight: 700; }
-	.__w-4478 { width: 100%; }
-	.__g-4479 { gap: 5px; }
-	.__rl-4480 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4480 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4481 { color: #212738 !important; }
-	.__rl-4482 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4482 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-4483 { width: 80%; }
-	.__c-4484 { color: #707070 !important; }
-	.__w-4485 { width: 100%; }
-	.__mt-4486 { margin-top: 40px; }
-	.__pos-4489 { position: absolute; }
-	.__t-4490 { top: 8px; }
-	.__r-4491 { right: 8px; }
-	.__z-4492 { z-index: 999; }
-	.__cur-4493 { cursor: pointer; }
-	.__w-4494 { width: 12px; }
-	.__jc-4495 { justify-content: center; }
-	.__ali-4496 { align-items: center; }
-	.__jc-4497 { justify-content: space-between; }
-	.__w-4498 { width: 100%; }
-	.__pl-4499 { padding-left: 12px; }
-	.__pr-4500 { padding-right: 12px; }
-	.__pt-4501 { padding-top: 15px; }
-	.__pb-4502 { padding-bottom: 15px; }
-	.__bw-4503 { border-width: 1px; }
-	.__br-4504 { border-radius: 6px; }
-	.__bc-4505 { border-color: #EEEEEE; }
-	.__g-4506 { gap: 15px; }
-	.__w-4507 { width: 100px; }
-	.__h-4508 { height: 80px; }
-	.__w-4509 { width: 100%; }
-	.__h-4510 { height: 100%; }
-	.__mt-4511 { margin-top: -44px; }
-	.__bw-4512 { border-width: 1px; }
-	.__br-4513 { border-radius: 6px; }
-	.__bc-4514 { border-color: #A0A0A0; }
-	.__bgc-4515 { background-color: #c8c8c8; }
-	.__pos-4516 { position: absolute; }
-	.__w-4517 { width: 100%; }
-	.__pl-4518 { padding-left: 10px; }
-	.__pr-4519 { padding-right: 10px; }
-	.__pt-4520 { padding-top: 8px; }
-	.__pb-4521 { padding-bottom: 8px; }
-	.__bblr-4522 { border-bottom-left-radius: 6px; }
-	.__bbrr-4523 { border-bottom-right-radius: 6px; }
-	.__b-4524 { bottom: 0px; }
-	.__bgc-4525 { background-color: rgba(0,0,0,.1); }
-	.__rl-4526 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-4526 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4527 { color: #FFFFFF !important; }
-	.__tt-4528 { text-transform: uppercase; }
-	.__fwt-4529 { font-weight: 700; }
-	.__w-4530 { width: 100%; }
-	.__g-4531 { gap: 5px; }
-	.__rl-4532 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4532 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4533 { color: #212738 !important; }
-	.__rl-4534 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4534 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-4535 { width: 80%; }
-	.__c-4536 { color: #707070 !important; }
-	.__w-4537 { width: 100%; }
-	.__mt-4538 { margin-top: 40px; }
-	.__pos-4541 { position: absolute; }
-	.__t-4542 { top: 8px; }
-	.__r-4543 { right: 8px; }
-	.__z-4544 { z-index: 999; }
-	.__cur-4545 { cursor: pointer; }
-	.__w-4546 { width: 12px; }
-	.__jc-4547 { justify-content: center; }
-	.__ali-4548 { align-items: center; }
-	.__jc-4549 { justify-content: space-between; }
-	.__w-4550 { width: 100%; }
-	.__pl-4551 { padding-left: 12px; }
-	.__pr-4552 { padding-right: 12px; }
-	.__pt-4553 { padding-top: 15px; }
-	.__pb-4554 { padding-bottom: 15px; }
-	.__bw-4555 { border-width: 1px; }
-	.__br-4556 { border-radius: 6px; }
-	.__bc-4557 { border-color: #EEEEEE; }
-	.__g-4558 { gap: 15px; }
-	.__w-4559 { width: 100px; }
-	.__h-4560 { height: 80px; }
-	.__w-4561 { width: 100%; }
-	.__h-4562 { height: 100%; }
-	.__mt-4563 { margin-top: -44px; }
-	.__bw-4564 { border-width: 1px; }
-	.__br-4565 { border-radius: 6px; }
-	.__bc-4566 { border-color: #A0A0A0; }
-	.__bgc-4567 { background-color: #c9efde; }
-	.__pos-4568 { position: absolute; }
-	.__w-4569 { width: 100%; }
-	.__pl-4570 { padding-left: 10px; }
-	.__pr-4571 { padding-right: 10px; }
-	.__pt-4572 { padding-top: 8px; }
-	.__pb-4573 { padding-bottom: 8px; }
-	.__bblr-4574 { border-bottom-left-radius: 6px; }
-	.__bbrr-4575 { border-bottom-right-radius: 6px; }
-	.__b-4576 { bottom: 0px; }
-	.__bgc-4577 { background-color: rgba(0,0,0,.1); }
-	.__rl-4578 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-4578 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4579 { color: #FFFFFF !important; }
-	.__tt-4580 { text-transform: uppercase; }
-	.__fwt-4581 { font-weight: 700; }
-	.__w-4582 { width: 100%; }
-	.__g-4583 { gap: 5px; }
-	.__rl-4584 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4584 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4585 { color: #212738 !important; }
-	.__rl-4586 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4586 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-4587 { width: 80%; }
-	.__c-4588 { color: #707070 !important; }
-	.__w-4589 { width: 100%; }
-	.__mt-4590 { margin-top: 40px; }
-	.__pos-4593 { position: absolute; }
-	.__t-4594 { top: 8px; }
-	.__r-4595 { right: 8px; }
-	.__z-4596 { z-index: 999; }
-	.__cur-4597 { cursor: pointer; }
-	.__w-4598 { width: 12px; }
-	.__jc-4599 { justify-content: center; }
-	.__ali-4600 { align-items: center; }
-	.__jc-4601 { justify-content: space-between; }
-	.__w-4602 { width: 100%; }
-	.__pl-4603 { padding-left: 12px; }
-	.__pr-4604 { padding-right: 12px; }
-	.__pt-4605 { padding-top: 15px; }
-	.__pb-4606 { padding-bottom: 15px; }
-	.__bw-4607 { border-width: 1px; }
-	.__br-4608 { border-radius: 6px; }
-	.__bc-4609 { border-color: #EEEEEE; }
-	.__g-4610 { gap: 15px; }
-	.__w-4611 { width: 100px; }
-	.__h-4612 { height: 80px; }
-	.__w-4613 { width: 100%; }
-	.__h-4614 { height: 100%; }
-	.__mt-4615 { margin-top: -44px; }
-	.__bw-4616 { border-width: 1px; }
-	.__br-4617 { border-radius: 6px; }
-	.__bc-4618 { border-color: #A0A0A0; }
-	.__bgc-4619 { background-color: #3fb488; }
-	.__pos-4620 { position: absolute; }
-	.__w-4621 { width: 100%; }
-	.__pl-4622 { padding-left: 10px; }
-	.__pr-4623 { padding-right: 10px; }
-	.__pt-4624 { padding-top: 8px; }
-	.__pb-4625 { padding-bottom: 8px; }
-	.__bblr-4626 { border-bottom-left-radius: 6px; }
-	.__bbrr-4627 { border-bottom-right-radius: 6px; }
-	.__b-4628 { bottom: 0px; }
-	.__bgc-4629 { background-color: rgba(0,0,0,.1); }
-	.__rl-4630 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-4630 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4631 { color: #FFFFFF !important; }
-	.__tt-4632 { text-transform: uppercase; }
-	.__fwt-4633 { font-weight: 700; }
-	.__w-4634 { width: 100%; }
-	.__g-4635 { gap: 5px; }
-	.__rl-4636 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4636 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4637 { color: #212738 !important; }
-	.__rl-4638 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4638 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-4639 { width: 80%; }
-	.__c-4640 { color: #707070 !important; }
-	.__w-4641 { width: 100%; }
-	.__mt-4642 { margin-top: 40px; }
-	.__pos-4645 { position: absolute; }
-	.__t-4646 { top: 8px; }
-	.__r-4647 { right: 8px; }
-	.__z-4648 { z-index: 999; }
-	.__cur-4649 { cursor: pointer; }
-	.__w-4650 { width: 12px; }
-	.__jc-4651 { justify-content: center; }
-	.__ali-4652 { align-items: center; }
-	.__jc-4653 { justify-content: space-between; }
-	.__w-4654 { width: 100%; }
-	.__pl-4655 { padding-left: 12px; }
-	.__pr-4656 { padding-right: 12px; }
-	.__pt-4657 { padding-top: 15px; }
-	.__pb-4658 { padding-bottom: 15px; }
-	.__bw-4659 { border-width: 1px; }
-	.__br-4660 { border-radius: 6px; }
-	.__bc-4661 { border-color: #EEEEEE; }
-	.__g-4662 { gap: 15px; }
-	.__w-4663 { width: 100px; }
-	.__h-4664 { height: 80px; }
-	.__w-4665 { width: 100%; }
-	.__h-4666 { height: 100%; }
-	.__mt-4667 { margin-top: -44px; }
-	.__bw-4668 { border-width: 1px; }
-	.__br-4669 { border-radius: 6px; }
-	.__bc-4670 { border-color: #A0A0A0; }
-	.__bgc-4671 { background-color: #eb57be; }
-	.__pos-4672 { position: absolute; }
-	.__w-4673 { width: 100%; }
-	.__pl-4674 { padding-left: 10px; }
-	.__pr-4675 { padding-right: 10px; }
-	.__pt-4676 { padding-top: 8px; }
-	.__pb-4677 { padding-bottom: 8px; }
-	.__bblr-4678 { border-bottom-left-radius: 6px; }
-	.__bbrr-4679 { border-bottom-right-radius: 6px; }
-	.__b-4680 { bottom: 0px; }
-	.__bgc-4681 { background-color: rgba(0,0,0,.1); }
-	.__rl-4682 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-4682 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4683 { color: #FFFFFF !important; }
-	.__tt-4684 { text-transform: uppercase; }
-	.__fwt-4685 { font-weight: 700; }
-	.__w-4686 { width: 100%; }
-	.__g-4687 { gap: 5px; }
-	.__rl-4688 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4688 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4689 { color: #212738 !important; }
-	.__rl-4690 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4690 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-4691 { width: 80%; }
-	.__c-4692 { color: #707070 !important; }
-	.__w-4693 { width: 100%; }
-	.__mt-4694 { margin-top: 40px; }
-	.__pos-4697 { position: absolute; }
-	.__t-4698 { top: 8px; }
-	.__r-4699 { right: 8px; }
-	.__z-4700 { z-index: 999; }
-	.__cur-4701 { cursor: pointer; }
-	.__w-4702 { width: 12px; }
-	.__jc-4703 { justify-content: center; }
-	.__ali-4704 { align-items: center; }
-	.__jc-4705 { justify-content: space-between; }
-	.__w-4706 { width: 100%; }
-	.__pl-4707 { padding-left: 12px; }
-	.__pr-4708 { padding-right: 12px; }
-	.__pt-4709 { padding-top: 15px; }
-	.__pb-4710 { padding-bottom: 15px; }
-	.__bw-4711 { border-width: 1px; }
-	.__br-4712 { border-radius: 6px; }
-	.__bc-4713 { border-color: #EEEEEE; }
-	.__g-4714 { gap: 15px; }
-	.__w-4715 { width: 100px; }
-	.__h-4716 { height: 80px; }
-	.__w-4717 { width: 100%; }
-	.__h-4718 { height: 100%; }
-	.__mt-4719 { margin-top: -44px; }
-	.__bw-4720 { border-width: 1px; }
-	.__br-4721 { border-radius: 6px; }
-	.__bc-4722 { border-color: #A0A0A0; }
-	.__bgc-4723 { background-color: #ef8dd6; }
-	.__pos-4724 { position: absolute; }
-	.__w-4725 { width: 100%; }
-	.__pl-4726 { padding-left: 10px; }
-	.__pr-4727 { padding-right: 10px; }
-	.__pt-4728 { padding-top: 8px; }
-	.__pb-4729 { padding-bottom: 8px; }
-	.__bblr-4730 { border-bottom-left-radius: 6px; }
-	.__bbrr-4731 { border-bottom-right-radius: 6px; }
-	.__b-4732 { bottom: 0px; }
-	.__bgc-4733 { background-color: rgba(0,0,0,.1); }
-	.__rl-4734 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-4734 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4735 { color: #FFFFFF !important; }
-	.__tt-4736 { text-transform: uppercase; }
-	.__fwt-4737 { font-weight: 700; }
-	.__w-4738 { width: 100%; }
-	.__g-4739 { gap: 5px; }
-	.__rl-4740 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4740 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4741 { color: #212738 !important; }
-	.__rl-4742 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4742 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-4743 { width: 80%; }
-	.__c-4744 { color: #707070 !important; }
-	.__w-4745 { width: 100%; }
-	.__mt-4746 { margin-top: 40px; }
-	.__pos-4749 { position: absolute; }
-	.__t-4750 { top: 8px; }
-	.__r-4751 { right: 8px; }
-	.__z-4752 { z-index: 999; }
-	.__cur-4753 { cursor: pointer; }
-	.__w-4754 { width: 12px; }
-	.__jc-4755 { justify-content: center; }
-	.__ali-4756 { align-items: center; }
-	.__jc-4757 { justify-content: space-between; }
-	.__w-4758 { width: 100%; }
-	.__pl-4759 { padding-left: 12px; }
-	.__pr-4760 { padding-right: 12px; }
-	.__pt-4761 { padding-top: 15px; }
-	.__pb-4762 { padding-bottom: 15px; }
-	.__bw-4763 { border-width: 1px; }
-	.__br-4764 { border-radius: 6px; }
-	.__bc-4765 { border-color: #EEEEEE; }
-	.__g-4766 { gap: 15px; }
-	.__w-4767 { width: 100px; }
-	.__h-4768 { height: 80px; }
-	.__w-4769 { width: 100%; }
-	.__h-4770 { height: 100%; }
-	.__mt-4771 { margin-top: -44px; }
-	.__bw-4772 { border-width: 1px; }
-	.__br-4773 { border-radius: 6px; }
-	.__bc-4774 { border-color: #A0A0A0; }
-	.__bgc-4775 { background-color: #7564be; }
-	.__pos-4776 { position: absolute; }
-	.__w-4777 { width: 100%; }
-	.__pl-4778 { padding-left: 10px; }
-	.__pr-4779 { padding-right: 10px; }
-	.__pt-4780 { padding-top: 8px; }
-	.__pb-4781 { padding-bottom: 8px; }
-	.__bblr-4782 { border-bottom-left-radius: 6px; }
-	.__bbrr-4783 { border-bottom-right-radius: 6px; }
-	.__b-4784 { bottom: 0px; }
-	.__bgc-4785 { background-color: rgba(0,0,0,.1); }
-	.__rl-4786 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-4786 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4787 { color: #FFFFFF !important; }
-	.__tt-4788 { text-transform: uppercase; }
-	.__fwt-4789 { font-weight: 700; }
-	.__w-4790 { width: 100%; }
-	.__g-4791 { gap: 5px; }
-	.__rl-4792 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4792 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4793 { color: #212738 !important; }
-	.__rl-4794 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4794 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-4795 { width: 80%; }
-	.__c-4796 { color: #707070 !important; }
-	.__w-4797 { width: 100%; }
-	.__mt-4798 { margin-top: 40px; }
-	.__pos-4801 { position: absolute; }
-	.__t-4802 { top: 8px; }
-	.__r-4803 { right: 8px; }
-	.__z-4804 { z-index: 999; }
-	.__cur-4805 { cursor: pointer; }
-	.__w-4806 { width: 12px; }
-	.__jc-4807 { justify-content: center; }
-	.__ali-4808 { align-items: center; }
-	.__jc-4809 { justify-content: space-between; }
-	.__w-4810 { width: 100%; }
-	.__pl-4811 { padding-left: 12px; }
-	.__pr-4812 { padding-right: 12px; }
-	.__pt-4813 { padding-top: 15px; }
-	.__pb-4814 { padding-bottom: 15px; }
-	.__bw-4815 { border-width: 1px; }
-	.__br-4816 { border-radius: 6px; }
-	.__bc-4817 { border-color: #EEEEEE; }
-	.__g-4818 { gap: 15px; }
-	.__w-4819 { width: 100px; }
-	.__h-4820 { height: 80px; }
-	.__w-4821 { width: 100%; }
-	.__h-4822 { height: 100%; }
-	.__mt-4823 { margin-top: -44px; }
-	.__bw-4824 { border-width: 1px; }
-	.__br-4825 { border-radius: 6px; }
-	.__bc-4826 { border-color: #A0A0A0; }
-	.__bgc-4827 { background-color: #d554b3; }
-	.__pos-4828 { position: absolute; }
-	.__w-4829 { width: 100%; }
-	.__pl-4830 { padding-left: 10px; }
-	.__pr-4831 { padding-right: 10px; }
-	.__pt-4832 { padding-top: 8px; }
-	.__pb-4833 { padding-bottom: 8px; }
-	.__bblr-4834 { border-bottom-left-radius: 6px; }
-	.__bbrr-4835 { border-bottom-right-radius: 6px; }
-	.__b-4836 { bottom: 0px; }
-	.__bgc-4837 { background-color: rgba(0,0,0,.1); }
-	.__rl-4838 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-4838 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4839 { color: #FFFFFF !important; }
-	.__tt-4840 { text-transform: uppercase; }
-	.__fwt-4841 { font-weight: 700; }
-	.__w-4842 { width: 100%; }
-	.__g-4843 { gap: 5px; }
-	.__rl-4844 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4844 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4845 { color: #212738 !important; }
-	.__rl-4846 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4846 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-4847 { width: 80%; }
-	.__c-4848 { color: #707070 !important; }
-	.__w-4849 { width: 100%; }
-	.__mt-4850 { margin-top: 40px; }
-	.__pos-4853 { position: absolute; }
-	.__t-4854 { top: 8px; }
-	.__r-4855 { right: 8px; }
-	.__z-4856 { z-index: 999; }
-	.__cur-4857 { cursor: pointer; }
-	.__w-4858 { width: 12px; }
-	.__jc-4859 { justify-content: center; }
-	.__ali-4860 { align-items: center; }
-	.__jc-4861 { justify-content: space-between; }
-	.__w-4862 { width: 100%; }
-	.__pl-4863 { padding-left: 12px; }
-	.__pr-4864 { padding-right: 12px; }
-	.__pt-4865 { padding-top: 15px; }
-	.__pb-4866 { padding-bottom: 15px; }
-	.__bw-4867 { border-width: 1px; }
-	.__br-4868 { border-radius: 6px; }
-	.__bc-4869 { border-color: #EEEEEE; }
-	.__g-4870 { gap: 15px; }
-	.__w-4871 { width: 100px; }
-	.__h-4872 { height: 80px; }
-	.__w-4873 { width: 100%; }
-	.__h-4874 { height: 100%; }
-	.__mt-4875 { margin-top: -44px; }
-	.__bw-4876 { border-width: 1px; }
-	.__br-4877 { border-radius: 6px; }
-	.__bc-4878 { border-color: #A0A0A0; }
-	.__bgc-4879 { background-color: #54595f; }
-	.__pos-4880 { position: absolute; }
-	.__w-4881 { width: 100%; }
-	.__pl-4882 { padding-left: 10px; }
-	.__pr-4883 { padding-right: 10px; }
-	.__pt-4884 { padding-top: 8px; }
-	.__pb-4885 { padding-bottom: 8px; }
-	.__bblr-4886 { border-bottom-left-radius: 6px; }
-	.__bbrr-4887 { border-bottom-right-radius: 6px; }
-	.__b-4888 { bottom: 0px; }
-	.__bgc-4889 { background-color: rgba(0,0,0,.1); }
-	.__rl-4890 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-4890 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4891 { color: #FFFFFF !important; }
-	.__tt-4892 { text-transform: uppercase; }
-	.__fwt-4893 { font-weight: 700; }
-	.__w-4894 { width: 100%; }
-	.__g-4895 { gap: 5px; }
-	.__rl-4896 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4896 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4897 { color: #212738 !important; }
-	.__rl-4898 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4898 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-4899 { width: 80%; }
-	.__c-4900 { color: #707070 !important; }
-	.__w-4901 { width: 100%; }
-	.__mt-4902 { margin-top: 40px; }
-	.__pos-4905 { position: absolute; }
-	.__t-4906 { top: 8px; }
-	.__r-4907 { right: 8px; }
-	.__z-4908 { z-index: 999; }
-	.__cur-4909 { cursor: pointer; }
-	.__w-4910 { width: 12px; }
-	.__jc-4911 { justify-content: center; }
-	.__ali-4912 { align-items: center; }
-	.__jc-4913 { justify-content: space-between; }
-	.__w-4914 { width: 100%; }
-	.__pl-4915 { padding-left: 12px; }
-	.__pr-4916 { padding-right: 12px; }
-	.__pt-4917 { padding-top: 15px; }
-	.__pb-4918 { padding-bottom: 15px; }
-	.__bw-4919 { border-width: 1px; }
-	.__br-4920 { border-radius: 6px; }
-	.__bc-4921 { border-color: #EEEEEE; }
-	.__g-4922 { gap: 15px; }
-	.__w-4923 { width: 100px; }
-	.__h-4924 { height: 80px; }
-	.__w-4925 { width: 100%; }
-	.__h-4926 { height: 100%; }
-	.__mt-4927 { margin-top: -44px; }
-	.__bw-4928 { border-width: 1px; }
-	.__br-4929 { border-radius: 6px; }
-	.__bc-4930 { border-color: #A0A0A0; }
-	.__bgc-4931 { background-color: #0a0a0a; }
-	.__pos-4932 { position: absolute; }
-	.__w-4933 { width: 100%; }
-	.__pl-4934 { padding-left: 10px; }
-	.__pr-4935 { padding-right: 10px; }
-	.__pt-4936 { padding-top: 8px; }
-	.__pb-4937 { padding-bottom: 8px; }
-	.__bblr-4938 { border-bottom-left-radius: 6px; }
-	.__bbrr-4939 { border-bottom-right-radius: 6px; }
-	.__b-4940 { bottom: 0px; }
-	.__bgc-4941 { background-color: rgba(0,0,0,.1); }
-	.__rl-4942 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-4942 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4943 { color: #FFFFFF !important; }
-	.__tt-4944 { text-transform: uppercase; }
-	.__fwt-4945 { font-weight: 700; }
-	.__w-4946 { width: 100%; }
-	.__g-4947 { gap: 5px; }
-	.__rl-4948 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4948 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4949 { color: #212738 !important; }
-	.__rl-4950 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4950 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__w-4951 { width: 80%; }
-	.__c-4952 { color: #707070 !important; }
-	.__w-4953 { width: 100%; }
-	.__mt-4954 { margin-top: 60px; }
-	.__mb-4955 { margin-bottom: 40px; }
-	.__g-4956 { gap: 24px; }
-	.__rl-4957 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 24px; font-weight: 700; line-height: 31px; }
-	body.mobile .__rl-4957 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 22px; font-weight: 700; line-height: 29px; }
-	.__c-4958 { color: #212738 !important; }
-	.__fwt-4959 { font-weight: 700; }
-	.__rl-4960 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-4960 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__c-4961 { color: #212738 !important; }
-	.__w-4962 { width: 100%; }
-	.__c-4963 { color: #212738 !important; }
-	.__rl-4964 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-4964 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__g-4965 { gap: 8px; }
-	.__w-4966 { width: 100%; }
-	.__c-4967 { color: #212738 !important; }
-	.__rl-4968 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-4968 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__g-4969 { gap: 8px; }
-	.__w-4970 { width: 100%; }
-	.__c-4971 { color: #212738 !important; }
-	.__rl-4972 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 18px; font-weight: 400; line-height: 30px; }
-	body.mobile .__rl-4972 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 16px; font-weight: 400; line-height: 24px; }
-	.__g-4973 { gap: 8px; }
-	.__as-4974 { align-self: center; }
-	.__w-4975 { width: 100%; }
-	.__bgc-4976 { background-color: #FFFFFF; }
-	.__jc-4977 { justify-content: center; }
-	.__ali-4978 { align-items: center; }
-	.__w-4979 { width: 100%; }
-	.__pl-4980 { padding-left: 20px; }
-	.__pr-4981 { padding-right: 20px; }
-	.__pt-4982 { padding-top: 20px; }
-	.__pb-4983 { padding-bottom: 20px; }
-	.__btw-4984 { border-top-width: 1px; }
-	.__bc-4985 { border-color: #3fb488; }
-	.__jc-4986 { justify-content: center; }
-	.__ali-4987 { align-items: center; }
-	.__w-4988 { width: 100%; }
-	.__rl-4989 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 14px; font-weight: 400; line-height: 24px; }
-	body.mobile .__rl-4989 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4990 { color: #7d8180 !important; }
-	.__white-space-4991 { white-space: nowrap; }
-	.__ta-4992 { text-align: center; }
-	.__as-4993 { align-self: end; }
-	.__rl-4994 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	body.mobile .__rl-4994 {  font-family: fastn-community-github-io-inter-font-Inter; font-size: 12px; font-weight: 400; line-height: 16px; }
-	.__c-4995 { color: #7d8180 !important; }
-	.__h-4996 { height: 28px; }
-	.__ml-4997 { margin-left: 18px; }
-	.__mxw-4998 { max-width: 120px; }
-    </style><style>
-
-
-
-
-
-
-
-
-@font-face { unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
-font-style: normal;
-font-weight: 100;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-100-normal-cyrillic-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-font-style: normal;
-font-weight: 100;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-100-normal-cyrillic.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+1F00-1FFF;
-font-style: normal;
-font-weight: 100;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-100-normal-greek-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0370-03FF;
-font-style: normal;
-font-weight: 100;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-100-normal-greek.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EF9, U+20AB;
-font-style: normal;
-font-weight: 100;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-100-normal-vietnamese.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
-font-style: normal;
-font-weight: 100;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-100-normal-latin-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-font-style: normal;
-font-weight: 100;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-100-normal-latin.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
-font-style: normal;
-font-weight: 200;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-200-normal-cyrillic-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-font-style: normal;
-font-weight: 200;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-200-normal-cyrillic.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+1F00-1FFF;
-font-style: normal;
-font-weight: 200;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-200-normal-greek-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0370-03FF;
-font-style: normal;
-font-weight: 200;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-200-normal-greek.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EF9, U+20AB;
-font-style: normal;
-font-weight: 200;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-200-normal-vietnamese.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
-font-style: normal;
-font-weight: 200;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-200-normal-latin-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-font-style: normal;
-font-weight: 200;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-200-normal-latin.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
-font-style: normal;
-font-weight: 300;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-300-normal-cyrillic-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-font-style: normal;
-font-weight: 300;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-300-normal-cyrillic.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+1F00-1FFF;
-font-style: normal;
-font-weight: 300;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-300-normal-greek-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0370-03FF;
-font-style: normal;
-font-weight: 300;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-300-normal-greek.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EF9, U+20AB;
-font-style: normal;
-font-weight: 300;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-300-normal-vietnamese.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
-font-style: normal;
-font-weight: 300;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-300-normal-latin-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-font-style: normal;
-font-weight: 300;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-300-normal-latin.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
-font-style: normal;
-font-weight: 400;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-400-normal-cyrillic-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-font-style: normal;
-font-weight: 400;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-400-normal-cyrillic.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+1F00-1FFF;
-font-style: normal;
-font-weight: 400;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-400-normal-greek-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0370-03FF;
-font-style: normal;
-font-weight: 400;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-400-normal-greek.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EF9, U+20AB;
-font-style: normal;
-font-weight: 400;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-400-normal-vietnamese.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
-font-style: normal;
-font-weight: 400;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-400-normal-latin-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-font-style: normal;
-font-weight: 400;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-400-normal-latin.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
-font-style: normal;
-font-weight: 500;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-500-normal-cyrillic-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-font-style: normal;
-font-weight: 500;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-500-normal-cyrillic.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+1F00-1FFF;
-font-style: normal;
-font-weight: 500;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-500-normal-greek-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0370-03FF;
-font-style: normal;
-font-weight: 500;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-500-normal-greek.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EF9, U+20AB;
-font-style: normal;
-font-weight: 500;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-500-normal-vietnamese.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
-font-style: normal;
-font-weight: 500;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-500-normal-latin-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-font-style: normal;
-font-weight: 500;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-500-normal-latin.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
-font-style: normal;
-font-weight: 600;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-600-normal-cyrillic-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-font-style: normal;
-font-weight: 600;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-600-normal-cyrillic.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+1F00-1FFF;
-font-style: normal;
-font-weight: 600;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-600-normal-greek-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0370-03FF;
-font-style: normal;
-font-weight: 600;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-600-normal-greek.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EF9, U+20AB;
-font-style: normal;
-font-weight: 600;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-600-normal-vietnamese.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
-font-style: normal;
-font-weight: 600;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-600-normal-latin-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-font-style: normal;
-font-weight: 600;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-600-normal-latin.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
-font-style: normal;
-font-weight: 700;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-700-normal-cyrillic-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-font-style: normal;
-font-weight: 700;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-700-normal-cyrillic.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+1F00-1FFF;
-font-style: normal;
-font-weight: 700;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-700-normal-greek-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0370-03FF;
-font-style: normal;
-font-weight: 700;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-700-normal-greek.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EF9, U+20AB;
-font-style: normal;
-font-weight: 700;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-700-normal-vietnamese.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
-font-style: normal;
-font-weight: 700;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-700-normal-latin-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-font-style: normal;
-font-weight: 700;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-700-normal-latin.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
-font-style: normal;
-font-weight: 800;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-800-normal-cyrillic-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-font-style: normal;
-font-weight: 800;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-800-normal-cyrillic.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+1F00-1FFF;
-font-style: normal;
-font-weight: 800;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-800-normal-greek-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0370-03FF;
-font-style: normal;
-font-weight: 800;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-800-normal-greek.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EF9, U+20AB;
-font-style: normal;
-font-weight: 800;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-800-normal-vietnamese.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
-font-style: normal;
-font-weight: 800;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-800-normal-latin-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-font-style: normal;
-font-weight: 800;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-800-normal-latin.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
-font-style: normal;
-font-weight: 900;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-900-normal-cyrillic-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-font-style: normal;
-font-weight: 900;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-900-normal-cyrillic.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+1F00-1FFF;
-font-style: normal;
-font-weight: 900;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-900-normal-greek-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0370-03FF;
-font-style: normal;
-font-weight: 900;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-900-normal-greek.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EF9, U+20AB;
-font-style: normal;
-font-weight: 900;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-900-normal-vietnamese.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
-font-style: normal;
-font-weight: 900;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-900-normal-latin-ext.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-@font-face { unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-font-style: normal;
-font-weight: 900;
-src: url(-/fastn-community.github.io/inter-font/static/Inter-900-normal-latin.woff2) format('woff2');
-font-family: fastn-community-github-io-inter-font-Inter }
-
-
-
-
-</style>
-<script>
-    (function() {
-        let main = function (parent) {
+let main = function (parent) {
   let __fastn_super_package_name__ = __fastn_package_name__;
   __fastn_package_name__ = "fifthtry_github_io_admint_cs";
   try {
@@ -7365,7 +7432,7 @@ let fastn_community_github_io_footer__fastn_footer = function (parent, inherited
           fastn_dom.conditionalDom(root, [
             __args__.copyright
           ], function () {
-            return (fastn_utils.getStaticValue(__args__.copyright) !== null);
+            return (fastn_utils.getter(__args__.copyright) !== null);
           }, function (root) {
             let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Text);
             rooti0.setProperty(fastn_dom.PropertyKind.Role, inherited.get("types").get("copy_small"), inherited);
@@ -7385,7 +7452,7 @@ let fastn_community_github_io_footer__fastn_footer = function (parent, inherited
           fastn_dom.conditionalDom(root, [
             __args__.site_logo
           ], function () {
-            return (fastn_utils.getStaticValue(__args__.site_logo) !== null);
+            return (fastn_utils.getter(__args__.site_logo) !== null);
           }, function (root) {
             let rooti0 = fastn_community_github_io_footer__powered_by(root, inherited, {
               title: __args__.powered_by_text,
@@ -7435,11 +7502,11 @@ let fastn_community_github_io_color_doc__package = function (parent, inherited, 
         rooti0.setProperty(fastn_dom.PropertyKind.PaddingVertical, fastn.formula([ftd.device,
         ftd.device], function () {
           if (function () {
-            return (fastn_utils.getStaticValue(ftd.device) !== "mobile");
+            return (fastn_utils.getter(ftd.device) !== "mobile");
           }()) {
             return fastn_dom.Length.Px(34);
           } else if (function () {
-            return (fastn_utils.getStaticValue(ftd.device) == "mobile");
+            return (fastn_utils.getter(ftd.device) == "mobile");
           }()) {
             return fastn_dom.Length.Px(18);
           }
@@ -7458,11 +7525,11 @@ let fastn_community_github_io_color_doc__package = function (parent, inherited, 
           rooti0.setProperty(fastn_dom.PropertyKind.PaddingHorizontal, fastn.formula([ftd.device,
           ftd.device], function () {
             if (function () {
-              return (fastn_utils.getStaticValue(ftd.device) !== "mobile");
+              return (fastn_utils.getter(ftd.device) !== "mobile");
             }()) {
               return fastn_dom.Length.Px(70);
             } else if (function () {
-              return (fastn_utils.getStaticValue(ftd.device) == "mobile");
+              return (fastn_utils.getter(ftd.device) == "mobile");
             }()) {
               return fastn_dom.Length.Px(18);
             }
@@ -7480,7 +7547,7 @@ let fastn_community_github_io_color_doc__package = function (parent, inherited, 
                 fastn_dom.conditionalDom(root, [
                   __args__.logo
                 ], function () {
-                  return (fastn_utils.getStaticValue(__args__.logo) !== null);
+                  return (fastn_utils.getter(__args__.logo) !== null);
                 }, function (root) {
                   let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Image);
                   rooti0.setProperty(fastn_dom.PropertyKind.ImageSrc, __args__.logo, inherited);
@@ -7535,7 +7602,7 @@ let fastn_community_github_io_color_doc__package = function (parent, inherited, 
         rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn_dom.Resizing.FillContainer, inherited);
         rooti0.setProperty(fastn_dom.PropertyKind.PaddingHorizontal, fastn.formula([ftd.device], function () {
           if (function () {
-            return (fastn_utils.getStaticValue(ftd.device) == "desktop");
+            return (fastn_utils.getter(ftd.device) == "desktop");
           }()) {
             return fastn_dom.Length.Px(70);
           } else {
@@ -7545,7 +7612,7 @@ let fastn_community_github_io_color_doc__package = function (parent, inherited, 
         ), inherited);
         rooti0.setProperty(fastn_dom.PropertyKind.PaddingVertical, fastn.formula([ftd.device], function () {
           if (function () {
-            return (fastn_utils.getStaticValue(ftd.device) == "desktop");
+            return (fastn_utils.getter(ftd.device) == "desktop");
           }()) {
             return fastn_dom.Length.Px(60);
           } else {
@@ -7585,7 +7652,7 @@ let fastn_community_github_io_color_doc__package = function (parent, inherited, 
               fastn_dom.conditionalDom(root, [
                 ftd.dark_mode
               ], function () {
-                return fastn_utils.getStaticValue(ftd.dark_mode);
+                return fastn_utils.getter(ftd.dark_mode);
               }, function (root) {
                 let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Image);
                 rooti0.setProperty(fastn_dom.PropertyKind.ImageSrc, global.fastn_community_github_io_color_doc_assets__files.get("static").get("light_icon").get("svg"), inherited);
@@ -7611,7 +7678,7 @@ let fastn_community_github_io_color_doc__package = function (parent, inherited, 
                 rooti0.setProperty(fastn_dom.PropertyKind.BorderRadius, fastn_dom.Length.Px(100), inherited);
                 rooti0.setProperty(fastn_dom.PropertyKind.Background, fastn.formula([__args__.mouse_in], function () {
                   if (function () {
-                    return fastn_utils.getStaticValue(__args__.mouse_in);
+                    return fastn_utils.getter(__args__.mouse_in);
                   }()) {
                     return fastn_dom.BackgroundStyle.Solid(function () {
                       let record = fastn.recordInstance({
@@ -7630,7 +7697,7 @@ let fastn_community_github_io_color_doc__package = function (parent, inherited, 
               fastn_dom.conditionalDom(root, [
                 ftd.dark_mode
               ], function () {
-                return (!fastn_utils.getStaticValue(ftd.dark_mode));
+                return (!fastn_utils.getter(ftd.dark_mode));
               }, function (root) {
                 let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Image);
                 rooti0.setProperty(fastn_dom.PropertyKind.ImageSrc, global.fastn_community_github_io_color_doc_assets__files.get("static").get("dark_icon").get("svg"), inherited);
@@ -7656,7 +7723,7 @@ let fastn_community_github_io_color_doc__package = function (parent, inherited, 
                 rooti0.setProperty(fastn_dom.PropertyKind.BorderRadius, fastn_dom.Length.Px(100), inherited);
                 rooti0.setProperty(fastn_dom.PropertyKind.Background, fastn.formula([__args__.mouse_in], function () {
                   if (function () {
-                    return fastn_utils.getStaticValue(__args__.mouse_in);
+                    return fastn_utils.getter(__args__.mouse_in);
                   }()) {
                     return fastn_dom.BackgroundStyle.Solid(function () {
                       let record = fastn.recordInstance({
@@ -7715,7 +7782,7 @@ let fastn_community_github_io_color_doc__package = function (parent, inherited, 
     __args__.document_title,
     __args__.title], function () {
       if (function () {
-        return (fastn_utils.getStaticValue(__args__.document_title) !== null);
+        return (fastn_utils.getter(__args__.document_title) !== null);
       }()) {
         return __args__.document_title;
       } else {
@@ -7727,7 +7794,7 @@ let fastn_community_github_io_color_doc__package = function (parent, inherited, 
     __args__.document_title,
     __args__.title], function () {
       if (function () {
-        return (fastn_utils.getStaticValue(__args__.document_title) !== null);
+        return (fastn_utils.getter(__args__.document_title) !== null);
       }()) {
         return __args__.document_title;
       } else {
@@ -7739,7 +7806,7 @@ let fastn_community_github_io_color_doc__package = function (parent, inherited, 
     __args__.document_title,
     __args__.title], function () {
       if (function () {
-        return (fastn_utils.getStaticValue(__args__.document_title) !== null);
+        return (fastn_utils.getter(__args__.document_title) !== null);
       }()) {
         return __args__.document_title;
       } else {
@@ -8916,7 +8983,7 @@ let fastn_community_github_io_color_doc_components__news_block = function (paren
       fastn_dom.conditionalDom(root, [
         ftd.device
       ], function () {
-        return (fastn_utils.getStaticValue(ftd.device) == "desktop");
+        return (fastn_utils.getter(ftd.device) == "desktop");
       }, function (root) {
         let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Row);
         rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn_dom.Resizing.FillContainer, inherited);
@@ -8933,7 +9000,7 @@ let fastn_community_github_io_color_doc_components__news_block = function (paren
       fastn_dom.conditionalDom(root, [
         ftd.device
       ], function () {
-        return (fastn_utils.getStaticValue(ftd.device) == "mobile");
+        return (fastn_utils.getter(ftd.device) == "mobile");
       }, function (root) {
         let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Column);
         rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn_dom.Resizing.FillContainer, inherited);
@@ -9076,7 +9143,7 @@ let fastn_community_github_io_color_doc_components__footer_list_toc = function (
       fastn_dom.conditionalDom(root, [
         __args__.show_subsections
       ], function () {
-        return fastn_utils.getStaticValue(__args__.show_subsections);
+        return fastn_utils.getter(__args__.show_subsections);
       }, function (root) {
         let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Text);
         rooti0.setProperty(fastn_dom.PropertyKind.Role, inherited.get("types").get("copy_small"), inherited);
@@ -9093,7 +9160,7 @@ let fastn_community_github_io_color_doc_components__footer_list_toc = function (
       fastn_dom.conditionalDom(root, [
         __args__.show_subsections
       ], function () {
-        return (!fastn_utils.getStaticValue(__args__.show_subsections));
+        return (!fastn_utils.getter(__args__.show_subsections));
       }, function (root) {
         let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Text);
         rooti0.setProperty(fastn_dom.PropertyKind.Role, inherited.get("types").get("copy_small"), inherited);
@@ -9158,7 +9225,7 @@ let fastn_community_github_io_color_doc_components__footer_list_section = functi
     parenti0.setProperty(fastn_dom.PropertyKind.Width, fastn.formula([__args__.show_subsections,
     ftd.device], function () {
       if (function () {
-        return (fastn_utils.getStaticValue(ftd.device) == "mobile" && fastn_utils.getStaticValue(__args__.show_subsections));
+        return (fastn_utils.getter(ftd.device) == "mobile" && fastn_utils.getter(__args__.show_subsections));
       }()) {
         return fastn_dom.Resizing.Fixed(fastn_dom.Length.Percent(50));
       }
@@ -9166,7 +9233,7 @@ let fastn_community_github_io_color_doc_components__footer_list_section = functi
     ), inherited);
     parenti0.setProperty(fastn_dom.PropertyKind.MarginBottom, fastn.formula([ftd.device], function () {
       if (function () {
-        return (fastn_utils.getStaticValue(ftd.device) == "mobile");
+        return (fastn_utils.getter(ftd.device) == "mobile");
       }()) {
         return fastn_dom.Length.Px(3);
       }
@@ -9176,7 +9243,7 @@ let fastn_community_github_io_color_doc_components__footer_list_section = functi
       fastn_dom.conditionalDom(root, [
         __args__.show_toc
       ], function () {
-        return fastn_utils.getStaticValue(__args__.show_toc);
+        return fastn_utils.getter(__args__.show_toc);
       }, function (root) {
         let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Text);
         rooti0.setProperty(fastn_dom.PropertyKind.Role, inherited.get("types").get("copy_small"), inherited);
@@ -9194,7 +9261,7 @@ let fastn_community_github_io_color_doc_components__footer_list_section = functi
         __args__.show_subsections,
         __args__.show_toc
       ], function () {
-        return (fastn_utils.getStaticValue(__args__.show_subsections) && !fastn_utils.getStaticValue(__args__.show_toc));
+        return (fastn_utils.getter(__args__.show_subsections) && !fastn_utils.getter(__args__.show_toc));
       }, function (root) {
         let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Text);
         rooti0.setProperty(fastn_dom.PropertyKind.Role, inherited.get("types").get("copy_small"), inherited);
@@ -9212,7 +9279,7 @@ let fastn_community_github_io_color_doc_components__footer_list_section = functi
         __args__.show_subsections,
         __args__.show_toc
       ], function () {
-        return (!fastn_utils.getStaticValue(__args__.show_toc) && !fastn_utils.getStaticValue(__args__.show_subsections));
+        return (!fastn_utils.getter(__args__.show_toc) && !fastn_utils.getter(__args__.show_subsections));
       }, function (root) {
         let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Text);
         rooti0.setProperty(fastn_dom.PropertyKind.Role, inherited.get("types").get("copy_small"), inherited);
@@ -9229,7 +9296,7 @@ let fastn_community_github_io_color_doc_components__footer_list_section = functi
         return fastn_dom.conditionalDom(root, [
           __args__.show_toc
         ], function () {
-          return (!fastn_utils.getStaticValue(__args__.show_toc));
+          return (!fastn_utils.getter(__args__.show_toc));
         }, function (root) {
           let rooti0 = fastn_community_github_io_color_doc_components__footer_list_toc(root, inherited, {
             title: item.get("title"),
@@ -9247,7 +9314,7 @@ let fastn_community_github_io_color_doc_components__footer_list_section = functi
         return fastn_dom.conditionalDom(root, [
           __args__.show_toc
         ], function () {
-          return fastn_utils.getStaticValue(__args__.show_toc);
+          return fastn_utils.getter(__args__.show_toc);
         }, function (root) {
           let rooti0 = fastn_community_github_io_color_doc_components__footer_list_toc(root, inherited, {
             title: item.get("title"),
@@ -9331,7 +9398,7 @@ let fastn_community_github_io_color_doc_components__images_list = function (pare
       rooti0.setProperty(fastn_dom.PropertyKind.ImageSrc, __args__.facebook_logo, inherited);
       rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn.formula([ftd.device], function () {
         if (function () {
-          return (fastn_utils.getStaticValue(ftd.device) == "mobile");
+          return (fastn_utils.getter(ftd.device) == "mobile");
         }()) {
           return fastn_dom.Resizing.Fixed(fastn_dom.Length.Px(24));
         } else {
@@ -9341,7 +9408,7 @@ let fastn_community_github_io_color_doc_components__images_list = function (pare
       ), inherited);
       rooti0.setProperty(fastn_dom.PropertyKind.Height, fastn.formula([ftd.device], function () {
         if (function () {
-          return (fastn_utils.getStaticValue(ftd.device) == "mobile");
+          return (fastn_utils.getter(ftd.device) == "mobile");
         }()) {
           return fastn_dom.Resizing.Fixed(fastn_dom.Length.Px(24));
         } else {
@@ -9356,7 +9423,7 @@ let fastn_community_github_io_color_doc_components__images_list = function (pare
       rooti0.setProperty(fastn_dom.PropertyKind.ImageSrc, __args__.figma_logo, inherited);
       rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn.formula([ftd.device], function () {
         if (function () {
-          return (fastn_utils.getStaticValue(ftd.device) == "mobile");
+          return (fastn_utils.getter(ftd.device) == "mobile");
         }()) {
           return fastn_dom.Resizing.Fixed(fastn_dom.Length.Px(9));
         } else {
@@ -9366,7 +9433,7 @@ let fastn_community_github_io_color_doc_components__images_list = function (pare
       ), inherited);
       rooti0.setProperty(fastn_dom.PropertyKind.Height, fastn.formula([ftd.device], function () {
         if (function () {
-          return (fastn_utils.getStaticValue(ftd.device) == "mobile");
+          return (fastn_utils.getter(ftd.device) == "mobile");
         }()) {
           return fastn_dom.Resizing.Fixed(fastn_dom.Length.Px(9));
         } else {
@@ -9381,7 +9448,7 @@ let fastn_community_github_io_color_doc_components__images_list = function (pare
       rooti0.setProperty(fastn_dom.PropertyKind.ImageSrc, __args__.google_logo, inherited);
       rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn.formula([ftd.device], function () {
         if (function () {
-          return (fastn_utils.getStaticValue(ftd.device) == "mobile");
+          return (fastn_utils.getter(ftd.device) == "mobile");
         }()) {
           return fastn_dom.Resizing.Fixed(fastn_dom.Length.Px(9));
         } else {
@@ -9391,7 +9458,7 @@ let fastn_community_github_io_color_doc_components__images_list = function (pare
       ), inherited);
       rooti0.setProperty(fastn_dom.PropertyKind.Height, fastn.formula([ftd.device], function () {
         if (function () {
-          return (fastn_utils.getStaticValue(ftd.device) == "mobile");
+          return (fastn_utils.getter(ftd.device) == "mobile");
         }()) {
           return fastn_dom.Resizing.Fixed(fastn_dom.Length.Px(9));
         } else {
@@ -9406,7 +9473,7 @@ let fastn_community_github_io_color_doc_components__images_list = function (pare
       rooti0.setProperty(fastn_dom.PropertyKind.ImageSrc, __args__.msg_logo, inherited);
       rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn.formula([ftd.device], function () {
         if (function () {
-          return (fastn_utils.getStaticValue(ftd.device) == "mobile");
+          return (fastn_utils.getter(ftd.device) == "mobile");
         }()) {
           return fastn_dom.Resizing.Fixed(fastn_dom.Length.Px(9));
         } else {
@@ -9416,7 +9483,7 @@ let fastn_community_github_io_color_doc_components__images_list = function (pare
       ), inherited);
       rooti0.setProperty(fastn_dom.PropertyKind.Height, fastn.formula([ftd.device], function () {
         if (function () {
-          return (fastn_utils.getStaticValue(ftd.device) == "mobile");
+          return (fastn_utils.getter(ftd.device) == "mobile");
         }()) {
           return fastn_dom.Resizing.Fixed(fastn_dom.Length.Px(9));
         } else {
@@ -9431,7 +9498,7 @@ let fastn_community_github_io_color_doc_components__images_list = function (pare
       rooti0.setProperty(fastn_dom.PropertyKind.ImageSrc, __args__.ball_logo, inherited);
       rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn.formula([ftd.device], function () {
         if (function () {
-          return (fastn_utils.getStaticValue(ftd.device) == "mobile");
+          return (fastn_utils.getter(ftd.device) == "mobile");
         }()) {
           return fastn_dom.Resizing.Fixed(fastn_dom.Length.Px(9));
         } else {
@@ -9441,7 +9508,7 @@ let fastn_community_github_io_color_doc_components__images_list = function (pare
       ), inherited);
       rooti0.setProperty(fastn_dom.PropertyKind.Height, fastn.formula([ftd.device], function () {
         if (function () {
-          return (fastn_utils.getStaticValue(ftd.device) == "mobile");
+          return (fastn_utils.getter(ftd.device) == "mobile");
         }()) {
           return fastn_dom.Resizing.Fixed(fastn_dom.Length.Px(9));
         } else {
@@ -9546,11 +9613,11 @@ let fastn_community_github_io_color_doc_components__sitemap_footer = function (p
       rooti0.setProperty(fastn_dom.PropertyKind.PaddingHorizontal, fastn.formula([ftd.device,
       ftd.device], function () {
         if (function () {
-          return (fastn_utils.getStaticValue(ftd.device) == "desktop");
+          return (fastn_utils.getter(ftd.device) == "desktop");
         }()) {
           return fastn_dom.Length.Px(60);
         } else if (function () {
-          return (fastn_utils.getStaticValue(ftd.device) == "mobile");
+          return (fastn_utils.getter(ftd.device) == "mobile");
         }()) {
           return fastn_dom.Length.Px(30);
         }
@@ -9592,7 +9659,7 @@ let fastn_community_github_io_color_doc_components__sitemap_footer = function (p
           rooti0.setProperty(fastn_dom.PropertyKind.Color, inherited.get("colors").get("text"), inherited);
           rooti0.setProperty(fastn_dom.PropertyKind.TextAlign, fastn.formula([ftd.device], function () {
             if (function () {
-              return (fastn_utils.getStaticValue(ftd.device) == "mobile");
+              return (fastn_utils.getter(ftd.device) == "mobile");
             }()) {
               return fastn_dom.TextAlign.Center;
             }
@@ -9719,7 +9786,7 @@ let fastn_community_github_io_color_doc_components__sub_nav = function (parent, 
       fastn_dom.conditionalDom(root, [
         __args__.item.get("stats")
       ], function () {
-        return (!fastn_utils.getStaticValue(__args__.item.get("stats")));
+        return (!fastn_utils.getter(__args__.item.get("stats")));
       }, function (root) {
         let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Row);
         rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn_dom.Resizing.FillContainer, inherited);
@@ -9739,7 +9806,7 @@ let fastn_community_github_io_color_doc_components__sub_nav = function (parent, 
       fastn_dom.conditionalDom(root, [
         __args__.item.get("stats")
       ], function () {
-        return fastn_utils.getStaticValue(__args__.item.get("stats"));
+        return fastn_utils.getter(__args__.item.get("stats"));
       }, function (root) {
         let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Row);
         rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn_dom.Resizing.FillContainer, inherited);
@@ -9798,7 +9865,7 @@ let fastn_community_github_io_color_doc_components__navbar_list = function (pare
           fastn_dom.conditionalDom(root, [
             __args__.item.get("icon")
           ], function () {
-            return (fastn_utils.getStaticValue(__args__.item.get("icon")) !== null);
+            return (fastn_utils.getter(__args__.item.get("icon")) !== null);
           }, function (root) {
             let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Image);
             rooti0.setProperty(fastn_dom.PropertyKind.ImageSrc, __args__.item.get("icon"), inherited);
@@ -9817,7 +9884,7 @@ let fastn_community_github_io_color_doc_components__navbar_list = function (pare
         fastn_dom.conditionalDom(root, [
           __args__.item.get("stats")
         ], function () {
-          return fastn_utils.getStaticValue(__args__.item.get("stats"));
+          return fastn_utils.getter(__args__.item.get("stats"));
         }, function (root) {
           let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Row);
           rooti0.setProperty(fastn_dom.PropertyKind.AlignSelf, fastn_dom.AlignSelf.End, inherited);
@@ -9869,7 +9936,7 @@ let fastn_community_github_io_color_doc_components__navbar_list = function (pare
             __args__.item.get("arrow"),
             __args__.show_sub_nav
           ], function () {
-            return (fastn_utils.getStaticValue(__args__.item.get("arrow")) && !fastn_utils.getStaticValue(__args__.show_sub_nav));
+            return (fastn_utils.getter(__args__.item.get("arrow")) && !fastn_utils.getter(__args__.show_sub_nav));
           }, function (root) {
             let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Image);
             rooti0.setProperty(fastn_dom.PropertyKind.ImageSrc, global.fastn_community_github_io_color_doc_assets__files.get("static").get("down").get("svg"), inherited);
@@ -9881,7 +9948,7 @@ let fastn_community_github_io_color_doc_components__navbar_list = function (pare
             __args__.item.get("arrow"),
             __args__.show_sub_nav
           ], function () {
-            return (fastn_utils.getStaticValue(__args__.item.get("arrow")) && fastn_utils.getStaticValue(__args__.show_sub_nav));
+            return (fastn_utils.getter(__args__.item.get("arrow")) && fastn_utils.getter(__args__.show_sub_nav));
           }, function (root) {
             let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Image);
             rooti0.setProperty(fastn_dom.PropertyKind.ImageSrc, global.fastn_community_github_io_color_doc_assets__files.get("static").get("up").get("svg"), inherited);
@@ -9897,7 +9964,7 @@ let fastn_community_github_io_color_doc_components__navbar_list = function (pare
         return fastn_dom.conditionalDom(root, [
           __args__.show_sub_nav
         ], function () {
-          return fastn_utils.getStaticValue(__args__.show_sub_nav);
+          return fastn_utils.getter(__args__.show_sub_nav);
         }, function (root) {
           let rooti0 = fastn_community_github_io_color_doc_components__sub_nav(root, inherited, {
             item: item
@@ -10093,11 +10160,11 @@ let fastn_community_github_io_color_doc_components__component_wrap_right = funct
     parenti0.setProperty(fastn_dom.PropertyKind.PaddingRight, fastn.formula([ftd.device,
     ftd.device], function () {
       if (function () {
-        return (fastn_utils.getStaticValue(ftd.device) == "desktop");
+        return (fastn_utils.getter(ftd.device) == "desktop");
       }()) {
         return fastn_dom.Length.Px(24);
       } else if (function () {
-        return (fastn_utils.getStaticValue(ftd.device) == "desktop");
+        return (fastn_utils.getter(ftd.device) == "desktop");
       }()) {
         return fastn_dom.Length.Px(24);
       }
@@ -10565,11 +10632,11 @@ let fastn_community_github_io_color_doc_components__pallete_small = function (pa
     parenti0.setProperty(fastn_dom.PropertyKind.Width, fastn.formula([ftd.device,
     ftd.device], function () {
       if (function () {
-        return (fastn_utils.getStaticValue(ftd.device) == "desktop");
+        return (fastn_utils.getter(ftd.device) == "desktop");
       }()) {
         return fastn_dom.Resizing.Fixed(fastn_dom.Length.Percent(24));
       } else if (function () {
-        return (fastn_utils.getStaticValue(ftd.device) == "mobile");
+        return (fastn_utils.getter(ftd.device) == "mobile");
       }()) {
         return fastn_dom.Resizing.FillContainer;
       }
@@ -10598,11 +10665,11 @@ let fastn_community_github_io_color_doc_components__pallete = function (parent, 
     parenti0.setProperty(fastn_dom.PropertyKind.Width, fastn.formula([ftd.device,
     ftd.device], function () {
       if (function () {
-        return (fastn_utils.getStaticValue(ftd.device) == "desktop");
+        return (fastn_utils.getter(ftd.device) == "desktop");
       }()) {
         return fastn_dom.Resizing.Fixed(fastn_dom.Length.Percent(50));
       } else if (function () {
-        return (fastn_utils.getStaticValue(ftd.device) == "mobile");
+        return (fastn_utils.getter(ftd.device) == "mobile");
       }()) {
         return fastn_dom.Resizing.FillContainer;
       }
@@ -10634,7 +10701,7 @@ let fastn_community_github_io_color_doc_components__components_pallete = functio
     parenti0.setProperty(fastn_dom.PropertyKind.OverflowX, fastn_dom.Overflow.Auto, inherited);
     parenti0.setProperty(fastn_dom.PropertyKind.MinWidth, fastn.formula([ftd.device], function () {
       if (function () {
-        return (fastn_utils.getStaticValue(ftd.device) == "desktop");
+        return (fastn_utils.getter(ftd.device) == "desktop");
       }()) {
         return fastn_dom.Resizing.Fixed(fastn_dom.Length.Px(1300));
       }
@@ -10644,7 +10711,7 @@ let fastn_community_github_io_color_doc_components__components_pallete = functio
       fastn_dom.conditionalDom(root, [
         ftd.device
       ], function () {
-        return (fastn_utils.getStaticValue(ftd.device) == "desktop");
+        return (fastn_utils.getter(ftd.device) == "desktop");
       }, function (root) {
         let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Row);
         rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn_dom.Resizing.FillContainer, inherited);
@@ -10673,7 +10740,7 @@ let fastn_community_github_io_color_doc_components__components_pallete = functio
       fastn_dom.conditionalDom(root, [
         ftd.device
       ], function () {
-        return (fastn_utils.getStaticValue(ftd.device) == "mobile");
+        return (fastn_utils.getter(ftd.device) == "mobile");
       }, function (root) {
         let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Column);
         rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn_dom.Resizing.FillContainer, inherited);
@@ -10800,13 +10867,13 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
         __args__.copy,
         __args__.download
       ], function () {
-        return (fastn_utils.getStaticValue(__args__.caption) !== null || fastn_utils.getStaticValue(__args__.download) !== null || fastn_utils.getStaticValue(__args__.copy));
+        return (fastn_utils.getter(__args__.caption) !== null || fastn_utils.getter(__args__.download) !== null || fastn_utils.getter(__args__.copy));
       }, function (root) {
         let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Row);
         rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn_dom.Resizing.FillContainer, inherited);
         rooti0.setProperty(fastn_dom.PropertyKind.PaddingLeft, fastn.formula([__args__.caption], function () {
           if (function () {
-            return (fastn_utils.getStaticValue(__args__.caption) !== null);
+            return (fastn_utils.getter(__args__.caption) !== null);
           }()) {
             return fastn_dom.Length.Px(20);
           }
@@ -10814,7 +10881,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
         ), inherited);
         rooti0.setProperty(fastn_dom.PropertyKind.PaddingRight, fastn.formula([__args__.caption], function () {
           if (function () {
-            return (fastn_utils.getStaticValue(__args__.caption) !== null);
+            return (fastn_utils.getter(__args__.caption) !== null);
           }()) {
             return fastn_dom.Length.Px(20);
           }
@@ -10822,7 +10889,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
         ), inherited);
         rooti0.setProperty(fastn_dom.PropertyKind.PaddingTop, fastn.formula([__args__.caption], function () {
           if (function () {
-            return (fastn_utils.getStaticValue(__args__.caption) !== null);
+            return (fastn_utils.getter(__args__.caption) !== null);
           }()) {
             return fastn_dom.Length.Px(10);
           }
@@ -10830,7 +10897,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
         ), inherited);
         rooti0.setProperty(fastn_dom.PropertyKind.PaddingBottom, fastn.formula([__args__.caption], function () {
           if (function () {
-            return (fastn_utils.getStaticValue(__args__.caption) !== null);
+            return (fastn_utils.getter(__args__.caption) !== null);
           }()) {
             return fastn_dom.Length.Px(10);
           }
@@ -10842,7 +10909,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
         rooti0.setProperty(fastn_dom.PropertyKind.MaxWidth, fastn.formula([__args__.max_width,
         __args__.max_width], function () {
           if (function () {
-            return (fastn_utils.getStaticValue(__args__.max_width) !== null);
+            return (fastn_utils.getter(__args__.max_width) !== null);
           }()) {
             return __args__.max_width;
           }
@@ -10852,7 +10919,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
           fastn_dom.conditionalDom(root, [
             __args__.caption
           ], function () {
-            return (fastn_utils.getStaticValue(__args__.caption) !== null);
+            return (fastn_utils.getter(__args__.caption) !== null);
           }, function (root) {
             let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Text);
             rooti0.setProperty(fastn_dom.PropertyKind.Role, inherited.get("types").get("copy_regular"), inherited);
@@ -10867,7 +10934,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
           fastn_dom.conditionalDom(root, [
             __args__.copy
           ], function () {
-            return fastn_utils.getStaticValue(__args__.copy);
+            return fastn_utils.getter(__args__.copy);
           }, function (root) {
             let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Row);
             rooti0.addEventHandler(fastn_dom.Event.MouseLeave, function () {
@@ -10881,7 +10948,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
             rooti0.setProperty(fastn_dom.PropertyKind.Top, fastn_dom.Length.Px(12), inherited);
             rooti0.setProperty(fastn_dom.PropertyKind.Right, fastn.formula([__args__.download], function () {
               if (function () {
-                return (fastn_utils.getStaticValue(__args__.download) !== null);
+                return (fastn_utils.getter(__args__.download) !== null);
               }()) {
                 return fastn_dom.Length.Px(56);
               } else {
@@ -10896,14 +10963,14 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
                 __args__.copy_text,
                 __args__.mouse_in
               ], function () {
-                return (fastn_utils.getStaticValue(__args__.copy_text) == "null" && fastn_utils.getStaticValue(__args__.mouse_in));
+                return (fastn_utils.getter(__args__.copy_text) == "null" && fastn_utils.getter(__args__.mouse_in));
               }, function (root) {
                 let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Image);
                 rooti0.setProperty(fastn_dom.PropertyKind.ImageSrc, fastn.formula([global.fifthtry_github_io_code_block_assets__files.get("static").get("copy").get("svg"),
                 global.fifthtry_github_io_code_block_assets__files.get("static").get("copy_hover").get("svg"),
                 __args__.copy_mouse_in], function () {
                   if (function () {
-                    return fastn_utils.getStaticValue(__args__.copy_mouse_in);
+                    return fastn_utils.getter(__args__.copy_mouse_in);
                   }()) {
                     return global.fifthtry_github_io_code_block_assets__files.get("static").get("copy_hover").get("svg");
                   } else {
@@ -10942,7 +11009,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
               fastn_dom.conditionalDom(root, [
                 __args__.copy_text
               ], function () {
-                return (fastn_utils.getStaticValue(__args__.copy_text) !== "null");
+                return (fastn_utils.getter(__args__.copy_text) !== "null");
               }, function (root) {
                 let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Image);
                 rooti0.setProperty(fastn_dom.PropertyKind.ImageSrc, global.fifthtry_github_io_code_block_assets__files.get("static").get("tick").get("svg"), inherited);
@@ -10954,7 +11021,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
               fastn_dom.conditionalDom(root, [
                 __args__.copy_text
               ], function () {
-                return (fastn_utils.getStaticValue(__args__.copy_text) !== "null");
+                return (fastn_utils.getter(__args__.copy_text) !== "null");
               }, function (root) {
                 let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Text);
                 rooti0.setProperty(fastn_dom.PropertyKind.Role, inherited.get("types").get("copy_regular"), inherited);
@@ -10972,14 +11039,14 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
             __args__.download,
             __args__.mouse_in
           ], function () {
-            return (fastn_utils.getStaticValue(__args__.download) !== null && fastn_utils.getStaticValue(__args__.mouse_in));
+            return (fastn_utils.getter(__args__.download) !== null && fastn_utils.getter(__args__.mouse_in));
           }, function (root) {
             let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Image);
             rooti0.setProperty(fastn_dom.PropertyKind.ImageSrc, fastn.formula([global.fifthtry_github_io_code_block_assets__files.get("static").get("download").get("svg"),
             global.fifthtry_github_io_code_block_assets__files.get("static").get("download_hover").get("svg"),
             __args__.download_mouse_in], function () {
               if (function () {
-                return fastn_utils.getStaticValue(__args__.download_mouse_in);
+                return fastn_utils.getter(__args__.download_mouse_in);
               }()) {
                 return global.fifthtry_github_io_code_block_assets__files.get("static").get("download_hover").get("svg");
               } else {
@@ -11022,7 +11089,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
       fastn_dom.conditionalDom(root, [
         ftd.dark_mode
       ], function () {
-        return fastn_utils.getStaticValue(ftd.dark_mode);
+        return fastn_utils.getter(ftd.dark_mode);
       }, function (root) {
         let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Code);
         rooti0.setProperty(fastn_dom.PropertyKind.Code, __args__.body, inherited);
@@ -11032,7 +11099,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
         rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn_dom.Resizing.FillContainer, inherited);
         rooti0.setProperty(fastn_dom.PropertyKind.BorderTopLeftRadius, fastn.formula([__args__.caption], function () {
           if (function () {
-            return (fastn_utils.getStaticValue(__args__.caption) == null);
+            return (fastn_utils.getter(__args__.caption) == null);
           }()) {
             return fastn_dom.Length.Px(4);
           }
@@ -11040,7 +11107,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
         ), inherited);
         rooti0.setProperty(fastn_dom.PropertyKind.BorderTopRightRadius, fastn.formula([__args__.caption], function () {
           if (function () {
-            return (fastn_utils.getStaticValue(__args__.caption) == null);
+            return (fastn_utils.getter(__args__.caption) == null);
           }()) {
             return fastn_dom.Length.Px(4);
           }
@@ -11048,7 +11115,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
         ), inherited);
         rooti0.setProperty(fastn_dom.PropertyKind.BorderBottomLeftRadius, fastn.formula([__args__.caption], function () {
           if (function () {
-            return (fastn_utils.getStaticValue(__args__.caption) == null);
+            return (fastn_utils.getter(__args__.caption) == null);
           }()) {
             return fastn_dom.Length.Px(4);
           }
@@ -11056,7 +11123,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
         ), inherited);
         rooti0.setProperty(fastn_dom.PropertyKind.BorderBottomRightRadius, fastn.formula([__args__.caption], function () {
           if (function () {
-            return (fastn_utils.getStaticValue(__args__.caption) == null);
+            return (fastn_utils.getter(__args__.caption) == null);
           }()) {
             return fastn_dom.Length.Px(4);
           }
@@ -11069,7 +11136,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
         rooti0.setProperty(fastn_dom.PropertyKind.MaxHeight, fastn.formula([__args__.max_height,
         __args__.max_height], function () {
           if (function () {
-            return (fastn_utils.getStaticValue(__args__.max_height) !== null);
+            return (fastn_utils.getter(__args__.max_height) !== null);
           }()) {
             return __args__.max_height;
           }
@@ -11078,7 +11145,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
         rooti0.setProperty(fastn_dom.PropertyKind.MaxWidth, fastn.formula([__args__.max_width,
         __args__.max_width], function () {
           if (function () {
-            return (fastn_utils.getStaticValue(__args__.max_width) !== null);
+            return (fastn_utils.getter(__args__.max_width) !== null);
           }()) {
             return __args__.max_width;
           }
@@ -11092,7 +11159,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
       fastn_dom.conditionalDom(root, [
         ftd.dark_mode
       ], function () {
-        return (!fastn_utils.getStaticValue(ftd.dark_mode));
+        return (!fastn_utils.getter(ftd.dark_mode));
       }, function (root) {
         let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Code);
         rooti0.setProperty(fastn_dom.PropertyKind.Code, __args__.body, inherited);
@@ -11102,7 +11169,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
         rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn_dom.Resizing.FillContainer, inherited);
         rooti0.setProperty(fastn_dom.PropertyKind.BorderTopLeftRadius, fastn.formula([__args__.caption], function () {
           if (function () {
-            return (fastn_utils.getStaticValue(__args__.caption) == null);
+            return (fastn_utils.getter(__args__.caption) == null);
           }()) {
             return fastn_dom.Length.Px(4);
           }
@@ -11110,7 +11177,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
         ), inherited);
         rooti0.setProperty(fastn_dom.PropertyKind.BorderTopRightRadius, fastn.formula([__args__.caption], function () {
           if (function () {
-            return (fastn_utils.getStaticValue(__args__.caption) == null);
+            return (fastn_utils.getter(__args__.caption) == null);
           }()) {
             return fastn_dom.Length.Px(4);
           }
@@ -11118,7 +11185,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
         ), inherited);
         rooti0.setProperty(fastn_dom.PropertyKind.BorderBottomLeftRadius, fastn.formula([__args__.caption], function () {
           if (function () {
-            return (fastn_utils.getStaticValue(__args__.caption) == null);
+            return (fastn_utils.getter(__args__.caption) == null);
           }()) {
             return fastn_dom.Length.Px(4);
           }
@@ -11126,7 +11193,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
         ), inherited);
         rooti0.setProperty(fastn_dom.PropertyKind.BorderBottomRightRadius, fastn.formula([__args__.caption], function () {
           if (function () {
-            return (fastn_utils.getStaticValue(__args__.caption) == null);
+            return (fastn_utils.getter(__args__.caption) == null);
           }()) {
             return fastn_dom.Length.Px(4);
           }
@@ -11139,7 +11206,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
         rooti0.setProperty(fastn_dom.PropertyKind.MaxHeight, fastn.formula([__args__.max_height,
         __args__.max_height], function () {
           if (function () {
-            return (fastn_utils.getStaticValue(__args__.max_height) !== null);
+            return (fastn_utils.getter(__args__.max_height) !== null);
           }()) {
             return __args__.max_height;
           }
@@ -11148,7 +11215,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
         rooti0.setProperty(fastn_dom.PropertyKind.MaxWidth, fastn.formula([__args__.max_width,
         __args__.max_width], function () {
           if (function () {
-            return (fastn_utils.getStaticValue(__args__.max_width) !== null);
+            return (fastn_utils.getter(__args__.max_width) !== null);
           }()) {
             return __args__.max_width;
           }
@@ -11162,7 +11229,7 @@ let fifthtry_github_io_code_block__code = function (parent, inherited, args)
       fastn_dom.conditionalDom(root, [
         __args__.download
       ], function () {
-        return (fastn_utils.getStaticValue(__args__.download) !== null);
+        return (fastn_utils.getter(__args__.download) !== null);
       }, function (root) {
         let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Column);
         rooti0.setProperty(fastn_dom.PropertyKind.Anchor, fastn_dom.Anchor.Parent, inherited);
@@ -11872,7 +11939,7 @@ let fastn_community_github_io_color_doc__color_scheme = function (parent, inheri
       fastn_dom.conditionalDom(root, [
         ftd.device
       ], function () {
-        return (fastn_utils.getStaticValue(ftd.device) !== "mobile");
+        return (fastn_utils.getter(ftd.device) !== "mobile");
       }, function (root) {
         let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Row);
         rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn_dom.Resizing.FillContainer, inherited);
@@ -11885,7 +11952,7 @@ let fastn_community_github_io_color_doc__color_scheme = function (parent, inheri
             fastn_dom.conditionalDom(root, [
               __args__.tagline
             ], function () {
-              return (fastn_utils.getStaticValue(__args__.tagline) !== null);
+              return (fastn_utils.getter(__args__.tagline) !== null);
             }, function (root) {
               let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Text);
               rooti0.setProperty(fastn_dom.PropertyKind.Role, inherited.get("types").get("heading_tiny"), inherited);
@@ -11905,7 +11972,7 @@ let fastn_community_github_io_color_doc__color_scheme = function (parent, inheri
             fastn_dom.conditionalDom(root, [
               __args__.body
             ], function () {
-              return (fastn_utils.getStaticValue(__args__.body) !== null);
+              return (fastn_utils.getter(__args__.body) !== null);
             }, function (root) {
               let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Text);
               rooti0.setProperty(fastn_dom.PropertyKind.Role, inherited.get("types").get("copy_regular"), inherited);
@@ -11948,7 +12015,7 @@ let fastn_community_github_io_color_doc__color_scheme = function (parent, inheri
       fastn_dom.conditionalDom(root, [
         ftd.device
       ], function () {
-        return (fastn_utils.getStaticValue(ftd.device) == "mobile");
+        return (fastn_utils.getter(ftd.device) == "mobile");
       }, function (root) {
         let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Column);
         rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn_dom.Resizing.FillContainer, inherited);
@@ -11961,7 +12028,7 @@ let fastn_community_github_io_color_doc__color_scheme = function (parent, inheri
             fastn_dom.conditionalDom(root, [
               __args__.tagline
             ], function () {
-              return (fastn_utils.getStaticValue(__args__.tagline) !== null);
+              return (fastn_utils.getter(__args__.tagline) !== null);
             }, function (root) {
               let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Text);
               rooti0.setProperty(fastn_dom.PropertyKind.Role, inherited.get("types").get("heading_tiny"), inherited);
@@ -11981,7 +12048,7 @@ let fastn_community_github_io_color_doc__color_scheme = function (parent, inheri
             fastn_dom.conditionalDom(root, [
               __args__.body
             ], function () {
-              return (fastn_utils.getStaticValue(__args__.body) !== null);
+              return (fastn_utils.getter(__args__.body) !== null);
             }, function (root) {
               let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Text);
               rooti0.setProperty(fastn_dom.PropertyKind.Role, inherited.get("types").get("copy_regular"), inherited);
@@ -12169,7 +12236,7 @@ let fastn_community_github_io_color_doc__color_block_dark = function (parent, in
     parenti0.setProperty(fastn_dom.PropertyKind.MarginTop, fastn_dom.Length.Px(40), inherited);
     parenti0.setProperty(fastn_dom.PropertyKind.MaxWidth, fastn.formula([ftd.device], function () {
       if (function () {
-        return (fastn_utils.getStaticValue(ftd.device) == "desktop");
+        return (fastn_utils.getter(ftd.device) == "desktop");
       }()) {
         return fastn_dom.Resizing.Fixed(fastn_dom.Length.Px(400));
       }
@@ -12177,7 +12244,7 @@ let fastn_community_github_io_color_doc__color_block_dark = function (parent, in
     ), inherited);
     parenti0.setProperty(fastn_dom.PropertyKind.MinWidth, fastn.formula([ftd.device], function () {
       if (function () {
-        return (fastn_utils.getStaticValue(ftd.device) == "desktop");
+        return (fastn_utils.getter(ftd.device) == "desktop");
       }()) {
         return fastn_dom.Resizing.Fixed(fastn_dom.Length.Px(400));
       }
@@ -12200,14 +12267,14 @@ let fastn_community_github_io_color_doc__color_block_dark = function (parent, in
           __args__.copy_text,
           __args__.mouse_in
         ], function () {
-          return (fastn_utils.getStaticValue(__args__.copy_text) == "null" && fastn_utils.getStaticValue(__args__.mouse_in));
+          return (fastn_utils.getter(__args__.copy_text) == "null" && fastn_utils.getter(__args__.mouse_in));
         }, function (root) {
           let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Image);
           rooti0.setProperty(fastn_dom.PropertyKind.ImageSrc, fastn.formula([global.fastn_community_github_io_color_doc_assets__files.get("static").get("copy").get("svg"),
           global.fastn_community_github_io_color_doc_assets__files.get("static").get("copy_hover").get("svg"),
           __args__.copy_mouse_in], function () {
             if (function () {
-              return fastn_utils.getStaticValue(__args__.copy_mouse_in);
+              return fastn_utils.getter(__args__.copy_mouse_in);
             }()) {
               return global.fastn_community_github_io_color_doc_assets__files.get("static").get("copy_hover").get("svg");
             } else {
@@ -12250,7 +12317,7 @@ let fastn_community_github_io_color_doc__color_block_dark = function (parent, in
           fastn_dom.conditionalDom(root, [
             __args__.copy_text
           ], function () {
-            return (fastn_utils.getStaticValue(__args__.copy_text) !== "null");
+            return (fastn_utils.getter(__args__.copy_text) !== "null");
           }, function (root) {
             let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Image);
             rooti0.setProperty(fastn_dom.PropertyKind.ImageSrc, global.fastn_community_github_io_color_doc_assets__files.get("static").get("tick_icon").get("svg"), inherited);
@@ -12262,7 +12329,7 @@ let fastn_community_github_io_color_doc__color_block_dark = function (parent, in
           fastn_dom.conditionalDom(root, [
             __args__.copy_text
           ], function () {
-            return (fastn_utils.getStaticValue(__args__.copy_text) !== "null");
+            return (fastn_utils.getter(__args__.copy_text) !== "null");
           }, function (root) {
             let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Text);
             rooti0.setProperty(fastn_dom.PropertyKind.Role, inherited.get("types").get("fine_print"), inherited);
@@ -12302,7 +12369,7 @@ let fastn_community_github_io_color_doc__color_block_dark = function (parent, in
           let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Column);
           rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn.formula([ftd.device], function () {
             if (function () {
-              return (fastn_utils.getStaticValue(ftd.device) == "desktop");
+              return (fastn_utils.getter(ftd.device) == "desktop");
             }()) {
               return fastn_dom.Resizing.Fixed(fastn_dom.Length.Px(145));
             } else {
@@ -12312,7 +12379,7 @@ let fastn_community_github_io_color_doc__color_block_dark = function (parent, in
           ), inherited);
           rooti0.setProperty(fastn_dom.PropertyKind.Height, fastn.formula([ftd.device], function () {
             if (function () {
-              return (fastn_utils.getStaticValue(ftd.device) == "desktop");
+              return (fastn_utils.getter(ftd.device) == "desktop");
             }()) {
               return fastn_dom.Resizing.Fixed(fastn_dom.Length.Px(100));
             } else {
@@ -12324,7 +12391,7 @@ let fastn_community_github_io_color_doc__color_block_dark = function (parent, in
             fastn_dom.conditionalDom(root, [
               __args__.border
             ], function () {
-              return (fastn_utils.getStaticValue(__args__.border) == null);
+              return (fastn_utils.getter(__args__.border) == null);
             }, function (root) {
               let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Column);
               rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn_dom.Resizing.FillContainer, inherited);
@@ -12380,7 +12447,7 @@ let fastn_community_github_io_color_doc__color_block_dark = function (parent, in
             fastn_dom.conditionalDom(root, [
               __args__.border
             ], function () {
-              return (fastn_utils.getStaticValue(__args__.border) !== null);
+              return (fastn_utils.getter(__args__.border) !== null);
             }, function (root) {
               let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Column);
               rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn_dom.Resizing.FillContainer, inherited);
@@ -12534,7 +12601,7 @@ let fastn_community_github_io_color_doc__color_block_dark = function (parent, in
             rooti0.setProperty(fastn_dom.PropertyKind.StringValue, __args__.body, inherited);
             rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn.formula([ftd.device], function () {
               if (function () {
-                return (fastn_utils.getStaticValue(ftd.device) == "mobile");
+                return (fastn_utils.getter(ftd.device) == "mobile");
               }()) {
                 return fastn_dom.Resizing.Fixed(fastn_dom.Length.Percent(80));
               }
@@ -12592,7 +12659,7 @@ let fastn_community_github_io_color_doc__color_block_light = function (parent, i
     parenti0.setProperty(fastn_dom.PropertyKind.MarginTop, fastn_dom.Length.Px(40), inherited);
     parenti0.setProperty(fastn_dom.PropertyKind.MaxWidth, fastn.formula([ftd.device], function () {
       if (function () {
-        return (fastn_utils.getStaticValue(ftd.device) == "desktop");
+        return (fastn_utils.getter(ftd.device) == "desktop");
       }()) {
         return fastn_dom.Resizing.Fixed(fastn_dom.Length.Px(400));
       }
@@ -12600,7 +12667,7 @@ let fastn_community_github_io_color_doc__color_block_light = function (parent, i
     ), inherited);
     parenti0.setProperty(fastn_dom.PropertyKind.MinWidth, fastn.formula([ftd.device], function () {
       if (function () {
-        return (fastn_utils.getStaticValue(ftd.device) == "desktop");
+        return (fastn_utils.getter(ftd.device) == "desktop");
       }()) {
         return fastn_dom.Resizing.Fixed(fastn_dom.Length.Px(400));
       }
@@ -12623,14 +12690,14 @@ let fastn_community_github_io_color_doc__color_block_light = function (parent, i
           __args__.copy_text,
           __args__.mouse_in
         ], function () {
-          return (fastn_utils.getStaticValue(__args__.copy_text) == "null" && fastn_utils.getStaticValue(__args__.mouse_in));
+          return (fastn_utils.getter(__args__.copy_text) == "null" && fastn_utils.getter(__args__.mouse_in));
         }, function (root) {
           let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Image);
           rooti0.setProperty(fastn_dom.PropertyKind.ImageSrc, fastn.formula([global.fastn_community_github_io_color_doc_assets__files.get("static").get("copy").get("svg"),
           global.fastn_community_github_io_color_doc_assets__files.get("static").get("copy_hover").get("svg"),
           __args__.copy_mouse_in], function () {
             if (function () {
-              return fastn_utils.getStaticValue(__args__.copy_mouse_in);
+              return fastn_utils.getter(__args__.copy_mouse_in);
             }()) {
               return global.fastn_community_github_io_color_doc_assets__files.get("static").get("copy_hover").get("svg");
             } else {
@@ -12673,7 +12740,7 @@ let fastn_community_github_io_color_doc__color_block_light = function (parent, i
           fastn_dom.conditionalDom(root, [
             __args__.copy_text
           ], function () {
-            return (fastn_utils.getStaticValue(__args__.copy_text) !== "null");
+            return (fastn_utils.getter(__args__.copy_text) !== "null");
           }, function (root) {
             let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Image);
             rooti0.setProperty(fastn_dom.PropertyKind.ImageSrc, global.fastn_community_github_io_color_doc_assets__files.get("static").get("tick_icon").get("svg"), inherited);
@@ -12685,7 +12752,7 @@ let fastn_community_github_io_color_doc__color_block_light = function (parent, i
           fastn_dom.conditionalDom(root, [
             __args__.copy_text
           ], function () {
-            return (fastn_utils.getStaticValue(__args__.copy_text) !== "null");
+            return (fastn_utils.getter(__args__.copy_text) !== "null");
           }, function (root) {
             let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Text);
             rooti0.setProperty(fastn_dom.PropertyKind.Role, inherited.get("types").get("fine_print"), inherited);
@@ -12725,7 +12792,7 @@ let fastn_community_github_io_color_doc__color_block_light = function (parent, i
           let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Column);
           rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn.formula([ftd.device], function () {
             if (function () {
-              return (fastn_utils.getStaticValue(ftd.device) == "desktop");
+              return (fastn_utils.getter(ftd.device) == "desktop");
             }()) {
               return fastn_dom.Resizing.Fixed(fastn_dom.Length.Px(145));
             } else {
@@ -12735,7 +12802,7 @@ let fastn_community_github_io_color_doc__color_block_light = function (parent, i
           ), inherited);
           rooti0.setProperty(fastn_dom.PropertyKind.Height, fastn.formula([ftd.device], function () {
             if (function () {
-              return (fastn_utils.getStaticValue(ftd.device) == "desktop");
+              return (fastn_utils.getter(ftd.device) == "desktop");
             }()) {
               return fastn_dom.Resizing.Fixed(fastn_dom.Length.Px(100));
             } else {
@@ -12747,7 +12814,7 @@ let fastn_community_github_io_color_doc__color_block_light = function (parent, i
             fastn_dom.conditionalDom(root, [
               __args__.border
             ], function () {
-              return (fastn_utils.getStaticValue(__args__.border) == null);
+              return (fastn_utils.getter(__args__.border) == null);
             }, function (root) {
               let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Column);
               rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn_dom.Resizing.FillContainer, inherited);
@@ -12765,8 +12832,8 @@ let fastn_community_github_io_color_doc__color_block_light = function (parent, i
               rooti0.setProperty(fastn_dom.PropertyKind.Background, fastn_dom.BackgroundStyle.Solid(function () {
                 let record = fastn.recordInstance({
                 });
-                record.set("light", __args__.light);
-                record.set("dark", __args__.light);
+                record.set("light", global.fastn_community_github_io_color_doc__color_block_light.get("light"));
+                record.set("dark", global.fastn_community_github_io_color_doc__color_block_light.get("light"));
                 return record;
               }()), inherited);
               rooti0.setProperty(fastn_dom.PropertyKind.Children, fastn.mutableList([function (root, inherited) {
@@ -12809,7 +12876,7 @@ let fastn_community_github_io_color_doc__color_block_light = function (parent, i
             fastn_dom.conditionalDom(root, [
               __args__.border
             ], function () {
-              return (fastn_utils.getStaticValue(__args__.border) !== null);
+              return (fastn_utils.getter(__args__.border) !== null);
             }, function (root) {
               let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Column);
               rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn_dom.Resizing.FillContainer, inherited);
@@ -12827,8 +12894,8 @@ let fastn_community_github_io_color_doc__color_block_light = function (parent, i
               rooti0.setProperty(fastn_dom.PropertyKind.Background, fastn_dom.BackgroundStyle.Solid(function () {
                 let record = fastn.recordInstance({
                 });
-                record.set("light", __args__.light);
-                record.set("dark", __args__.light);
+                record.set("light", global.fastn_community_github_io_color_doc__color_block_light.get("light"));
+                record.set("dark", global.fastn_community_github_io_color_doc__color_block_light.get("light"));
                 return record;
               }()), inherited);
               rooti0.setProperty(fastn_dom.PropertyKind.Children, fastn.mutableList([function (root, inherited) {
@@ -12969,7 +13036,7 @@ let fastn_community_github_io_color_doc__color_block_light = function (parent, i
             rooti0.setProperty(fastn_dom.PropertyKind.StringValue, __args__.body, inherited);
             rooti0.setProperty(fastn_dom.PropertyKind.Width, fastn.formula([ftd.device], function () {
               if (function () {
-                return (fastn_utils.getStaticValue(ftd.device) == "mobile");
+                return (fastn_utils.getter(ftd.device) == "mobile");
               }()) {
                 return fastn_dom.Resizing.Fixed(fastn_dom.Length.Percent(80));
               }
@@ -13051,7 +13118,7 @@ let fastn_community_github_io_color_doc__color_pallete = function (parent, inher
               fastn_dom.conditionalDom(root, [
                 __args__.dark_mode
               ], function () {
-                return (!fastn_utils.getStaticValue(__args__.dark_mode));
+                return (!fastn_utils.getter(__args__.dark_mode));
               }, function (root) {
                 let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Image);
                 rooti0.setProperty(fastn_dom.PropertyKind.ImageSrc, global.fastn_community_github_io_color_doc_assets__files.get("static").get("dark_icon").get("svg"), inherited);
@@ -13084,7 +13151,7 @@ let fastn_community_github_io_color_doc__color_pallete = function (parent, inher
                 rooti0.setProperty(fastn_dom.PropertyKind.BorderRadius, fastn_dom.Length.Px(100), inherited);
                 rooti0.setProperty(fastn_dom.PropertyKind.Background, fastn.formula([__args__.mouse_in], function () {
                   if (function () {
-                    return fastn_utils.getStaticValue(__args__.mouse_in);
+                    return fastn_utils.getter(__args__.mouse_in);
                   }()) {
                     return fastn_dom.BackgroundStyle.Solid(function () {
                       let record = fastn.recordInstance({
@@ -13103,7 +13170,7 @@ let fastn_community_github_io_color_doc__color_pallete = function (parent, inher
               fastn_dom.conditionalDom(root, [
                 __args__.dark_mode
               ], function () {
-                return fastn_utils.getStaticValue(__args__.dark_mode);
+                return fastn_utils.getter(__args__.dark_mode);
               }, function (root) {
                 let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Image);
                 rooti0.setProperty(fastn_dom.PropertyKind.ImageSrc, global.fastn_community_github_io_color_doc_assets__files.get("static").get("light_icon").get("svg"), inherited);
@@ -13136,7 +13203,7 @@ let fastn_community_github_io_color_doc__color_pallete = function (parent, inher
                 rooti0.setProperty(fastn_dom.PropertyKind.BorderRadius, fastn_dom.Length.Px(100), inherited);
                 rooti0.setProperty(fastn_dom.PropertyKind.Background, fastn.formula([__args__.mouse_in], function () {
                   if (function () {
-                    return fastn_utils.getStaticValue(__args__.mouse_in);
+                    return fastn_utils.getter(__args__.mouse_in);
                   }()) {
                     return fastn_dom.BackgroundStyle.Solid(function () {
                       let record = fastn.recordInstance({
@@ -13170,7 +13237,7 @@ let fastn_community_github_io_color_doc__color_pallete = function (parent, inher
             __args__.dark_mode,
             __args__.is_active
           ], function () {
-            return (fastn_utils.getStaticValue(__args__.dark_mode) && fastn_utils.getStaticValue(__args__.is_active));
+            return (fastn_utils.getter(__args__.dark_mode) && fastn_utils.getter(__args__.is_active));
           }, function (root) {
             let rooti0 = fastn_community_github_io_color_doc__color_block_dark(root, inherited, {
               title: item.get("title"),
@@ -13178,8 +13245,8 @@ let fastn_community_github_io_color_doc__color_pallete = function (parent, inher
               bgcolor: function () {
                 let record = fastn.recordInstance({
                 });
-                record.set("light", item.get("bgcolor").get("dark"));
-                record.set("dark", item.get("bgcolor").get("dark"));
+                record.set("light", global.fastn_community_github_io_color_doc__obj.get("bgcolor").get("dark"));
+                record.set("dark", global.fastn_community_github_io_color_doc__obj.get("bgcolor").get("dark"));
                 return record;
               }(),
               body: item.get("body"),
@@ -13200,7 +13267,7 @@ let fastn_community_github_io_color_doc__color_pallete = function (parent, inher
             __args__.dark_mode,
             __args__.is_active
           ], function () {
-            return (!fastn_utils.getStaticValue(__args__.dark_mode) && fastn_utils.getStaticValue(__args__.is_active));
+            return (!fastn_utils.getter(__args__.dark_mode) && fastn_utils.getter(__args__.is_active));
           }, function (root) {
             let rooti0 = fastn_community_github_io_color_doc__color_block_light(root, inherited, {
               title: item.get("title"),
@@ -13208,8 +13275,8 @@ let fastn_community_github_io_color_doc__color_pallete = function (parent, inher
               bgcolor: function () {
                 let record = fastn.recordInstance({
                 });
-                record.set("light", item.get("bgcolor").get("light"));
-                record.set("dark", item.get("bgcolor").get("light"));
+                record.set("light", global.fastn_community_github_io_color_doc__obj.get("bgcolor").get("light"));
+                record.set("dark", global.fastn_community_github_io_color_doc__obj.get("bgcolor").get("light"));
                 return record;
               }(),
               body: item.get("body"),
@@ -14488,7 +14555,7 @@ let fastn_community_github_io_color_doc__title_with_link = function (parent, inh
         fastn_dom.conditionalDom(root, [
           __args__.icon
         ], function () {
-          return (fastn_utils.getStaticValue(__args__.icon) !== null);
+          return (fastn_utils.getter(__args__.icon) !== null);
         }, function (root) {
           let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Image);
           rooti0.setProperty(fastn_dom.PropertyKind.ImageSrc, __args__.icon, inherited);
@@ -14499,7 +14566,7 @@ let fastn_community_github_io_color_doc__title_with_link = function (parent, inh
         fastn_dom.conditionalDom(root, [
           __args__.link_text
         ], function () {
-          return (fastn_utils.getStaticValue(__args__.link_text) !== null);
+          return (fastn_utils.getter(__args__.link_text) !== null);
         }, function (root) {
           let rooti0 = fastn_dom.createKernel(root, fastn_dom.ElementKind.Text);
           rooti0.setProperty(fastn_dom.PropertyKind.Role, inherited.get("types").get("button_small"), inherited);
@@ -14524,45 +14591,11 @@ let fastn_community_github_io_color_doc__title_with_link = function (parent, inh
   }
 }
 global["fastn_community_github_io_color_doc__title_with_link"] = fastn_community_github_io_color_doc__title_with_link;
-fastn_dom.codeData.availableThemes["coldark-theme.dark"] = "code-theme-9A3284FD117DFF7CFD432FF860A5E14169FA592BC3DA4F5E8A6975143F5EA07F.css";
-fastn_dom.codeData.availableThemes["coldark-theme.light"] = "code-theme-99CD7B013C96C4632F0AEA39AC265387B814AE85A7D33666A4AE4BEFF59016D0.css";
-fastn_dom.codeData.availableThemes["coy-theme"] = "code-theme-B3AEA322EADEDA61F0E219845A0E9C8E73F6345E49362B46E6F52CEE40471248.css";
-fastn_dom.codeData.availableThemes["dracula-theme"] = "code-theme-0CA636E4954E3FC6184FB8000174F8EAA6C61DB10F6A18D74740E6D2032C1A2E.css";
-fastn_dom.codeData.availableThemes["duotone-theme.dark"] = "code-theme-95B9118AFC8631777EEBBD89B2066C3706A6DF3579B14F41AF05564E41CAA09C.css";
-fastn_dom.codeData.availableThemes["duotone-theme.earth"] = "code-theme-6EB6F03F9F578742CA0CD1189693E43A6135D910989ADD88CA3C0D6117EE24D7.css";
-fastn_dom.codeData.availableThemes["duotone-theme.forest"] = "code-theme-256C21B515FC9E77F95D88689A4086B9D9406B7AAE3A273780FE8B8748C5A7D2.css";
-fastn_dom.codeData.availableThemes["duotone-theme.light"] = "code-theme-0800A18B1822D6AFDAF807CF840379A2DB3483A1F058CA29FBCFB3815CA76148.css";
-fastn_dom.codeData.availableThemes["duotone-theme.sea"] = "code-theme-9A45313F167DBD90654BFD5BB3BC0BDF6AE447485C30B0389ADA7B49C069E46A.css";
-fastn_dom.codeData.availableThemes["duotone-theme.space"] = "code-theme-4DD8479BE14A755645BC09FF433FB70EB4CB28F0CBF3CA98DCB71B244B85B194.css";
-fastn_dom.codeData.availableThemes["fastn-theme.dark"] = "code-theme-F614177D3155EA8E915B35A3445175DC7C96D02FBC621F8AFD0FCCC417ED8A43.css";
-fastn_dom.codeData.availableThemes["fastn-theme.light"] = "code-theme-B8645DE281A38A3068C56919DE1BB0511696A1EE8002C5088748DA0BAC0806E6.css";
-fastn_dom.codeData.availableThemes["fire.light"] = "code-theme-A352AF572179AB980583D41BC41ADDBA36C4C17757A34C1C6AAAF2C253E25CE3.css";
-fastn_dom.codeData.availableThemes["gruvbox-theme.dark"] = "code-theme-B68AA27E05B319F04A9CD747AADBF9B9CD791E040DEC519AE9544B4FF65DDBAC.css";
-fastn_dom.codeData.availableThemes["gruvbox-theme.light"] = "code-theme-06E6F84E43C61CB1653D9F4FACD46B7EBCB3CD8A48EFAEF2E5BE3E9E9212D1E6.css";
-fastn_dom.codeData.availableThemes["laserwave-theme"] = "code-theme-0F444C6433C356376F7E92122F6C521FE40242BEC9D9E050359EE1DF4A9D5E6D.css";
-fastn_dom.codeData.availableThemes["material-theme.dark"] = "code-theme-8CCA3D600F91FA55950DF3132F2ABE4BA14CEEA13CD23E157BF6A137762B8452.css";
-fastn_dom.codeData.availableThemes["material-theme.light"] = "code-theme-8C59190F5018F48CCBB063359072EE9053D04923BBC5D1BA52B574E78D8C536A.css";
-fastn_dom.codeData.availableThemes["nightowl-theme"] = "code-theme-88F91252A8A0EA125B4BA2C7B85E65580DB580F1477931AADCB5118E4E69D1CD.css";
-fastn_dom.codeData.availableThemes["one-theme.dark"] = "code-theme-A24DC8F09D03756A62923E8A883CAE3B938D54E2813F0855312D2554DBE97BAD.css";
-fastn_dom.codeData.availableThemes["one-theme.light"] = "code-theme-60E02531E77333F3F1B636C4FC43E976EA9F41AD75268B2DD825C33C68B573A6.css";
-fastn_dom.codeData.availableThemes["vs-theme.dark"] = "code-theme-DC76F700474E809F7BA2D9914793D04881B17EA4699BA9C568C83D32A18B0173.css";
-fastn_dom.codeData.availableThemes["vs-theme.light"] = "code-theme-7852E516BA094B01897820BB3432BE553FE5B28F00E9CA0EBC9DFFB8312EE8BF.css";
-fastn_dom.codeData.availableThemes["ztouch-theme"] = "code-theme-792C7BB9F4C8DFF3E0CBC354D2084DBF71BC5750C2C1357F0E7D936867AFAB62.css";
 
-        let main_wrapper = function (parent) {
+        let main_wrapper = function(parent) {
             let parenti0 = fastn_dom.createKernel(parent, fastn_dom.ElementKind.Column);
             parenti0.setProperty(fastn_dom.PropertyKind.Width, fastn_dom.Resizing.FillContainer, inherited);
             parenti0.setProperty(fastn_dom.PropertyKind.Height, fastn_dom.Resizing.FillContainer, inherited);
             main(parenti0);
-        }
-        fastnVirtual.doubleBuffer(main_wrapper);
-        ftd.post_init();
-    })();
-
-    window.onload = function() {
-        fastn_utils.resetFullHeight();
-        fastn_utils.setFullHeight();
-        ftd.emit_on_load();
-    };
-</script>
-</html>
+        };
+        fastnVirtual.ssr(main_wrapper);
